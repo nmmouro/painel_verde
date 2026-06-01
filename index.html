@@ -146,6 +146,11 @@ body{
   color:var(--blue);
 }
 
+  .andamento{
+  background:rgba(255,77,77,.15);
+  color:var(--red);
+}
+
 /* RIGHT */
 
 .right{
@@ -773,10 +778,7 @@ function renderEmpregados(rows){
 
 function getDisponibilidade(nome, painelRows){
 
-  let resultado =
-    '<span class="livre">🟢 LIVRE</span>';
-
-  painelRows.forEach(row => {
+  for(const row of painelRows){
 
     const valores =
       (row.c || []).map(getCell);
@@ -785,7 +787,7 @@ function getDisponibilidade(nome, painelRows){
       JSON.stringify(valores).toUpperCase();
 
     if(!texto.includes(nome.toUpperCase())){
-      return;
+      continue;
     }
 
     const status =
@@ -793,47 +795,29 @@ function getDisponibilidade(nome, painelRows){
       .toUpperCase();
 
     if(status.includes("MANUTENÇÃO")){
-
-      resultado =
-        '<span class="manutencao">🔵 MANUTENÇÃO</span>';
-
-      return;
+      return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
     }
 
     if(status.includes("VIAGEM")){
-
-      resultado =
-        '<span class="viagem">🟣 VIAGEM</span>';
-
-      return;
+      return '<span class="viagem">🟣 VIAGEM</span>';
     }
 
-    if(status.includes("EM ANDAMENTO")){
-
-      resultado =
-        '<span class="andamento">🔴 OCUPADO</span>';
-
-      return;
+    if(
+      status.includes("EM ANDAMENTO") ||
+      status.includes("OCUPADO")
+    ){
+      return '<span class="ocupado">🔴 OCUPADO</span>';
     }
+  }
 
-    if(status.includes("OCUPADO")){
-
-      resultado =
-        '<span class="ocupado">🔴 OCUPADO</span>';
-
-      return;
-    }
-
-  });
-
-  return resultado;
+  return '<span class="livre">🟢 LIVRE</span>';
 }
 
   
 
 /* ================= VEÍCULOS ================= */
   
-function renderVeiculos(rows){
+function renderVeiculos(rows, painelRows){
 
   return `
 
@@ -1010,16 +994,15 @@ dual.className = "dual-cards";
     ? "card card-resumo"
     : "card";
 
-  section.innerHTML = `
+ section.innerHTML = `
+  <h2>${tab.title}</h2>
 
-    <h2>${tab.title}</h2>
-
-    ${
-     tab.id === "veiculos"
-  ? renderVeiculos(rows, painelRows)
-  : renderMotoristas(rows, painelRows)
-
-  `;
+  ${
+    tab.id === "veiculos"
+      ? renderVeiculos(rows, painelRows)
+      : renderMotoristas(rows, painelRows)
+  }
+`;
 
   dual.appendChild(section);
 
