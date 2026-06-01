@@ -104,27 +104,6 @@ body{
 
 /* STATUS */
 
-#status-empregados{
-
-  display:flex;
-  flex-wrap:wrap;
-
-  justify-content:center;
-
-  gap:25px;
-
-  margin-top:10px;
-}
-
-.badge{
-
-  padding:6px 10px;
-
-  border-radius:10px;
-
-  font-size:16px;
-  font-weight:700;
-}
 
 .ocupado{
   background:rgba(255,77,77,.15);
@@ -359,19 +338,7 @@ tbody tr:nth-child(even) td{
     font-size:12px;
   }
 
-  #status-empregados{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:6px; margin-top:6px;
-  }
-  
-  #status-empregados .badge{
-    font-size:8px;
-    padding:3px 6px;
-    border-radius:6px;
-  }
-
+ 
   #clock{
     font-size:8px;
   }
@@ -447,9 +414,8 @@ tbody tr:nth-child(even) td{
       MOVIMENTAÇÃO DIÁRIA
     </div>
 
-    <div id="status-empregados"></div>
+   
 
-  </div>
 
   <div class="right">
 
@@ -717,63 +683,6 @@ return `
   `;
 }
 
-/* ================= STATUS EMPREGADOS =================
-
-function renderEmpregados(rows){
-
-  const nomes = [
-    "CACIO",
-    "CELSO",
-    "NEI"
-  ];
-
-  const usados = {};
-
-  nomes.forEach(nome => {
-    usados[nome] = false;
-  });
-
-  rows.forEach(row => {
-
-    const valores =
-      (row.c || []).map(getCell);
-
-    const status =
-      String(valores.at(-1) || "")
-      .toLowerCase();
-
-    if(!status.includes("andamento")){
-      return;
-    }
-
-    const texto =
-      JSON.stringify(valores).toUpperCase();
-
-    nomes.forEach(nome => {
-
-      if(texto.includes(nome)){
-        usados[nome] = true;
-      }
-
-    });
-
-  });
-
-  document.getElementById(
-    "status-empregados"
-  ).innerHTML = nomes.map(nome => `
-
-    <span class="
-      badge
-      ${usados[nome] ? "ocupado" : "livre"}
-    ">
-      ${nome}
-      (${usados[nome] ? "OCUPADO" : "LIVRE"})
-    </span>
-
-  `).join("");
-
-} */
 
 
 function getDisponibilidade(nome, painelRows){
