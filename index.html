@@ -111,18 +111,23 @@ body{
 }
 
 .livre{
-  background:rgba(0,255,156,.15);
-  color:var(--green);
+  color:#00ff9c;
+  font-weight:700;
+}
+
+.ocupado{
+  color:#ff4d4d;
+  font-weight:700;
 }
 
 .manutencao{
-  background:rgba(0,255,156,.15);
-  color:var(--blue);
+  color:#4da6ff;
+  font-weight:700;
 }
 
 .viagem{
-  background:rgba(0,255,156,.15);
-  color:var(--blue);
+  color:#d66bff;
+  font-weight:700;
 }
 
   .andamento{
@@ -410,14 +415,13 @@ tbody tr:nth-child(even) td{
 
   <div class="center">
 
-    <div class="title">
-      MOVIMENTAÇÃO DIÁRIA
-    </div>
+  <div class="title">
+    MOVIMENTAÇÃO DIÁRIA
+  </div>
 
-   
+</div>
 
-
-  <div class="right">
+<div class="right">
 
     <div id="clock"></div>
 
@@ -685,25 +689,41 @@ return `
 
 
 
-function getDisponibilidade(nome, painelRows){
+function getDisponibilidade(nome, painelRows, tipo){
+
+  let resultado =
+    '<span class="livre">🟢 LIVRE</span>';
 
   for(const row of painelRows){
 
     const valores =
       (row.c || []).map(getCell);
 
-    const texto =
-      JSON.stringify(valores).toUpperCase();
+    const veiculo =
+      String(valores[2] || "").toUpperCase();
 
-    if(!texto.includes(nome.toUpperCase())){
+    const motorista =
+      String(valores[3] || "").toUpperCase();
+
+    const status =
+      String(valores[6] || "").toUpperCase();
+
+    const procurado =
+      String(nome || "").toUpperCase();
+
+    const encontrado =
+      tipo === "veiculo"
+        ? veiculo === procurado
+        : motorista === procurado;
+
+    if(!encontrado){
       continue;
     }
 
-    const status =
-      String(valores.at(-1) || "")
-      .toUpperCase();
-
-    if(status.includes("MANUTENÇÃO")){
+    if(
+      status.includes("MANUTENÇÃO") ||
+      status.includes("MANUTENCAO")
+    ){
       return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
     }
 
@@ -719,9 +739,8 @@ function getDisponibilidade(nome, painelRows){
     }
   }
 
-  return '<span class="livre">🟢 LIVRE</span>';
+  return resultado;
 }
-
   
 
 /* ================= VEÍCULOS ================= */
@@ -757,7 +776,11 @@ function renderVeiculos(rows, painelRows){
               </td>
 
               <td>
-                ${getDisponibilidade(v[0], painelRows)}
+                ${getDisponibilidade(
+    v[0],
+    painelRows,
+    "veiculo"
+)}
               </td>
 
               <td>
@@ -784,7 +807,7 @@ function renderVeiculos(rows, painelRows){
 
 /* ================= MOTORISTAS ================= */
 
-function rendermotoristas(rows, painelRows){
+function renderMotoristas(rows, painelRows){
 
   return `
 
@@ -815,7 +838,11 @@ function rendermotoristas(rows, painelRows){
               </td>
 
               <td>
-                ${getDisponibilidade(v[0], painelRows)}
+                ${getDisponibilidade(
+    v[0],
+    painelRows,
+    "motorista"
+)}
               </td>
 
               <td>
