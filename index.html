@@ -712,7 +712,7 @@ return `
   `;
 }
 
-/* ================= STATUS EMPREGADOS ================= */
+/* ================= STATUS EMPREGADOS =================
 
 function renderEmpregados(rows){
 
@@ -768,28 +768,66 @@ function renderEmpregados(rows){
 
   `).join("");
 
+} */
+
+
+function getDisponibilidade(nome, painelRows){
+
+  let resultado =
+    '<span class="livre">🟢 LIVRE</span>';
+
+  painelRows.forEach(row => {
+
+    const valores =
+      (row.c || []).map(getCell);
+
+    const texto =
+      JSON.stringify(valores).toUpperCase();
+
+    if(!texto.includes(nome.toUpperCase())){
+      return;
+    }
+
+    const status =
+      String(valores.at(-1) || "")
+      .toUpperCase();
+
+    if(status.includes("MANUTENÇÃO")){
+
+      resultado =
+        '<span class="manutencao">🔵 MANUTENÇÃO</span>';
+
+      return;
+    }
+
+    if(status.includes("VIAGEM")){
+
+      resultado =
+        '<span class="viagem">🟣 VIAGEM</span>';
+
+      return;
+    }
+
+    if(status.includes("EM ANDAMENTO")){
+
+      resultado =
+        '<span class="andamento">🔴 OCUPADO</span>';
+
+      return;
+    }
+
+    if(status.includes("OCUPADO")){
+
+      resultado =
+        '<span class="ocupado">🔴 OCUPADO</span>';
+
+      return;
+    }
+
+  });
+
+  return resultado;
 }
-
-
-function formatStatus(valor=""){
-
-  const texto = String(valor).toUpperCase();
-
-  if(texto.includes("LIVRE")){
-    return '<span class="livre">🟢 LIVRE</span>';
-  }
-
-  if(texto.includes("OCUPADO")){
-    return '<span class="ocupado">🔴 OCUPADO</span>';
-  }
-
-  if(texto.includes("MANUTENÇÃO")){
-    return '<span class="manutenção">🔵 MANUTENÇÃO</span>';
-  }
-
-  return valor;
-}
-
 
   
 
@@ -826,7 +864,7 @@ function renderVeiculos(rows){
               </td>
 
               <td>
-                ${formatStatus(v[1])}
+                ${getDisponibilidade(v[0], painelRows)}
               </td>
 
               <td>
@@ -853,7 +891,7 @@ function renderVeiculos(rows){
 
 /* ================= MOTORISTAS ================= */
 
-function renderMotoristas(rows){
+function rendermotoristas(rows, painelRows){
 
   return `
 
@@ -884,7 +922,7 @@ function renderMotoristas(rows){
               </td>
 
               <td>
-                ${formatStatus(v[1])}
+                ${getDisponibilidade(v[0], painelRows)}
               </td>
 
               <td>
@@ -942,6 +980,13 @@ app.innerHTML = "";
 
 /* VEÍCULOS + MOTORISTAS */
 
+const painelIndex =
+  TABS.findIndex(t => t.id === "painel");
+
+const painelRows =
+  results[painelIndex].table.rows || [];
+    
+
 const veiculosIndex =
   TABS.findIndex(t => t.id === "veiculos");
 
@@ -970,10 +1015,9 @@ dual.className = "dual-cards";
     <h2>${tab.title}</h2>
 
     ${
-      tab.id === "veiculos"
-        ? renderVeiculos(rows)
-        : renderMotoristas(rows)
-    }
+     tab.id === "veiculos"
+  ? renderVeiculos(rows, painelRows)
+  : renderMotoristas(rows, painelRows)
 
   `;
 
