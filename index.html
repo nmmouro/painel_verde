@@ -691,8 +691,8 @@ return `
 
 function getDisponibilidade(nome, painelRows, tipo){
 
-  let resultado =
-    '<span class="livre">🟢 LIVRE</span>';
+  const procurado =
+    String(nome || "").trim().toUpperCase();
 
   for(const row of painelRows){
 
@@ -700,16 +700,13 @@ function getDisponibilidade(nome, painelRows, tipo){
       (row.c || []).map(getCell);
 
     const veiculo =
-      String(valores[2] || "").toUpperCase();
+      String(valores[2] || "").trim().toUpperCase();
 
     const motorista =
-      String(valores[3] || "").toUpperCase();
+      String(valores[3] || "").trim().toUpperCase();
 
     const status =
-      String(valores[6] || "").toUpperCase();
-
-    const procurado =
-      String(nome || "").toUpperCase();
+      String(valores[6] || "").trim().toUpperCase();
 
     const encontrado =
       tipo === "veiculo"
@@ -720,6 +717,7 @@ function getDisponibilidade(nome, painelRows, tipo){
       continue;
     }
 
+    // Se estiver em manutenção
     if(
       status.includes("MANUTENÇÃO") ||
       status.includes("MANUTENCAO")
@@ -727,18 +725,18 @@ function getDisponibilidade(nome, painelRows, tipo){
       return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
     }
 
+    // Se estiver em viagem
     if(status.includes("VIAGEM")){
       return '<span class="viagem">🟣 VIAGEM</span>';
     }
 
-    if(
-      status.includes("EM ANDAMENTO") ||
-      status.includes("OCUPADO")
-    ){
-      return '<span class="ocupado">🔴 OCUPADO</span>';
-    }
+    // Qualquer ocorrência da placa no PAINEL
+    return '<span class="ocupado">🔴 OCUPADO</span>';
   }
 
+  return '<span class="livre">🟢 LIVRE</span>';
+}
+  
   return resultado;
 }
   
