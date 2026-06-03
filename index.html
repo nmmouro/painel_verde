@@ -613,19 +613,39 @@ function getStatusIcon(status){
 
 async function fetchSheet(sheet){
 
-  const url =
+  try{
 
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
+    const url =
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
+      `?sheet=${encodeURIComponent(sheet)}` +
+      `&tqx=out:json`;
 
-    `?sheet=${encodeURIComponent(sheet)}` +
+    const res = await fetch(url);
 
-    `&tqx=out:json`;
+    if(!res.ok){
+      throw new Error(
+        `HTTP ${res.status}`
+      );
+    }
 
-  const res = await fetch(url);
+    return parseGviz(
+      await res.text()
+    );
 
-  return parseGviz(await res.text());
+  }catch(err){
+
+    console.error(
+      `Erro na aba ${sheet}:`,
+      err
+    );
+
+    return {
+      table:{
+        rows:[]
+      }
+    };
+  }
 }
-
 /* ================= TABLE ================= */
 
 function renderTable(headers, rows){
