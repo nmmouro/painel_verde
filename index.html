@@ -722,7 +722,8 @@ function getDisponibilidade(nome, painelRows, tipo){
       status.includes("MANUTENÇÃO") ||
       status.includes("MANUTENCAO")
     ){
-      return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
+      if(tipo === "veiculo"){
+        return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
     }
 
     // Se estiver em viagem
