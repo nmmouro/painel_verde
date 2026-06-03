@@ -717,27 +717,30 @@ function getDisponibilidade(nome, painelRows, tipo){
       continue;
     }
 
-    // Se estiver em manutenção
+    // MANUTENÇÃO
     if(
       status.includes("MANUTENÇÃO") ||
       status.includes("MANUTENCAO")
     ){
+
       if(tipo === "veiculo"){
         return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
+      }
+
+      return '<span class="livre">🟢 LIVRE</span>';
     }
 
-    // Se estiver em viagem
+    // VIAGEM
     if(status.includes("VIAGEM")){
       return '<span class="viagem">🟣 VIAGEM</span>';
     }
 
-    // Qualquer ocorrência da placa no PAINEL
+    // OCUPADO
     return '<span class="ocupado">🔴 OCUPADO</span>';
   }
 
   return '<span class="livre">🟢 LIVRE</span>';
-}
-  
+}  
 
 /* ================= VEÍCULOS ================= */
   
