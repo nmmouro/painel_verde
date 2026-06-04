@@ -648,6 +648,20 @@ async function fetchSheet(sheet){
   `select B,C,D,E,F,G,X `;
     }
 
+if(sheet === "AGENDA DO DIA"){
+
+  query =
+    "select B,C,D,E,F,G,H";
+}
+
+
+    if(sheet === "AGENDA SERVIÇO SOCIAL"){
+
+  query =
+    "select B,C,D,E,F,G";
+}
+    
+
     const url =
   `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
   `?sheet=${encodeURIComponent(sheet)}` +
