@@ -785,10 +785,10 @@ function getDisponibilidade(nome, painelRows, tipo){
       (row.c || []).map(getCell);
 
     const veiculo =
-      String(valores[2] || "").trim().toUpperCase();
+      String(valores[3] || "").trim().toUpperCase();
 
     const motorista =
-      String(valores[3] || "").trim().toUpperCase();
+      String(valores[2] || "").trim().toUpperCase();
 
     const status =
       String(valores[6] || "").trim().toUpperCase();
