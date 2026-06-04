@@ -304,6 +304,10 @@ tbody tr:nth-child(even) td{
   background:rgba(255,140,0,.10);
 }
 
+.status-viagem td{
+  background:rgba(214,107,255,.15);
+}
+
   /* ================= STATUS ICON ================= */
 
 .status-icon{
@@ -608,12 +612,32 @@ function formatarData(valor){
 /* 🔹 identifica chave do status */
 function getStatusKey(status=""){
 
-  status = status.toLowerCase();
+  status = status
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"");
 
-  return Object.keys(STATUS)
-    .find(key => status.includes(key));
+  if(status.includes("manutencao"))
+    return "manutenção";
+
+  if(status.includes("viagem"))
+    return "viagem";
+
+  if(status.includes("andamento"))
+    return "andamento";
+
+  if(status.includes("atendido"))
+    return "atendido";
+
+  if(status.includes("concluido"))
+    return "concluido";
+
+  if(status.includes("cancelado"))
+    return "cancelado";
+
+  return null;
 }
-
+  
 /* 🔹 retorna classe CSS */
 function getStatusClass(status){
 
