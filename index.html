@@ -959,22 +959,7 @@ app.innerHTML = "";
 /* VEÍCULOS + MOTORISTAS */
 
     
-
-console.log("HOJE:", hoje);
-
-results[agendaIndex].table.rows.forEach(row=>{
-  const v = (row.c || []).map(getCell);
-  console.log("AGENDA:", v[0]);
-});
-
-results[socialIndex].table.rows.forEach(row=>{
-  const v = (row.c || []).map(getCell);
-  console.log("SOCIAL:", v[0]);
-});
-
-
-
-    
+   
 
 const painelIndex =
   TABS.findIndex(t => t.id === "painel");
@@ -1001,6 +986,24 @@ const painelRows =
         status.includes("MANUTENCAO")
       );
     });
+
+
+
+console.log("HOJE:", hoje);
+
+results[agendaIndex].table.rows.forEach(row=>{
+  const v = (row.c || []).map(getCell);
+  console.log("AGENDA:", v[0]);
+});
+
+results[socialIndex].table.rows.forEach(row=>{
+  const v = (row.c || []).map(getCell);
+  console.log("SOCIAL:", v[0]);
+});
+
+
+
+    
 
 const agendaIndex =
   TABS.findIndex(t => t.id === "agenda");
