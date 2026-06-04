@@ -944,8 +944,11 @@ const painelRows =
   (results[painelIndex].table.rows || [])
     .filter(row => {
 
-      const v =
-        (row.c || []).map(getCell);
+      const valores =
+      (row.c || []).map(getCell);
+
+    const data =
+      String(valores[0] || "");
 
       return String(v[0]).trim() === hoje;
     });
