@@ -620,14 +620,8 @@ async function fetchSheet(sheet){
     // Somente para a aba PAINEL
     if(sheet === "LANÇAMENTOS"){
       
-      const hoje = new Date();
-
-const ano = hoje.getFullYear();
-const mes = String(hoje.getMonth()+1).padStart(2,'0');
-const dia = String(hoje.getDate()).padStart(2,'0');
-
-query =
-  `select B,C,D,E,F,G,X where B = date '${ano}-${mes}-${dia}'`;
+  query =
+  `select B,C,D,E,F,G,X `;
     }
 
     const url =
@@ -943,8 +937,18 @@ app.innerHTML = "";
 const painelIndex =
   TABS.findIndex(t => t.id === "painel");
 
+const hoje =
+  new Date().toLocaleDateString("pt-BR");
+
 const painelRows =
-  results[painelIndex].table.rows || [];
+  (results[painelIndex].table.rows || [])
+    .filter(row => {
+
+      const v =
+        (row.c || []).map(getCell);
+
+      return String(v[0]).trim() === hoje;
+    });
     
 
 const veiculosIndex =
