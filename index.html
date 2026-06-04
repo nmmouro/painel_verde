@@ -481,8 +481,8 @@ const TABS = [
 },
 
   {
-    id:"lançamentos",
-    title:"LANÇAMENTOS",
+    id:"Painel",
+    title:"PAINEL",
     sheet:"LANÇAMENTOS",
 
     headers:[
@@ -627,7 +627,7 @@ const mes = String(hoje.getMonth()+1).padStart(2,'0');
 const dia = String(hoje.getDate()).padStart(2,'0');
 
 query =
-  `select B,C,D,E,F,G,X where A = date '${ano}-${mes}-${dia}'`;
+  `select B,C,D,E,F,G,X where B = date '${ano}-${mes}-${dia}'`;
     }
 
     const url =
