@@ -984,7 +984,8 @@ const painelRows =
       );
     });
 
-
+const agendaIndex =
+  TABS.findIndex(t => t.id === "agenda");
 
 const agendaRows =
   (results[agendaIndex].table.rows || [])
