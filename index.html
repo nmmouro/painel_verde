@@ -959,6 +959,36 @@ const painelRows =
         status.includes("MANUTENCAO")
       );
     });
+
+
+
+const agendaIndex =
+  TABS.findIndex(t => t.id === "agenda");
+
+const agendaRows =
+  (results[agendaIndex].table.rows || [])
+    .filter(row => {
+
+      const v =
+        (row.c || []).map(getCell);
+
+      return String(v[0] || "").trim() === hoje;
+    });
+
+const socialIndex =
+  TABS.findIndex(t => t.id === "social");
+
+const socialRows =
+  (results[socialIndex].table.rows || [])
+    .filter(row => {
+
+      const v =
+        (row.c || []).map(getCell);
+
+      return String(v[0] || "").trim() === hoje;
+    });
+
+    
     
 
 const veiculosIndex =
@@ -973,6 +1003,7 @@ dual.className = "dual-cards";
 [veiculosIndex,motoristasIndex].forEach(index=>{
 
   const tab = TABS[index];
+  
   const rows = results[index].table.rows || [];
 
   const section =
@@ -1011,10 +1042,20 @@ results.forEach((data,index)=>{
     tab.id === "motoristas"
   ) return;
 
- const rows =
-    tab.id === "painel"
-      ? painelRows
-      : (data.table.rows || []);
+let rows;
+
+if(tab.id === "painel"){
+  rows = painelRows;
+}
+else if(tab.id === "agenda"){
+  rows = agendaRows;
+}
+else if(tab.id === "social"){
+  rows = socialRows;
+}
+else{
+  rows = data.table.rows || [];
+}
 
   const section =
     document.createElement("section");
