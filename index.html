@@ -946,26 +946,17 @@ const painelRows =
 
       const v =
         (row.c || []).map(getCell);
-      console.log(
-  "DATA:", v[0],
-  "STATUS:", v[6]
-);
-
-      const data =
-        String(v[0] || "").trim();
 
       const status =
         String(v[6] || "")
-          .toUpperCase();
+          .toUpperCase()
+          .trim();
 
       return (
-        data === hoje &&
-        (
-          status.includes("EM ANDAMENTO") ||
-          status.includes("VIAGEM") ||
-          status.includes("MANUTENÇÃO") ||
-          status.includes("MANUTENCAO")
-        )
+        status.includes("EM ANDAMENTO") ||
+        status.includes("VIAGEM") ||
+        status.includes("MANUTENÇÃO") ||
+        status.includes("MANUTENCAO")
       );
     });
     
