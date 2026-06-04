@@ -971,8 +971,10 @@ const agendaRows =
 
       const v =
         (row.c || []).map(getCell);
+      console.log("HOJE:", hoje);
+console.log("DATA DA LINHA:", v[0]);
 
-      console.log("DATA AGENDA:", v[0]);
+      
 
       return true;
     });
@@ -989,7 +991,8 @@ const socialRows =
       const v =
         (row.c || []).map(getCell);
 
-      console.log("DATA SOCIAL:", v[0]);
+     console.log("HOJE:", hoje);
+console.log("DATA DA LINHA:", v[0]);
 
       return true;
     });
