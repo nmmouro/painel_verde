@@ -581,6 +581,30 @@ const parseGviz = txt =>
 const getCell = c =>
   c?.f ?? c?.v ?? "";
 
+
+  
+function formatarData(valor){
+
+  if(!valor) return "";
+
+  if(valor instanceof Date){
+    return valor.toLocaleDateString("pt-BR");
+  }
+
+  const texto = String(valor);
+
+  const match =
+    texto.match(/\d{1,2}\/\d{1,2}\/\d{4}/);
+
+  if(match){
+    return match[0];
+  }
+
+  return texto;
+}
+  
+  
+
 /* 🔹 identifica chave do status */
 function getStatusKey(status=""){
 
@@ -962,9 +986,6 @@ const painelRows =
 
 
 
-const agendaIndex =
-  TABS.findIndex(t => t.id === "agenda");
-
 const agendaRows =
   (results[agendaIndex].table.rows || [])
     .filter(row => {
@@ -972,18 +993,12 @@ const agendaRows =
       const v =
         (row.c || []).map(getCell);
 
-      const data =
-  String(v[0] || "")
-    .match(/\d{1,2}\/\d{2}\/\d{4}/)?.[0] || "";
-
-      return data === hoje;
-
-     
+      return formatarData(v[0]) === hoje;
     });
     
 
 const socialIndex =
-  TABS.findIndex(t => t.id === "social");    
+  TABS.findIndex(t => t.id === "social");
 
 const socialRows =
   (results[socialIndex].table.rows || [])
@@ -992,13 +1007,7 @@ const socialRows =
       const v =
         (row.c || []).map(getCell);
 
-      const data =
-  String(v[0] || "")
-    .match(/\d{1,2}\/\d{2}\/\d{4}/)?.[0] || "";
-
-      return data === hoje;
-
-      
+      return formatarData(v[0]) === hoje;
     });
 
     
