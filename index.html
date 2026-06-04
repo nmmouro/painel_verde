@@ -1015,7 +1015,7 @@ const agendaRows =
         (row.c || []).map(getCell);
 
       const data =
-        String(v[1] || "").trim();
+        String(v[0] || "").trim();
 
       return data === hoje;
     });
@@ -1032,7 +1032,7 @@ const socialRows =
         (row.c || []).map(getCell);
 
       const data =
-        String(v[1] || "").trim();
+        String(v[0] || "").trim();
 
       return data === hoje;
     });
