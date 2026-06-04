@@ -975,6 +975,8 @@ const agendaRows =
       return String(v[0] || "").trim() === hoje;
     });
 
+    
+
 const socialIndex =
   TABS.findIndex(t => t.id === "social");
 
@@ -1041,6 +1043,7 @@ results.forEach((data,index)=>{
     tab.id === "veiculos" ||
     tab.id === "motoristas"
   ) return;
+  
 
 let rows;
 
@@ -1056,6 +1059,7 @@ else if(tab.id === "social"){
 else{
   rows = data.table.rows || [];
 }
+  
 
   const section =
     document.createElement("section");
