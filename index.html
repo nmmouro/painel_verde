@@ -971,18 +971,17 @@ const agendaRows =
 
       const v =
         (row.c || []).map(getCell);
-      console.log("HOJE:", hoje);
-console.log("DATA DA LINHA:", v[1]);
 
-      
+      const data =
+  String(v[0] || "")
+    .match(/\d{1,2}\/\d{2}\/\d{4}/)?.[0] || "";
 
-      return true;
+return data === hoje;
+
+      return data.includes(hoje);
     });
 
     
-
-const socialIndex =
-  TABS.findIndex(t => t.id === "social");
 
 const socialRows =
   (results[socialIndex].table.rows || [])
@@ -991,10 +990,13 @@ const socialRows =
       const v =
         (row.c || []).map(getCell);
 
-     console.log("HOJE:", hoje);
-console.log("DATA DA LINHA:", v[1]);
+      const data =
+  String(v[0] || "")
+    .match(/\d{1,2}\/\d{2}\/\d{4}/)?.[0] || "";
 
-      return true;
+return data === hoje;
+
+      return data.includes(hoje);
     });
 
     
