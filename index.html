@@ -1011,8 +1011,10 @@ results.forEach((data,index)=>{
     tab.id === "motoristas"
   ) return;
 
-  const rows =
-    data.table.rows || [];
+ const rows =
+    tab.id === "painel"
+      ? painelRows
+      : (data.table.rows || []);
 
   const section =
     document.createElement("section");
