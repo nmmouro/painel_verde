@@ -988,22 +988,7 @@ const painelRows =
     });
 
 
-
-console.log("HOJE:", hoje);
-
-results[agendaIndex].table.rows.forEach(row=>{
-  const v = (row.c || []).map(getCell);
-  console.log("AGENDA:", v[0]);
-});
-
-results[socialIndex].table.rows.forEach(row=>{
-  const v = (row.c || []).map(getCell);
-  console.log("SOCIAL:", v[0]);
-});
-
-
-
-    
+   
 
 const agendaIndex =
   TABS.findIndex(t => t.id === "agenda");
@@ -1015,7 +1000,7 @@ const agendaRows =
       const v =
         (row.c || []).map(getCell);
 
-      return formatarData(v[0]) === hoje;
+      return formatarData(v[1]) === hoje;
     });
     
 
@@ -1029,7 +1014,7 @@ const socialRows =
       const v =
         (row.c || []).map(getCell);
 
-      return formatarData(v[0]) === hoje;
+      return formatarData(v[1]) === hoje;
     });
 
     
