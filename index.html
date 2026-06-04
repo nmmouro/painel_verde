@@ -940,6 +940,9 @@ const painelIndex =
 const hoje =
   new Date().toLocaleDateString("pt-BR");
 
+const hoje =
+  new Date().toLocaleDateString("pt-BR");
+
 const painelRows =
   (results[painelIndex].table.rows || [])
     .filter(row => {
@@ -947,7 +950,22 @@ const painelRows =
       const v =
         (row.c || []).map(getCell);
 
-      return String(v[0]).trim() === hoje;
+      const data =
+        String(v[0] || "").trim();
+
+      const status =
+        String(v[6] || "")
+          .toUpperCase();
+
+      return (
+        data === hoje &&
+        (
+          status.includes("🟠 EM ANDAMENTO") ||
+          status.includes("✈️ VIAGEM") ||
+          status.includes("🔧 MANUTENÇÃO") ||
+          status.includes("🔧 MANUTENCAO")
+        )
+      );
     });
     
 
