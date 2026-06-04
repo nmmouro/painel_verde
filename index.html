@@ -940,9 +940,6 @@ const painelIndex =
 const hoje =
   new Date().toLocaleDateString("pt-BR");
 
-const hoje =
-  new Date().toLocaleDateString("pt-BR");
-
 const painelRows =
   (results[painelIndex].table.rows || [])
     .filter(row => {
@@ -960,10 +957,10 @@ const painelRows =
       return (
         data === hoje &&
         (
-          status.includes("🟠 EM ANDAMENTO") ||
-          status.includes("✈️ VIAGEM") ||
-          status.includes("🔧 MANUTENÇÃO") ||
-          status.includes("🔧 MANUTENCAO")
+          status.includes("EM ANDAMENTO") ||
+          status.includes("VIAGEM") ||
+          status.includes("MANUTENÇÃO") ||
+          status.includes("MANUTENCAO")
         )
       );
     });
