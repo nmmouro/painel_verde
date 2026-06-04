@@ -976,12 +976,14 @@ const agendaRows =
   String(v[0] || "")
     .match(/\d{1,2}\/\d{2}\/\d{4}/)?.[0] || "";
 
-return data === hoje;
+      return data === hoje;
 
-      return data.includes(hoje);
+     
     });
-
     
+
+const socialIndex =
+  TABS.findIndex(t => t.id === "social");    
 
 const socialRows =
   (results[socialIndex].table.rows || [])
@@ -994,9 +996,9 @@ const socialRows =
   String(v[0] || "")
     .match(/\d{1,2}\/\d{2}\/\d{4}/)?.[0] || "";
 
-return data === hoje;
+      return data === hoje;
 
-      return data.includes(hoje);
+      
     });
 
     
