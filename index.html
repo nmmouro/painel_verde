@@ -946,6 +946,10 @@ const painelRows =
 
       const v =
         (row.c || []).map(getCell);
+      console.log(
+  "DATA:", v[0],
+  "STATUS:", v[6]
+);
 
       const data =
         String(v[0] || "").trim();
@@ -958,7 +962,7 @@ const painelRows =
         data === hoje &&
         (
           status.includes("EM ANDAMENTO") ||
-          status.includes("VIAGEM") ||
+          status.includes("✈️ VIAGEM") ||
           status.includes("MANUTENÇÃO") ||
           status.includes("MANUTENCAO")
         )
