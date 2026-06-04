@@ -972,7 +972,7 @@ const agendaRows =
       const v =
         (row.c || []).map(getCell);
 
-      return String(v[0] || "").trim() === hoje;
+      return String(v[1] || "").trim() === hoje;
     });
 
     
@@ -987,7 +987,7 @@ const socialRows =
       const v =
         (row.c || []).map(getCell);
 
-      return String(v[0] || "").trim() === hoje;
+      return String(v[1] || "").trim() === hoje;
     });
 
     
