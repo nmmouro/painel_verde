@@ -1000,7 +1000,7 @@ const agendaRows =
       const v =
         (row.c || []).map(getCell);
 
-      return formatarData(v[2]) === hoje;
+      return formatarData(v[0]) === hoje;
     });
     
 
@@ -1014,7 +1014,7 @@ const socialRows =
       const v =
         (row.c || []).map(getCell);
 
-      return formatarData(v[2]) === hoje;
+      return formatarData(v[0]) === hoje;
     });
 
     
