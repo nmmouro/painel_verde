@@ -1050,6 +1050,7 @@ const painelRows =
           .trim();
 
       return (
+        status.includes("AGENDADO") ||
         status.includes("EM ANDAMENTO") ||
         status.includes("VIAGEM") ||
         status.includes("MANUTENÇÃO") ||
