@@ -981,6 +981,8 @@ function renderMotoristas(rows, painelRows){
 
         }).join("")}
 
+        ${linhaFlutuante}
+
       </tbody>
 
     </table>
@@ -1099,8 +1101,66 @@ const veiculosIndex =
 
 const motoristasIndex =
   TABS.findIndex(t => t.id === "motoristas");
+    
 
-const dual = document.createElement("div");
+const motoristaFlutuante =
+  painelRows.find(row => {
+
+    const v =
+      (row.c || []).map(getCell);
+
+    const nome =
+      String(v[2] || "").trim();
+
+    return !rows.some(r => {
+
+      const m =
+        (r.c || []).map(getCell);
+
+      return String(m[0] || "").trim() === nome;
+    });
+
+  });
+
+let linhaFlutuante = "";
+
+if(motoristaFlutuante){
+
+  const v =
+    (motoristaFlutuante.c || []).map(getCell);
+
+  const nome =
+    String(v[2] || "").trim();
+
+  const status =
+    String(v[6] || "").toUpperCase();
+
+  let textoStatus =
+    "🔴 OCUPADO";
+
+  if(status.includes("VIAGEM")){
+    textoStatus = "✈️ VIAGEM";
+  }
+
+  if(
+    status.includes("MANUTENÇÃO") ||
+    status.includes("MANUTENCAO")
+  ){
+    textoStatus = "🔧 MANUTENÇÃO";
+  }
+
+  linhaFlutuante = `
+    <tr>
+      <td><strong>${nome}</strong></td>
+      <td>${textoStatus}</td>
+      <td>FLUTUAÇÃO</td>
+    </tr>
+  `;
+}
+    
+
+
+  const dual = document.createElement("div");
 dual.className = "dual-cards";
 
 [veiculosIndex,motoristasIndex].forEach(index=>{
