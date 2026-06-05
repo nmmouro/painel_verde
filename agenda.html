@@ -122,11 +122,62 @@ cursor:pointer;
 </div>
 
 
+
+
+<div class="formulario">
+
+<input type="date" id="novaData">
+
+<input type="time" id="novaHora">
+
+<input
+type="text"
+id="novoPassageiro"
+placeholder="Passageiro"
+
+>
+
+<input
+type="text"
+id="novoSetor"
+placeholder="Setor"
+
+>
+
+<input
+type="text"
+id="novoMotivo"
+placeholder="Motivo"
+
+>
+
+<input
+type="text"
+id="novoItinerario"
+placeholder="Itinerário"
+
+>
+
+<button onclick="salvarAgenda()">
+➕ Salvar
+</button>
+
+</div>
+
+
+
+
+  
+
   
 
 <div id="tabela"></div>
 
+  
+
 <script>
+
+  
 
   const SHEET_ID =
 "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
@@ -269,45 +320,7 @@ return dataA - dataB;
 
 
 
-<div class="formulario">
 
-<input type="date" id="novaData">
-
-<input type="time" id="novaHora">
-
-<input
-type="text"
-id="novoPassageiro"
-placeholder="Passageiro"
-
->
-
-<input
-type="text"
-id="novoSetor"
-placeholder="Setor"
-
->
-
-<input
-type="text"
-id="novoMotivo"
-placeholder="Motivo"
-
->
-
-<input
-type="text"
-id="novoItinerario"
-placeholder="Itinerário"
-
->
-
-<button onclick="salvarAgenda()">
-➕ Salvar
-</button>
-
-</div>
 
 
     
@@ -413,19 +426,27 @@ async function salvarAgenda(){
   };
 
   const res =
-    await fetch(WEBAPP,{
-
-      method:"POST",
-
-      body:
-        JSON.stringify(payload)
-
-    });
+    fetch(WEBAPP,{
+  method:"POST",
+  mode:"cors",
+  headers:{
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify(payload)
+});
 
   const json =
     await res.json();
 
   if(json.success){
+
+document.getElementById("novaData").value = "";
+document.getElementById("novaHora").value = "";
+document.getElementById("novoPassageiro").value = "";
+document.getElementById("novoSetor").value = "";
+document.getElementById("novoMotivo").value = "";
+document.getElementById("novoItinerario").value = "";
+
 
     alert(
       "Agendamento incluído!"
