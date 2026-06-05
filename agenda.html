@@ -399,7 +399,7 @@ document.getElementById("filtroData").value =
 
 
 const WEBAPP =
-"https://script.google.com/macros/s/AKfycbwPp3Zibg-LVK3uZ4fvj6E6kEyTamV_pmjOhdiINji_E7KhCVy-YkY7PBdo2nsLUcs82A/exec";
+"https://script.google.com/macros/s/AKfycbwnSvL04p011ccpRVuE-D2wN8JzQLZi1BW-_vZbLXSpVRtTIUr8f4yb7tc3jHttxY7ixA/exec";
 
 async function salvarAgenda(){
 
@@ -414,9 +414,18 @@ async function salvarAgenda(){
 
   };
 
-  const res = await fetch(WEBAPP,{
+ const formData = new FormData();
+
+formData.append("data", payload.data);
+formData.append("hora", payload.hora);
+formData.append("passageiro", payload.passageiro);
+formData.append("setor", payload.setor);
+formData.append("motivo", payload.motivo);
+formData.append("itinerario", payload.itinerario);
+
+const res = await fetch(WEBAPP,{
   method:"POST",
-  body:JSON.stringify(payload)
+  body:formData
 });
 
   const json = await res.json();
