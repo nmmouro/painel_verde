@@ -401,68 +401,11 @@ document.getElementById("filtroData").value =
 const WEBAPP =
 "https://script.google.com/macros/s/AKfycbwPp3Zibg-LVK3uZ4fvj6E6kEyTamV_pmjOhdiINji_E7KhCVy-YkY7PBdo2nsLUcs82A/exec";
 
-async function salvarAgenda(){
+const texto = await res.text();
 
-  const payload = {
+console.log(texto);
 
-    data:
-      document.getElementById("novaData").value,
-
-    hora:
-      document.getElementById("novaHora").value,
-
-    passageiro:
-      document.getElementById("novoPassageiro").value,
-
-    setor:
-      document.getElementById("novoSetor").value,
-
-    motivo:
-      document.getElementById("novoMotivo").value,
-
-    itinerario:
-      document.getElementById("novoItinerario").value
-
-  };
-
-  const res =
-    fetch(WEBAPP,{
-  method:"POST",
-  mode:"cors",
-  headers:{
-    "Content-Type":"application/json"
-  },
-  body:JSON.stringify(payload)
-});
-
-  const json =
-    await res.json();
-
-  if(json.success){
-
-document.getElementById("novaData").value = "";
-document.getElementById("novaHora").value = "";
-document.getElementById("novoPassageiro").value = "";
-document.getElementById("novoSetor").value = "";
-document.getElementById("novoMotivo").value = "";
-document.getElementById("novoItinerario").value = "";
-
-
-    alert(
-      "Agendamento incluído!"
-    );
-
-    carregarAgenda();
-
-  }else{
-
-    alert(
-      "Erro ao gravar."
-    );
-
-  }
-
-}
+alert(texto);
 
 
 
