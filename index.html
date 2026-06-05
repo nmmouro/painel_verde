@@ -1040,6 +1040,33 @@ const hoje =
 const painelRows =
   (results[painelIndex].table.rows || [])
     .filter(row => {
+      
+
+painelRows.sort((a,b)=>{
+
+  const va = (a.c || []).map(getCell);
+  const vb = (b.c || []).map(getCell);
+
+  const da = String(va[0] || "").split("/");
+  const db = String(vb[0] || "").split("/");
+
+  const ha = String(va[1] || "00:00").split(":");
+  const hb = String(vb[1] || "00:00").split(":");
+
+  const dataHoraA =
+    new Date(da[2], da[1]-1, da[0], ha[0], ha[1]);
+
+  const dataHoraB =
+    new Date(db[2], db[1]-1, db[0], hb[0], hb[1]);
+
+  return dataHoraA - dataHoraB;
+});
+
+
+
+
+
+      
 
       const v =
         (row.c || []).map(getCell);
