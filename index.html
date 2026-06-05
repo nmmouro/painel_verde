@@ -1040,7 +1040,24 @@ const hoje =
 const painelRows =
   (results[painelIndex].table.rows || [])
     .filter(row => {
-      
+   
+      const v =
+        (row.c || []).map(getCell);
+
+      const status =
+        String(v[6] || "")
+          .toUpperCase()
+          .trim();
+
+      return (
+        status.includes("AGENDADO") ||
+        status.includes("EM ANDAMENTO") ||
+        status.includes("VIAGEM") ||
+        status.includes("MANUTENÇÃO") ||
+        status.includes("MANUTENCAO")
+      );
+    });
+
 
 painelRows.sort((a,b)=>{
 
@@ -1062,28 +1079,7 @@ painelRows.sort((a,b)=>{
   return dataHoraA - dataHoraB;
 });
 
-
-
-
-
-      
-
-      const v =
-        (row.c || []).map(getCell);
-
-      const status =
-        String(v[6] || "")
-          .toUpperCase()
-          .trim();
-
-      return (
-        status.includes("AGENDADO") ||
-        status.includes("EM ANDAMENTO") ||
-        status.includes("VIAGEM") ||
-        status.includes("MANUTENÇÃO") ||
-        status.includes("MANUTENCAO")
-      );
-    });
+    
 
 
  
