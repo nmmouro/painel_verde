@@ -1241,7 +1241,26 @@ section.className = `card ${tab.id}`;
 
   section.innerHTML = `
 
-    <h2>${tab.title}</h2>
+    <h2 style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 20px;
+">
+
+<span>${tab.title}</span>
+
+<button
+onclick="window.open('agenda.html','_blank')"
+style="
+padding:6px 12px;
+font-size:12px;
+"
+>
+📅 COMPLETA
+</button>
+
+</h2>
 
     ${renderTable(tab.headers, rows)}
 
