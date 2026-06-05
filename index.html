@@ -1241,34 +1241,37 @@ section.className = `card ${tab.id}`;
 
 section.innerHTML = `
 
- <h2 style="
+<h2 style="
   position:relative;
   text-align:center;
 ">
 
   ${tab.title}
 
+  ${
+    tab.id === "agenda"
+    ? `
+      <span
+        onclick="window.location.href='agenda.html'"
+        title="Agenda Completa"
+        style="
+          position:absolute;
+          right:15px;
+          top:50%;
+          transform:translateY(-50%);
+          cursor:pointer;
+          font-size:22px;
+          user-select:none;
+        "
+      >
+        📅
+      </span>
+    `
+    : ""
+  }
 
-    ${
-      tab.id === "agenda"
-      ? `<button
-            onclick="window.open('agenda.html','_blank')"
-            style="
-              padding:6px 12px;
-              font-size:14px;
-              background:#6284fc;
-              color:white;
-              border:none;
-              border-radius:8px;
-              cursor:pointer;
-            "
-         >
-           📅 COMPLETA
-         </button>`
-      : ""
-    }
+</h2>
 
-  </h2>
 
   ${renderTable(tab.headers, rows)}
 
