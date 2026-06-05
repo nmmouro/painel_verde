@@ -53,6 +53,33 @@ tr:nth-child(odd){
 
 <h1>📅 AGENDA COMPLETA</h1>
 
+
+<div style="
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+">
+
+  <label>📅 Data:</label>
+
+  <input
+  type="date"
+  id="filtroData"
+  onchange="carregarAgenda()"
+    style="
+      padding:6px;
+      border-radius:6px;
+      border:none;
+    "
+  >
+
+</div>
+
+
+  
+
 <div id="tabela"></div>
 
 <script>
@@ -99,7 +126,7 @@ const rows =
   json.table.rows || [];
 
 
-  const hoje = new Date();
+ const hoje = new Date();
 
 hoje.setHours(0,0,0,0);
 
@@ -129,6 +156,41 @@ rows.filter(row=>{
   return dataAgenda >= hoje;
 
 });
+
+
+const dataSelecionada =
+  document.getElementById("filtroData")?.value;
+
+if(dataSelecionada){
+
+  const dataBR =
+    dateToBR(dataSelecionada);
+
+  rows = rows.filter(row=>{
+
+    const v =
+      (row.c || []).map(getCell);
+
+    return String(v[0]).includes(dataBR);
+
+  });
+
+}else{
+
+  rows = filtrarFuturo(rows,0);
+
+}
+
+    
+
+function dateToBR(dataISO){
+
+  const [ano,mes,dia] =
+    dataISO.split("-");
+
+  return `${dia}/${mes}/${ano}`;
+}
+    
 
 
   agendaFiltrada.sort((a,b)=>{
@@ -223,6 +285,12 @@ document.getElementById(
 ).innerHTML = html;
 
 }
+
+
+  const hoje = new Date();
+
+document.getElementById("filtroData").value =
+  hoje.toISOString().split("T")[0];
 
 carregarAgenda();
 
