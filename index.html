@@ -1241,14 +1241,13 @@ section.className = `card ${tab.id}`;
 
 section.innerHTML = `
 
-  <h2 style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:10px 15px;
-  ">
+ <h2 style="
+  position:relative;
+  text-align:center;
+">
 
-    <span>${tab.title}</span>
+  ${tab.title}
+
 
     ${
       tab.id === "agenda"
