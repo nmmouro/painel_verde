@@ -405,60 +405,42 @@ async function salvarAgenda(){
 
   const payload = {
 
-    data:
-      document.getElementById("novaData").value,
-
-    hora:
-      document.getElementById("novaHora").value,
-
-    passageiro:
-      document.getElementById("novoPassageiro").value,
-
-    setor:
-      document.getElementById("novoSetor").value,
-
-    motivo:
-      document.getElementById("novoMotivo").value,
-
-    itinerario:
-      document.getElementById("novoItinerario").value
+    data: document.getElementById("novaData").value,
+    hora: document.getElementById("novaHora").value,
+    passageiro: document.getElementById("novoPassageiro").value,
+    setor: document.getElementById("novoSetor").value,
+    motivo: document.getElementById("novoMotivo").value,
+    itinerario: document.getElementById("novoItinerario").value
 
   };
 
-  const res =
-    fetch(WEBAPP,{
-  method:"POST",
-  mode:"cors",
-  headers:{
-    "Content-Type":"application/json"
-  },
-  body:JSON.stringify(payload)
-});
+  const res = await fetch(WEBAPP,{
+    method:"POST",
+    mode:"cors",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(payload)
+  });
 
-  const json =
-    await res.json();
+  const json = await res.json();
 
   if(json.success){
 
-document.getElementById("novaData").value = "";
-document.getElementById("novaHora").value = "";
-document.getElementById("novoPassageiro").value = "";
-document.getElementById("novoSetor").value = "";
-document.getElementById("novoMotivo").value = "";
-document.getElementById("novoItinerario").value = "";
+    document.getElementById("novaData").value = "";
+    document.getElementById("novaHora").value = "";
+    document.getElementById("novoPassageiro").value = "";
+    document.getElementById("novoSetor").value = "";
+    document.getElementById("novoMotivo").value = "";
+    document.getElementById("novoItinerario").value = "";
 
-
-    alert(
-      "Agendamento incluído!"
-    );
+    alert("Agendamento incluído!");
 
     carregarAgenda();
 
   }else{
 
-    alert(
-      "Erro ao gravar."
-    );
+    alert("Erro ao gravar.");
 
   }
 
