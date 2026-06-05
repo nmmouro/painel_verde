@@ -45,6 +45,50 @@ tr:nth-child(odd){
   background:#0e224d;
 }
 
+
+
+.formulario{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,1fr);
+
+gap:10px;
+
+margin-bottom:20px;
+
+}
+
+.formulario input{
+
+padding:10px;
+
+border:none;
+
+border-radius:8px;
+
+}
+
+.formulario button{
+
+background:#00c853;
+
+color:white;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+
+
+
+  
+
 </style>
 
 </head>
@@ -224,6 +268,54 @@ return dataA - dataB;
 });
 
 
+
+<div class="formulario">
+
+<input type="date" id="novaData">
+
+<input type="time" id="novaHora">
+
+<input
+type="text"
+id="novoPassageiro"
+placeholder="Passageiro"
+
+>
+
+<input
+type="text"
+id="novoSetor"
+placeholder="Setor"
+
+>
+
+<input
+type="text"
+id="novoMotivo"
+placeholder="Motivo"
+
+>
+
+<input
+type="text"
+id="novoItinerario"
+placeholder="Itinerário"
+
+>
+
+<button onclick="salvarAgenda()">
+➕ Salvar
+</button>
+
+</div>
+
+
+    
+
+
+    
+
+
   let html =
 
 `
@@ -289,6 +381,72 @@ document.getElementById(
 
 document.getElementById("filtroData").value =
   hoje.toISOString().split("T")[0];
+
+
+
+
+const WEBAPP =
+"https://SEU-LINK-DO-WEBAPP/exec";
+
+async function salvarAgenda(){
+
+  const payload = {
+
+    data:
+      document.getElementById("novaData").value,
+
+    hora:
+      document.getElementById("novaHora").value,
+
+    passageiro:
+      document.getElementById("novoPassageiro").value,
+
+    setor:
+      document.getElementById("novoSetor").value,
+
+    motivo:
+      document.getElementById("novoMotivo").value,
+
+    itinerario:
+      document.getElementById("novoItinerario").value
+
+  };
+
+  const res =
+    await fetch(WEBAPP,{
+
+      method:"POST",
+
+      body:
+        JSON.stringify(payload)
+
+    });
+
+  const json =
+    await res.json();
+
+  if(json.success){
+
+    alert(
+      "Agendamento incluído!"
+    );
+
+    carregarAgenda();
+
+  }else{
+
+    alert(
+      "Erro ao gravar."
+    );
+
+  }
+
+}
+
+
+
+
+  
 
 carregarAgenda();
 
