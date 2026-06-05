@@ -282,30 +282,48 @@ tbody tr:nth-child(even) td{
   background:var(--table-alt);
 }
 
-/* STATUS ROWS */
+/* PAINEL, AGENDA E SERVIÇO SOCIAL */
 
-.status-atendido td{
-  background:rgba(0,255,156,.10);
+.painel .status-andamento td,
+.agenda .status-andamento td,
+.social .status-andamento td{
+  background:#FFD700;
+  color:#000;
 }
 
-.status-andamento td{
-  background:rgba(255,204,0,.10);
+.painel .status-cancelado td,
+.agenda .status-cancelado td,
+.social .status-cancelado td{
+  background:#DC143C;
+  color:#FFF;
 }
 
-.status-cancelado td{
-  background:rgba(255,77,77,.12);
+.painel .status-concluido td,
+.agenda .status-concluido td,
+.social .status-concluido td{
+  background:#32CD32;
+  color:#FFF;
 }
 
-.status-concluido td{
-  background:rgba(124,252,0,.10);
+.painel .status-atendido td,
+.agenda .status-atendido td,
+.social .status-atendido td{
+  background:#00C853;
+  color:#FFF;
 }
 
-.status-manutencao td{
-  background:rgba(255,77,77,.12);
+.painel .status-manutencao td,
+.agenda .status-manutencao td,
+.social .status-manutencao td{
+  background:#1E88E5;
+  color:#FFF;
 }
 
-.status-viagem td{
-  background:rgba(214,107,255,.15);
+.painel .status-viagem td,
+.agenda .status-viagem td,
+.social .status-viagem td{
+  background:#8E24AA;
+  color:#FFF;
 }
 
   /* ================= STATUS ICON ================= */
@@ -1142,12 +1160,15 @@ else if(tab.id === "social"){
 else{
   rows = data.table.rows || [];
 }
+
   
 
   const section =
-    document.createElement("section");
+  document.createElement("section");
 
-  section.className = "card";
+section.className = `card ${tab.id}`;
+
+  
 
   section.innerHTML = `
 
