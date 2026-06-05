@@ -231,6 +231,8 @@ if(dataSelecionada){
   const dataBR =
     dateToBR(dataSelecionada);
 
+  
+
   agendaFiltrada =
     rows.filter(row=>{
 
@@ -247,28 +249,47 @@ if(dataSelecionada){
 
   hoje.setHours(0,0,0,0);
 
-  agendaFiltrada =
-    rows.filter(row=>{
+  agendaFiltrada.sort((a,b)=>{
 
-      const v =
-        (row.c || []).map(getCell);
+  const va =
+    (a.c || []).map(getCell);
 
-      const partes =
-        String(v[0] || "").split("/");
+  const vb =
+    (b.c || []).map(getCell);
 
-      if(partes.length !== 3)
-        return false;
+  const da =
+    String(va[0] || "").split("/");
 
-      const dataAgenda =
-        new Date(
-          partes[2],
-          partes[1]-1,
-          partes[0]
-        );
+  const db =
+    String(vb[0] || "").split("/");
 
-      return dataAgenda >= hoje;
+  const ha =
+    String(va[1] || "00:00").split(":");
 
-    });
+  const hb =
+    String(vb[1] || "00:00").split(":");
+
+  const dataHoraA =
+    new Date(
+      da[2],
+      da[1]-1,
+      da[0],
+      ha[0],
+      ha[1]
+    );
+
+  const dataHoraB =
+    new Date(
+      db[2],
+      db[1]-1,
+      db[0],
+      hb[0],
+      hb[1]
+    );
+
+  return dataHoraA - dataHoraB;
+
+});
 
 }
 
