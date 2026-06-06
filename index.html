@@ -1035,11 +1035,11 @@ const painelIndex =
 
 const hojeStr = new Date().toLocaleDateString("pt-BR");
     
-painelRows = painelRows.filter(r => {
+/*painelRows = painelRows.filter(r => {
   const v = (r.c || []).map(getCell);
   return String(v[0]).trim() === hojeStr;
 });
-
+*/
 
 let painelRows =
   (results[painelIndex].table.rows || [])
@@ -1118,6 +1118,36 @@ const agendaRows =
 
       return String(v[0] || "").trim() === hoje;
     });
+
+
+
+
+agendaRows.sort((a, b) => {
+
+  const va = (a.c || []).map(getCell);
+  const vb = (b.c || []).map(getCell);
+
+  const parse = (dataStr, horaStr) => {
+
+    if (!dataStr) return new Date(0);
+
+    const [dia, mes, ano] = String(dataStr).split("/");
+
+    const [h, m] = String(horaStr || "00:00").split(":");
+
+    return new Date(
+      Number(ano),
+      Number(mes) - 1,
+      Number(dia),
+      Number(h || 0),
+      Number(m || 0)
+    );
+  };
+
+  return parse(va[0], va[1]) - parse(vb[0], vb[1]);
+});
+
+    
 
     
 
