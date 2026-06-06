@@ -1104,18 +1104,22 @@ painelRows.sort((a, b) => {
 const agendaIndex =
   TABS.findIndex(t => t.id === "agenda");
 
+const d = new Date();
+
+const hoje =
+  `${String(d.getDate()).padStart(2,"0")}/` +
+  `${String(d.getMonth()+1).padStart(2,"0")}/` +
+  `${d.getFullYear()}`;
+
 const agendaRows =
   (results[agendaIndex].table.rows || [])
     .filter(row => {
 
-      const v =
-        (row.c || []).map(getCell);
+      const v = (row.c || []).map(getCell);
 
-      const data =
-        String(v[0] || "").trim();
-
-      return data === hoje;
+      return String(v[0] || "").trim() === hoje;
     });
+
     
 
 const socialIndex =
