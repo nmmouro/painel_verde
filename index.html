@@ -1034,10 +1034,11 @@ const painelIndex =
     
 
 const hojeStr = new Date().toLocaleDateString("pt-BR");
-/*painelRows = painelRows.filter(r => {
+    
+painelRows = painelRows.filter(r => {
   const v = (r.c || []).map(getCell);
   return String(v[0]).trim() === hojeStr;
-});*/
+});
 
 
 let painelRows =
