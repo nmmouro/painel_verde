@@ -1094,10 +1094,6 @@ painelRows.sort((a, b) => {
   return parse(va[0], va[1]) - parse(vb[0], vb[1]);
 });
 
-
-    
-
-
  
 
 const agendaIndex =
@@ -1121,7 +1117,7 @@ const agendaRows =
 
 
 
-
+/*
 agendaRows.sort((a, b) => {
 
   const va = (a.c || []).map(getCell);
@@ -1146,7 +1142,14 @@ agendaRows.sort((a, b) => {
 
   return parse(va[0], va[1]) - parse(vb[0], vb[1]);
 });
+*/
 
+    agendaRows.sort((a,b)=> {
+  const va = (a.c||[]).map(getCell);
+  const vb = (b.c||[]).map(getCell);
+
+  return new Date(`${va[0]} ${va[1]}`) - new Date(`${vb[0]} ${vb[1]}`);
+});
     
 
     
