@@ -1059,22 +1059,42 @@ const painelRows =
     });
 
 
-painelRows.sort((a,b)=>{
+painelRows.sort((a, b) => {
 
   const va = (a.c || []).map(getCell);
   const vb = (b.c || []).map(getCell);
 
-  const da = String(va[0] || "").split("/");
-  const db = String(vb[0] || "").split("/");
+  const parse = (dataStr, horaStr) => {
 
-  const ha = String(va[1] || "00:00").split(":");
-  const hb = String(vb[1] || "00:00").split(":");
+    if (!dataStr) return new Date(0);
 
-  const dataHoraA =
-    new Date(da[2], da[1]-1, da[0], ha[0], ha[1]);
+    let dia, mes, ano;
 
-  const dataHoraB =
-    new Date(db[2], db[1]-1, db[0], hb[0], hb[1]);
+    if (dataStr.includes("/")) {
+      const d = dataStr.split("/");
+      dia = d[0];
+      mes = d[1];
+      ano = d[2];
+    } else {
+      const d = new Date(dataStr);
+      dia = d.getDate();
+      mes = d.getMonth() + 1;
+      ano = d.getFullYear();
+    }
+
+    const h = (horaStr || "00:00").split(":");
+
+    return new Date(
+      Number(ano),
+      Number(mes) - 1,
+      Number(dia),
+      Number(h[0] || 0),
+      Number(h[1] || 0)
+    );
+  };
+
+  const dataHoraA = parse(va[0], va[1]);
+  const dataHoraB = parse(vb[0], vb[1]);
 
   return dataHoraA - dataHoraB;
 });
