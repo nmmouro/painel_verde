@@ -1073,19 +1073,13 @@ painelRows.sort((a, b) => {
 
     if (!dataStr) return new Date(0);
 
-    let dia, mes, ano;
+    const d = dataStr.includes("/")
+      ? dataStr.split("/")
+      : new Date(dataStr);
 
-    if (dataStr.includes("/")) {
-      const d = dataStr.split("/");
-      dia = d[0];
-      mes = d[1];
-      ano = d[2];
-    } else {
-      const d = new Date(dataStr);
-      dia = d.getDate();
-      mes = d.getMonth() + 1;
-      ano = d.getFullYear();
-    }
+    const dia = Array.isArray(d) ? d[0] : d.getDate();
+    const mes = Array.isArray(d) ? d[1] : d.getMonth() + 1;
+    const ano = Array.isArray(d) ? d[2] : d.getFullYear();
 
     const h = (horaStr || "00:00").split(":");
 
@@ -1098,11 +1092,9 @@ painelRows.sort((a, b) => {
     );
   };
 
-  const dataHoraA = parse(va[0], va[1]);
-  const dataHoraB = parse(vb[0], vb[1]);
-
-  return dataHoraA - dataHoraB;
+  return parse(va[0], va[1]) - parse(vb[0], vb[1]);
 });
+
 
     
 
