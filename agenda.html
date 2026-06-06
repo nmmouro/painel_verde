@@ -312,42 +312,48 @@ function dateToBR(dataISO){
   const vb =
     (b.c || []).map(getCell);
 
-  const dataA =
-    new Date(
-      String(va[0]).replace(
-        /(\d{2})\/(\d{2})\/(\d{4})/,
-        "$3-$2-$1"
-      )
+  function criarDataHora(data,hora){
+
+    let d;
+
+    if(String(data).includes("/")){
+
+      const p =
+        String(data).split("/");
+
+      d = new Date(
+        p[2],
+        p[1]-1,
+        p[0]
+      );
+
+    }else{
+
+      d = new Date(data);
+
+    }
+
+    const h =
+      String(hora || "00:00")
+        .split(":");
+
+    d.setHours(
+      Number(h[0]),
+      Number(h[1]),
+      0,
+      0
     );
 
-  const dataB =
-    new Date(
-      String(vb[0]).replace(
-        /(\d{2})\/(\d{2})\/(\d{4})/,
-        "$3-$2-$1"
-      )
-    );
+    return d;
 
-  const horaA =
-    String(va[1] || "00:00");
-
-  const horaB =
-    String(vb[1] || "00:00");
+  }
 
   return (
-    new Date(
-      dataA.toISOString().split("T")[0]
-      + "T" + horaA
-    )
-    -
-    new Date(
-      dataB.toISOString().split("T")[0]
-      + "T" + horaB
-    )
+    criarDataHora(va[0],va[1]) -
+    criarDataHora(vb[0],vb[1])
   );
 
 });
-
 
 
 
