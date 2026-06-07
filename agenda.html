@@ -111,7 +111,7 @@ border-radius:8px;
 
 <body>
 
-<h1>📅 AGENDA COMPLETA</h1>
+<h1>📅 AGENDA DO DIA</h1>
 
 
 <div style="
@@ -221,7 +221,7 @@ const getCell = c =>
   async function carregarAgenda(){
 
 const query =
-"select B,C,D,E,F,G,H";
+"select B,C,D,E,F,G,H,I";
 
 const url =
 
@@ -394,6 +394,7 @@ function dateToBR(dataISO){
 <th>Motivo</th>
 <th>Itinerário</th>
 <th>Status</th>
+<th>Ações</th>
 
 </tr>
 
