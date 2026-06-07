@@ -127,7 +127,10 @@ border-radius:8px;
   <input
   type="date"
   id="filtroData"
-  onchange="carregarAgenda()"
+  onchange="
+  carregarAgenda();
+  carregarServicoSocial();
+  "
     style="
       padding:6px;
       border-radius:6px;
@@ -180,14 +183,17 @@ placeholder="Itinerário"
 
 </div>
 
-
-
-
-  
-
   
 
 <div id="tabela"></div>
+
+
+
+  <h2 style="margin-top:40px;">
+🏥 AGENDA SERVIÇO SOCIAL
+</h2>
+
+<div id="tabelaServicoSocial"></div>
 
   
 
@@ -306,7 +312,6 @@ if(dataSelecionada){
 
 }
 
-    
 
 function dateToBR(dataISO){
 
@@ -373,14 +378,6 @@ function dateToBR(dataISO){
 
 
 
-
-
-    
-
-
-    
-
-
   let html =
 
 `
@@ -442,11 +439,86 @@ document.getElementById(
 }
 
 
+async function carregarServicoSocial(){
+
+  const query =
+  "select A,B,C,D,E,F";
+
+  const url =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
+  `?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}` +
+  `&tq=${encodeURIComponent(query)}` +
+  `&tqx=out:json`;
+
+  const res =
+  await fetch(url);
+
+  const json =
+  parseGviz(await res.text());
+
+  const rows =
+  json.table.rows || [];
+
+  let html = `
+  <table>
+
+  <thead>
+
+  <tr>
+  <th>Data</th>
+  <thPERÍODO</th>
+  <th>PASSAGEIRO</th>
+  <th>MOTIVO</th>
+  <th>ITINERÁRIO</th>
+  <th>STATUS</th>
+  <th>Ações</th>
+  </tr>
+
+  </thead>
+
+  <tbody>
+  `;
+
+  rows.forEach(row=>{
+
+    const v =
+    (row.c || []).map(getCell);
+
+    html += `
+    <tr>
+
+    <td>${v[1] || ""}</td>
+    <td>${v[2] || ""}</td>
+    <td>${v[3] || ""}</td>
+    <td>${v[4] || ""}</td>
+    <td>${v[5] || ""}</td>
+    <td>${v[6] || ""}</td>
+    <td>${v[7] || ""}</td>
+
+    </tr>
+    `;
+  });
+
+  html += `
+  </tbody>
+  </table>
+  `;
+
+  document.getElementById(
+    "tabelaServicoSocial"
+  ).innerHTML = html;
+
+}
+
+
+
+  
+
+
   const hoje = new Date();
 
 document.getElementById("filtroData").value =
   hoje.toISOString().split("T")[0];
-
 
 
 
@@ -493,7 +565,7 @@ const res = await fetch(WEBAPP,{
 
     alert("Agendamento incluído!");
 
-    carregarAgenda();
+   
 
   }else{
 
@@ -502,12 +574,10 @@ const res = await fetch(WEBAPP,{
   }
 
 }
-
-
-
   
 
 carregarAgenda();
+  carregarServicoSocial();
 
 </script>
 
