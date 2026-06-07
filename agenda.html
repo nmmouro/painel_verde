@@ -81,14 +81,15 @@ border-radius:8px;
   background:#00c853;
   color:white;
 
-  height:45px;
-  font-size:16px;
+  height:55px;
+  font-size:20px;
   font-weight:bold;
 
   border:none;
-  border-radius:8px;
+  border-radius:10px;
 
   cursor:pointer;
+
   transition:0.2s;
 
 }
@@ -144,42 +145,6 @@ border-radius:8px;
 
 <input type="date" id="novaData">
 
-  
-
-
-<div style="
-  display:flex;
-  justify-content:center;
-  margin-bottom:15px;
-">
-
-  <select
-    id="tipoAgenda"
-    onchange="atualizarFormulario()"
-    style="
-      width:280px;
-      height:40px;
-      font-size:16px;
-      border-radius:8px;
-      padding:5px;
-    "
-  >
-    <option value="AGENDA DO DIA">
-      📅 Agenda do Dia
-    </option>
-
-    <option value="AGENDA SERVIÇO SOCIAL">
-      🏥 Agenda Serviço Social
-    </option>
-
-  </select>
-
-</div>
-
-
-
-  
-
 <div id="campoHora">
   <input type="time" id="novaHora">
 </div>
@@ -221,17 +186,22 @@ placeholder="Itinerário"
 >
 
 
+<select
+  id="tipoAgenda"
+  onchange="atualizarFormulario()"
+>
+  <option value="AGENDA DO DIA">📅 Agenda do Dia</option>
+  <option value="AGENDA SERVIÇO SOCIAL">🏥 Agenda Serviço Social</option>
+</select>
+
+
+
 
   
 
-<div style="grid-column:1 / -1;text-align:center;">
-
-  <button
-    onclick="salvarAgenda()"
-    style="width:250px;"
-  >
-    ➕ Salvar Agendamento
-  </button>
+<button onclick="salvarAgenda()">
+➕ Salvar
+</button>
 
 </div>
 
