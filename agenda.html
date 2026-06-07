@@ -145,7 +145,11 @@ border-radius:8px;
 
 <input type="date" id="novaData">
 
-<input type="time" id="novaHora">
+<select id="novoPeriodo">
+  <option value="">Selecione...</option>
+  <option value="MANHÃ">MANHÃ</option>
+  <option value="TARDE">TARDE</option>
+</select>
 
 <input
 type="text"
@@ -222,6 +226,27 @@ JSON.parse(
 
 const getCell = c =>
   c?.f ?? c?.v ?? "";
+
+
+
+function atualizarFormulario(){
+
+  const tipo =
+  document.getElementById("tipoAgenda").value;
+
+  document.getElementById("campoHora").style.display =
+    tipo === "AGENDA DO DIA"
+      ? "block"
+      : "none";
+
+  document.getElementById("campoPeriodo").style.display =
+    tipo === "AGENDA SERVIÇO SOCIAL"
+      ? "block"
+      : "none";
+
+}
+
+  
 
 
   async function carregarAgenda(){
@@ -575,7 +600,7 @@ async function salvarAgenda(){
     agenda: document.getElementById("tipoAgenda").value,
     
     data: document.getElementById("novaData").value,
-    hora: document.getElementById("novaHora").value,
+    hora: document.getElementById("novoPeriodo").value,
     passageiro: document.getElementById("novoPassageiro").value,
     setor: document.getElementById("novoSetor").value,
     motivo: document.getElementById("novoMotivo").value,
