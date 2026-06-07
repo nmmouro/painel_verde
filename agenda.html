@@ -275,6 +275,60 @@ function atualizarFormulario(){
 
 }
 
+
+
+function editarRegistro(
+  id,
+  data,
+  hora,
+  passageiro,
+  setor,
+  motivo,
+  itinerario,
+  agenda
+){
+
+  document.getElementById("tipoAgenda").value =
+    agenda;
+
+  atualizarFormulario();
+
+  // converter DD/MM/YYYY para YYYY-MM-DD
+  const p = data.split("/");
+
+  document.getElementById("novaData").value =
+    `${p[2]}-${p[1]}-${p[0]}`;
+
+  document.getElementById("novaHora").value =
+    hora;
+
+  document.getElementById("novoPassageiro").value =
+    passageiro;
+
+  document.getElementById("novoSetor").value =
+    setor;
+
+  document.getElementById("novoMotivo").value =
+    motivo;
+
+  document.getElementById("novoItinerario").value =
+    itinerario;
+
+  window.idEdicao = id;
+
+  document.querySelector(
+    'button[onclick="salvarAgenda()"]'
+  ).innerHTML = "💾 Atualizar";
+
+}
+
+
+
+
+
+
+
+  
   
 
 
