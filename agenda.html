@@ -281,6 +281,14 @@ async function editarRegistro(id, agenda){
 
   idEdicao = id;
 
+  document.querySelector(
+  'button[onclick="salvarAgenda()"]'
+).innerHTML = "💾 Atualizar";
+
+
+
+  
+
   const res = await fetch(
     `${WEBAPP}?acao=buscar&id=${id}&agenda=${encodeURIComponent(agenda)}`
   );
@@ -785,6 +793,98 @@ let idEdicao = "";
 
 async function salvarAgenda(){
 
+  const tipoAgenda =
+    document.getElementById("tipoAgenda").value;
+
+  const horaOuPeriodo =
+    tipoAgenda === "AGENDA SERVIÇO SOCIAL"
+      ? document.getElementById("novoPeriodo").value
+      : document.getElementById("novaHora").value;
+
+  const payload = {
+
+    acao: idEdicao ? "editar" : "novo",
+
+    id: idEdicao,
+
+    agenda: tipoAgenda,
+
+    data:
+      document.getElementById("novaData").value,
+
+    hora: horaOuPeriodo,
+
+    passageiro:
+      document.getElementById("novoPassageiro").value,
+
+    setor:
+      document.getElementById("novoSetor").value,
+
+    motivo:
+      document.getElementById("novoMotivo").value,
+
+    itinerario:
+      document.getElementById("novoItinerario").value
+
+  };
+
+  const formData = new FormData();
+
+  formData.append("acao", payload.acao);
+  formData.append("id", payload.id);
+
+  formData.append("agenda", payload.agenda);
+  formData.append("data", payload.data);
+  formData.append("hora", payload.hora);
+  formData.append("passageiro", payload.passageiro);
+  formData.append("setor", payload.setor);
+  formData.append("motivo", payload.motivo);
+  formData.append("itinerario", payload.itinerario);
+
+  const res = await fetch(WEBAPP,{
+    method:"POST",
+    body:formData
+  });
+
+  const json = await res.json();
+
+  if(json.success){
+
+    idEdicao = "";
+
+    document.getElementById("novaData").value = "";
+    document.getElementById("novaHora").value = "";
+    document.getElementById("novoPeriodo").value = "";
+    document.getElementById("novoPassageiro").value = "";
+    document.getElementById("novoSetor").value = "";
+    document.getElementById("novoMotivo").value = "";
+    document.getElementById("novoItinerario").value = "";
+
+    document.querySelector(
+      'button[onclick="salvarAgenda()"]'
+    ).innerHTML = "➕ Salvar";
+
+    carregarAgenda();
+    carregarServicoSocial();
+
+    alert("Registro salvo com sucesso!");
+
+  }else{
+
+    alert(json.erro || "Erro ao gravar.");
+
+  }
+
+}
+
+
+
+
+
+
+
+  
+
 
 const tipoAgenda =
 document.getElementById("tipoAgenda").value;
@@ -800,8 +900,7 @@ tipoAgenda === "AGENDA SERVIÇO SOCIAL"
 
   const payload = {
 
-  const payload = {
-
+ 
   acao: idEdicao ? "editar" : "novo",
 
   id: idEdicao,
