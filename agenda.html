@@ -338,7 +338,7 @@ if(dataSelecionada){
         (row.c || []).map(getCell);
 
       const dataTexto =
-        String(v[0] || "");
+        String(v[1] || "");
 
       let dataAgenda;
 
@@ -551,7 +551,7 @@ async function carregarServicoSocial(){
       const v =
       (row.c || []).map(getCell);
 
-      return String(v[0] || "").trim() === dataBR;
+      return String(v[1] || "").trim() === dataBR;
 
     });
 
