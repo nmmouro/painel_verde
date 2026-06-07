@@ -697,7 +697,15 @@ const res = await fetch(WEBAPP,{
   
 
 carregarAgenda();
-  carregarServicoSocial();
+carregarServicoSocial();
+atualizarFormulario();
+
+  setInterval(async () => {
+
+  await carregarAgenda();
+  await carregarServicoSocial();
+
+}, 30000);
 
 </script>
 
