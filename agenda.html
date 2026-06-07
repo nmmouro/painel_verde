@@ -467,11 +467,11 @@ async function carregarServicoSocial(){
 
   <tr>
   <th>Data</th>
-  <thPERÍODO</th>
-  <th>PASSAGEIRO</th>
-  <th>MOTIVO</th>
-  <th>ITINERÁRIO</th>
-  <th>STATUS</th>
+  <thPeríodo</th>
+  <th>Passageiro</th>
+  <th>Motivo</th>
+  <th>Itinerário</th>
+  <th>Status</th>
   <th>Ações</th>
   </tr>
 
@@ -487,13 +487,14 @@ async function carregarServicoSocial(){
 
     html += `
     <tr>
-
+    
+    <td>${v[0] || ""}</td>
     <td>${v[1] || ""}</td>
     <td>${v[2] || ""}</td>
     <td>${v[3] || ""}</td>
     <td>${v[5] || ""}</td>
     <td>${v[6] || ""}</td>
-    <td>${v[7] || ""}</td>
+    
 
     </tr>
     `;
