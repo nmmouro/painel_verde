@@ -277,56 +277,52 @@ function atualizarFormulario(){
 
 
 
-function editarRegistro(
-  id,
-  data,
-  hora,
-  passageiro,
-  setor,
-  motivo,
-  itinerario,
-  agenda
-){
+async function editarRegistro(id, agenda){
 
-  document.getElementById("tipoAgenda").value =
-    agenda;
+  idEdicao = id;
+
+  const res = await fetch(
+    `${WEBAPP}?acao=buscar&id=${id}&agenda=${encodeURIComponent(agenda)}`
+  );
+
+  const json = await res.json();
+
+  if(!json.success){
+    alert("Registro não encontrado.");
+    return;
+  }
+
+  const r = json.registro;
+
+  document.getElementById("tipoAgenda").value = agenda;
 
   atualizarFormulario();
 
-  const p = data.split("/");
+  document.getElementById("novaData").value = r.dataISO;
 
-  document.getElementById("novaData").value =
-    `${p[2]}-${p[1]}-${p[0]}`;
+  if(agenda == "AGENDA DO DIA"){
 
-  if(agenda === "AGENDA SERVIÇO SOCIAL"){
-
-    document.getElementById("novoPeriodo").value =
-      hora;
+    document.getElementById("novaHora").value =
+      r.hora;
 
   }else{
 
-    document.getElementById("novaHora").value =
-      hora;
+    document.getElementById("novoPeriodo").value =
+      r.periodo;
 
   }
 
   document.getElementById("novoPassageiro").value =
-    passageiro;
+    r.passageiro;
 
   document.getElementById("novoSetor").value =
-    setor;
+    r.setor;
 
   document.getElementById("novoMotivo").value =
-    motivo;
+    r.motivo;
 
   document.getElementById("novoItinerario").value =
-    itinerario;
-
-  window.idEdicao = id;
-
-  document.querySelector(
-    'button[onclick="salvarAgenda()"]'
-  ).innerHTML = "💾 Atualizar";
+    r.itinerario;
 
 }
 
@@ -782,6 +778,11 @@ async function excluirRegistro(id,agenda){
 const WEBAPP =
 "https://script.google.com/macros/s/AKfycbxold_4xfzgPCYEUKGZAYQzmGFc4Z3QlhT-wTwy2B2g3hfsVqJ9TdZxTHQ5AL1nmhoy/exec";
 
+
+let idEdicao = "";
+
+  
+
 async function salvarAgenda(){
 
 
@@ -799,19 +800,29 @@ tipoAgenda === "AGENDA SERVIÇO SOCIAL"
 
   const payload = {
 
+  const payload = {
+
+  acao: idEdicao ? "editar" : "novo",
+
+  id: idEdicao,
+
   agenda: tipoAgenda,
 
   data: document.getElementById("novaData").value,
 
   hora: horaOuPeriodo,
 
-  passageiro: document.getElementById("novoPassageiro").value,
+  passageiro:
+    document.getElementById("novoPassageiro").value,
 
-  setor: document.getElementById("novoSetor").value,
+  setor:
+    document.getElementById("novoSetor").value,
 
-  motivo: document.getElementById("novoMotivo").value,
+  motivo:
+    document.getElementById("novoMotivo").value,
 
-  itinerario: document.getElementById("novoItinerario").value
+  itinerario:
+    document.getElementById("novoItinerario").value
 
 };
 
@@ -844,6 +855,16 @@ const res = await fetch(WEBAPP,{
     document.getElementById("novoItinerario").value = "";
 
     alert("Agendamento incluído!");
+
+
+
+window.idEdicao = null;
+
+document.querySelector(
+  'button[onclick="salvarAgenda()"]'
+).innerHTML = "➕ Salvar";
+
+    
 
     carregarAgenda();
      carregarServicoSocial();
