@@ -599,6 +599,7 @@ const res = await fetch(WEBAPP,{
   body:formData
 });
 
+  /*
   const json = await res.json();
 
   if(json.success){
@@ -617,6 +618,13 @@ const res = await fetch(WEBAPP,{
   }else{
 
     alert("Erro ao gravar.");
+    */
+
+
+  const texto = await res.text();
+
+console.log(texto);
+alert(texto);
 
   }
 
