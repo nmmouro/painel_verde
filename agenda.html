@@ -454,6 +454,7 @@ function dateToBR(dataISO){
 <th>Motivo</th>
 <th>Itinerário</th>
 <th>Status</th>
+<th>Ações</th>
 
 </tr>
 
@@ -479,6 +480,17 @@ html += `
 <td>${v[4]}</td>
 <td>${v[5]}</td>
 <td>${v[6]}</td>
+
+<td>
+  <button onclick="editarRegistro('${v[0]}','AGENDA DO DIA')">
+    ✏️
+  </button>
+
+  <button onclick="excluirRegistro('${v[0]}','AGENDA DO DIA')">
+    🗑️
+  </button>
+</td>
+
 
 </tr>
 
@@ -573,6 +585,7 @@ async function carregarServicoSocial(){
         <th>Motivo</th>
         <th>Itinerário</th>
         <th>Status</th>
+        <th>Ações</th>
       </tr>
     </thead>
 
@@ -593,6 +606,19 @@ async function carregarServicoSocial(){
       <td>${v[3] || ""}</td>
       <td>${v[4] || ""}</td>
       <td>${v[5] || ""}</td>
+      <td>${v[6] || ""}</td>
+      
+      <td>
+        <button onclick="editarRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
+        ✏️
+        </button>
+
+        <button onclick="excluirRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
+        🗑️
+       </button>
+      </td>
+
+</td>
 
     </tr>
     `;
@@ -609,8 +635,6 @@ async function carregarServicoSocial(){
 
 }
 
-  
-
 
   const hoje = new Date();
 
@@ -618,6 +642,58 @@ document.getElementById("filtroData").value =
   hoje.toISOString().split("T")[0];
 
 
+
+
+  
+
+async function excluirRegistro(id,agenda){
+
+  if(!confirm("Excluir este registro?")){
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("acao","EXCLUIR");
+  formData.append("agenda",agenda);
+  formData.append("id",id);
+
+  const res = await fetch(WEBAPP,{
+    method:"POST",
+    body:formData
+  });
+
+  const json = await res.json();
+
+  if(json.success){
+
+    carregarAgenda();
+    carregarServicoSocial();
+
+  }else{
+
+    alert(json.erro || "Erro ao excluir");
+
+  }
+
+}
+
+
+function editarRegistro(id,agenda){
+
+  alert(
+    "Editar registro: " + id +
+    "\nAgenda: " + agenda
+  );
+
+}
+
+
+
+
+
+
+  
 
 const WEBAPP =
 "https://script.google.com/macros/s/AKfycbzxrVkwIFJyCQlY70adSNe_5_UVYZUHMZ5G-25bLY-TiaHDlcRi1Lv-T-nPKYBO3Vz9iQ/exec";
