@@ -570,7 +570,7 @@ async function carregarServicoSocial(){
     const vb =
     (b.c || []).map(getCell);
 
-    return String(va[1] || "")
+    return String(va[2] || "")
       .localeCompare(String(vb[2] || ""));
   });
 
@@ -639,7 +639,7 @@ async function carregarServicoSocial(){
   const hoje = new Date();
 
 document.getElementById("filtroData").value =
-  hoje.toISOString().split("T")[1];
+  hoje.toISOString().split("T")[0];
 
 
 
