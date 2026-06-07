@@ -433,6 +433,96 @@ document.getElementById(
 }
 
 
+
+async function carregarServicoSocial(){
+
+  const query =
+  "select A,C,D,F,G,H";
+
+  const url =
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
+  `?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}` +
+  `&tq=${encodeURIComponent(query)}` +
+  `&tqx=out:json`;
+
+  const res = await fetch(url);
+
+  const json =
+  parseGviz(await res.text());
+
+  const rows =
+  json.table.rows || [];
+
+  const dataSelecionada =
+  document.getElementById("filtroData").value;
+
+  let html = `
+  <table>
+
+  <thead>
+
+  <tr>
+
+  <th>Data</th>
+  <th>Hora</th>
+  <th>Paciente</th>
+  <th>Destino</th>
+  <th>Status</th>
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+  `;
+
+  rows.forEach(row=>{
+
+    const v =
+    (row.c || []).map(getCell);
+
+    const dataLinha =
+    String(v[1] || "").trim();
+
+    if(dataSelecionada){
+
+      const [ano,mes,dia] =
+      dataSelecionada.split("-");
+
+      const dataBR =
+      `${dia}/${mes}/${ano}`;
+
+      if(dataLinha !== dataBR){
+        return;
+      }
+    }
+
+    html += `
+    <tr>
+
+    <td>${v[1]}</td>
+    <td>${v[2]}</td>
+    <td>${v[3]}</td>
+    <td>${v[4]}</td>
+    <td>${v[5]}</td>
+
+    </tr>
+    `;
+  });
+
+  html += `
+  </tbody>
+  </table>
+  `;
+
+  document.getElementById(
+    "tabelaServicoSocial"
+  ).innerHTML = html;
+}
+
+  
+
+
   const hoje = new Date();
 
 document.getElementById("filtroData").value =
