@@ -175,6 +175,17 @@ placeholder="Itinerário"
 
 >
 
+
+<select id="tipoAgenda">
+  <option value="AGENDA DO DIA">📅 Agenda do Dia</option>
+  <option value="AGENDA SERVIÇO SOCIAL">🏥 Agenda Serviço Social</option>
+</select>
+
+
+
+
+  
+
 <button onclick="salvarAgenda()">
 ➕ Salvar
 </button>
@@ -555,12 +566,14 @@ document.getElementById("filtroData").value =
 
 
 const WEBAPP =
-"https://script.google.com/macros/s/AKfycby4M6bfM7O9xuemFF-89GzX2MauhPBLYdqWMPh1pUwXbfQWbSomvWuGI_KG-27_DpBG_w/exec";
+"https://script.google.com/macros/s/AKfycbyjtsM_daqRsI-uj-XR5fq6K8Tqc6pi9UPxq_M4FCKJkK9BsTESKuDyqfzT6984ZQne9g/exec";
 
 async function salvarAgenda(){
 
   const payload = {
-
+    
+    agenda: document.getElementById("tipoAgenda").value,
+    
     data: document.getElementById("novaData").value,
     hora: document.getElementById("novaHora").value,
     passageiro: document.getElementById("novoPassageiro").value,
@@ -572,6 +585,8 @@ async function salvarAgenda(){
 
  const formData = new FormData();
 
+formData.append("agenda", payload.agenda);
+  
 formData.append("data", payload.data);
 formData.append("hora", payload.hora);
 formData.append("passageiro", payload.passageiro);
