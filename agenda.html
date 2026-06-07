@@ -550,17 +550,11 @@ html += `
 <td>
   
   <button onclick="editarRegistro(
-    '${v[0]}',
-    '${v[1]}',
-    '${v[2]}',
-    '${v[3]}',
-    '${v[4]}',
-    '${v[5]}',
-    '${v[6]}',
-    'AGENDA DO DIA'
-  )">
-    ✏️
-  </button>
+  '${v[0]}',
+  'AGENDA DO DIA'
+)">
+✏️
+</button>
 
   <button onclick="excluirRegistro(
     '${v[0]}',
@@ -690,17 +684,11 @@ async function carregarServicoSocial(){
       
       <td>
   <button onclick="editarRegistro(
-    '${v[0]}',
-    '${v[1]}',
-    '${v[2]}',
-    '${v[3]}',
-    '',
-    '${v[4]}',
-    '${v[5]}',
-    'AGENDA SERVIÇO SOCIAL'
-  )">
-    ✏️
-  </button>
+  '${v[0]}',
+  'AGENDA SERVIÇO SOCIAL'
+)">
+✏️
+</button>
 
   <button onclick="excluirRegistro(
     '${v[0]}',
@@ -886,92 +874,6 @@ async function salvarAgenda(){
   
 
 
-const tipoAgenda =
-document.getElementById("tipoAgenda").value;
-
-const horaOuPeriodo =
-tipoAgenda === "AGENDA SERVIÇO SOCIAL"
-  ? document.getElementById("novoPeriodo").value
-  : document.getElementById("novaHora").value;
-
-
-
-  
-
-  const payload = {
-
- 
-  acao: idEdicao ? "editar" : "novo",
-
-  id: idEdicao,
-
-  agenda: tipoAgenda,
-
-  data: document.getElementById("novaData").value,
-
-  hora: horaOuPeriodo,
-
-  passageiro:
-    document.getElementById("novoPassageiro").value,
-
-  setor:
-    document.getElementById("novoSetor").value,
-
-  motivo:
-    document.getElementById("novoMotivo").value,
-
-  itinerario:
-    document.getElementById("novoItinerario").value
-
-};
-
- const formData = new FormData();
-
-formData.append("agenda", payload.agenda);
-  
-formData.append("data", payload.data);
-formData.append("hora", payload.hora);
-formData.append("passageiro", payload.passageiro);
-formData.append("setor", payload.setor);
-formData.append("motivo", payload.motivo);
-formData.append("itinerario", payload.itinerario);
-
-const res = await fetch(WEBAPP,{
-  method:"POST",
-  body:formData
-});
-
-
-  const json = await res.json();
-
-  if(json.success){
-
-    document.getElementById("novaData").value = "";
-    document.getElementById("novaHora").value = "";
-    document.getElementById("novoPassageiro").value = "";
-    document.getElementById("novoSetor").value = "";
-    document.getElementById("novoMotivo").value = "";
-    document.getElementById("novoItinerario").value = "";
-
-    alert("Agendamento incluído!");
-
-
-
-window.idEdicao = null;
-
-document.querySelector(
-  'button[onclick="salvarAgenda()"]'
-).innerHTML = "➕ Salvar";
-
-    
-
-    carregarAgenda();
-     carregarServicoSocial();
-  }else{
-
-    alert("Erro ao gravar.");
-   
-  }
 
 }
   
@@ -982,8 +884,7 @@ atualizarFormulario();
 
   setInterval(async () => {
 
-  await carregarAgenda();
-  await carregarServicoSocial();
+  
 
 }, 30000);
 
