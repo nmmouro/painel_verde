@@ -129,7 +129,6 @@ border-radius:8px;
   id="filtroData"
   onchange="
   carregarAgenda();
-  carregarServicoSocial();
   "
     style="
       padding:6px;
@@ -188,7 +187,9 @@ placeholder="Itinerário"
 <div id="tabela"></div>
 
 
-
+<h2 style="margin-top:40px;text-align:center;">
+🏥 AGENDA SERVIÇO SOCIAL
+</h2>
 
 
 <div id="tabelaServicoSocial"></div>
@@ -576,7 +577,7 @@ const res = await fetch(WEBAPP,{
   
 
 carregarAgenda();
-  carregarServicoSocial();
+carregarServicoSocial();
 
 </script>
 
