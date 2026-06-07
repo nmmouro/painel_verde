@@ -138,7 +138,13 @@ border-radius:8px;
 
 </div>
 
-
+<select
+  id="tipoAgenda"
+  onchange="atualizarFormulario()"
+>
+  <option value="AGENDA DO DIA">📅 Agenda do Dia</option>
+  <option value="AGENDA SERVIÇO SOCIAL">🏥 Agenda Serviço Social</option>
+</select>
 
 
 <div class="formulario">
@@ -185,14 +191,6 @@ placeholder="Itinerário"
 
 >
 
-
-<select
-  id="tipoAgenda"
-  onchange="atualizarFormulario()"
->
-  <option value="AGENDA DO DIA">📅 Agenda do Dia</option>
-  <option value="AGENDA SERVIÇO SOCIAL">🏥 Agenda Serviço Social</option>
-</select>
 
 
 
