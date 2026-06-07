@@ -81,15 +81,14 @@ border-radius:8px;
   background:#00c853;
   color:white;
 
-  height:55px;
-  font-size:20px;
+  height:45px;
+  font-size:16px;
   font-weight:bold;
 
   border:none;
-  border-radius:10px;
+  border-radius:8px;
 
   cursor:pointer;
-
   transition:0.2s;
 
 }
@@ -117,10 +116,31 @@ border-radius:8px;
 <div style="
   display:flex;
   justify-content:center;
-  align-items:center;
-  gap:10px;
-  padding:10px;
+  margin-bottom:15px;
 ">
+
+  <select
+    id="tipoAgenda"
+    onchange="atualizarFormulario()"
+    style="
+      width:280px;
+      height:40px;
+      font-size:16px;
+      border-radius:8px;
+      padding:5px;
+    "
+  >
+    <option value="AGENDA DO DIA">
+      📅 Agenda do Dia
+    </option>
+
+    <option value="AGENDA SERVIÇO SOCIAL">
+      🏥 Agenda Serviço Social
+    </option>
+
+  </select>
+
+</div>
 
   <label>📅 Data:</label>
 
@@ -186,22 +206,16 @@ placeholder="Itinerário"
 >
 
 
-<select
-  id="tipoAgenda"
-  onchange="atualizarFormulario()"
->
-  <option value="AGENDA DO DIA">📅 Agenda do Dia</option>
-  <option value="AGENDA SERVIÇO SOCIAL">🏥 Agenda Serviço Social</option>
-</select>
-
-
-
-
   
 
-<button onclick="salvarAgenda()">
-➕ Salvar
-</button>
+<div style="grid-column:1 / -1;text-align:center;">
+
+  <button
+    onclick="salvarAgenda()"
+    style="width:250px;"
+  >
+    ➕ Salvar Agendamento
+  </button>
 
 </div>
 
