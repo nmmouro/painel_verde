@@ -293,14 +293,22 @@ function editarRegistro(
 
   atualizarFormulario();
 
-  // converter DD/MM/YYYY para YYYY-MM-DD
   const p = data.split("/");
 
   document.getElementById("novaData").value =
     `${p[2]}-${p[1]}-${p[0]}`;
 
-  document.getElementById("novaHora").value =
-    hora;
+  if(agenda === "AGENDA SERVIÇO SOCIAL"){
+
+    document.getElementById("novoPeriodo").value =
+      hora;
+
+  }else{
+
+    document.getElementById("novaHora").value =
+      hora;
+
+  }
 
   document.getElementById("novoPassageiro").value =
     passageiro;
@@ -536,13 +544,27 @@ html += `
 <td>${v[6]}</td>
 <td>${v[7]}</td>
 <td>
-  <button onclick="editarRegistro('${v[0]}','AGENDA DO DIA')">
+  
+  <button onclick="editarRegistro(
+    '${v[0]}',
+    '${v[1]}',
+    '${v[2]}',
+    '${v[3]}',
+    '${v[4]}',
+    '${v[5]}',
+    '${v[6]}',
+    'AGENDA DO DIA'
+  )">
     ✏️
   </button>
 
-  <button onclick="excluirRegistro('${v[0]}','AGENDA DO DIA')">
+  <button onclick="excluirRegistro(
+    '${v[0]}',
+    'AGENDA DO DIA'
+  )">
     🗑️
   </button>
+
 </td>
 
 
@@ -663,14 +685,26 @@ async function carregarServicoSocial(){
       <td>${v[6] || ""}</td>
       
       <td>
-        <button onclick="editarRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
-        ✏️
-        </button>
+  <button onclick="editarRegistro(
+    '${v[0]}',
+    '${v[1]}',
+    '${v[2]}',
+    '${v[3]}',
+    '',
+    '${v[4]}',
+    '${v[5]}',
+    'AGENDA SERVIÇO SOCIAL'
+  )">
+    ✏️
+  </button>
 
-        <button onclick="excluirRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
-        🗑️
-       </button>
-      </td>
+  <button onclick="excluirRegistro(
+    '${v[0]}',
+    'AGENDA SERVIÇO SOCIAL'
+  )">
+    🗑️
+  </button>
+</td>
 
 
 
@@ -735,17 +769,6 @@ async function excluirRegistro(id,agenda){
 
 
 
-
-async function editarRegistro(id, agenda){
-
-  alert(
-    "Editar registro: " +
-    id +
-    "\nAgenda: " +
-    agenda
-  );
-
-}
 
 
 
