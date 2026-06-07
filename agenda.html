@@ -430,8 +430,8 @@ function dateToBR(dataISO){
   }
 
   return (
-    criarDataHora(va[0],va[1]) -
-    criarDataHora(vb[0],vb[1])
+    criarDataHora(va[1],va[2]) -
+    criarDataHora(vb[1],vb[2])
   );
 
 });
@@ -639,7 +639,7 @@ async function carregarServicoSocial(){
   const hoje = new Date();
 
 document.getElementById("filtroData").value =
-  hoje.toISOString().split("T")[0];
+  hoje.toISOString().split("T")[1];
 
 
 
