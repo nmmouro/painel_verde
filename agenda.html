@@ -549,10 +549,7 @@ html += `
 <td>${v[7]}</td>
 <td>
   
-  <button onclick="editarRegistro(
-  '${v[0]}',
-  'AGENDA DO DIA'
-)">
+  <button onclick="editarRegistro('${v[0]}','AGENDA DO DIA')">
 ✏️
 </button>
 
@@ -683,10 +680,7 @@ async function carregarServicoSocial(){
       <td>${v[6] || ""}</td>
       
       <td>
-  <button onclick="editarRegistro(
-  '${v[0]}',
-  'AGENDA SERVIÇO SOCIAL'
-)">
+  <button onclick="editarRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
 ✏️
 </button>
 
@@ -860,7 +854,7 @@ async function salvarAgenda(){
   }else{
 
     alert(json.erro || "Erro ao gravar.");
-
+  }
   }
 
 carregarAgenda();
