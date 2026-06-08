@@ -582,135 +582,125 @@ document.getElementById(
 }
 
 
-let carregandoSS = false;
+
 async function carregarServicoSocial(){
 
-  const query =
-  "select A,B,C,D,F,G,H";
+  const query = "select A,B,C,D,F,G,H";
 
   const url =
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
-  `?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}` +
-  `&tq=${encodeURIComponent(query)}` +
-  `&tqx=out:json`;
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
+    `?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}` +
+    `&tq=${encodeURIComponent(query)}` +
+    `&tqx=out:json`;
 
-  const res =
-  await fetch(url);
+  const res = await fetch(url);
+  const json = parseGviz(await res.text());
 
-  const json =
-  parseGviz(await res.text());
-
-  const rows =
-  json.table.rows || [];
+  const rows = json.table.rows || [];
 
   const dataSelecionada =
-  document.getElementById("filtroData")?.value;
+    document.getElementById("filtroData")?.value;
 
   let agendaFiltrada = [];
 
+  // 🔹 Função reutilizável
+  const dateToBR = (dataISO) => {
+    if(!dataISO) return "";
+    const [ano,mes,dia] = dataISO.split("-");
+    return `${dia}/${mes}/${ano}`;
+  };
+
+  // 🔹 Filtragem
   if(dataSelecionada){
 
-    const [ano,mes,dia] =
-    dataSelecionada.split("-");
+    const dataBR = dateToBR(dataSelecionada);
 
-    const dataBR =
-    `${dia}/${mes}/${ano}`;
-
-    agendaFiltrada =
-    rows.filter(row=>{
-
-      const v =
-      (row.c || []).map(getCell);
-
+    agendaFiltrada = rows.filter(row=>{
+      const v = (row.c || []).map(getCell);
       return String(v[1] || "").trim() === dataBR;
-
     });
 
   }else{
-
     agendaFiltrada = rows;
-
   }
 
-  // Ordenar pelo período
+  // 🔹 Limpeza (remove fantasmas)
+  agendaFiltrada = agendaFiltrada.filter(row=>{
+    if(!row.c) return false;
+
+    const v = row.c.map(getCell);
+
+    // ignora linhas totalmente vazias
+    if(v.every(x => String(x).trim() === "")) return false;
+
+    // ignora linhas sem data
+    if(!v[1]) return false;
+
+    return true;
+  });
+
+  // 🔹 Ordenação por período
   agendaFiltrada.sort((a,b)=>{
-
-    const va =
-    (a.c || []).map(getCell);
-
-    const vb =
-    (b.c || []).map(getCell);
+    const va = (a.c || []).map(getCell);
+    const vb = (b.c || []).map(getCell);
 
     return String(va[2] || "")
       .localeCompare(String(vb[2] || ""));
   });
 
+  // 🔹 Renderização
   let html = `
-  <table>
+    <table>
 
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Período</th>
-        <th>Passageiro</th>
-        <th>Motivo</th>
-        <th>Itinerário</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Período</th>
+          <th>Passageiro</th>
+          <th>Motivo</th>
+          <th>Itinerário</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
 
-    <tbody>
+      <tbody>
   `;
 
   agendaFiltrada.forEach(row=>{
 
-if(!row.c) return;
-
-const v =
-  row.c.map(c => c?.v ?? c?.f ?? "");
+    const v = (row.c || []).map(getCell);
 
     html += `
-    <tr>
+      <tr>
+        <td>${v[1] || ""}</td>
+        <td>${v[2] || ""}</td>
+        <td>${v[3] || ""}</td>
+        <td>${v[4] || ""}</td>
+        <td>${v[5] || ""}</td>
+        <td>${v[6] || ""}</td>
 
-      
-      <td>${v[1] || ""}</td>
-      <td>${v[2] || ""}</td>
-      <td>${v[3] || ""}</td>
-      <td>${v[4] || ""}</td>
-      <td>${v[5] || ""}</td>
-      <td>${v[6] || ""}</td>
-      
-      <td>
-  <button onclick="editarRegistro('${String(v[0]).replace(/'/g,'')}','AGENDA SERVIÇO SOCIAL')">
-✏️
-</button>
+        <td>
+          <button onclick="editarRegistro('${String(v[0]).replace(/'/g,'')}','AGENDA SERVIÇO SOCIAL')">
+            ✏️
+          </button>
 
-  <button onclick="excluirRegistro(
-    '${v[0]}',
-    'AGENDA SERVIÇO SOCIAL'
-  )">
-    🗑️
-  </button>
-</td>
+          <button onclick="excluirRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
+            🗑️
+          </button>
+        </td>
 
-
-
-    </tr>
+      </tr>
     `;
   });
 
   html += `
-    </tbody>
-  </table>
+      </tbody>
+    </table>
   `;
 
-  document.getElementById(
-    "tabelaServicoSocial"
-  ).innerHTML = html;
-
+  document.getElementById("tabelaServicoSocial").innerHTML = html;
 }
-
 
   const hoje = new Date();
 
