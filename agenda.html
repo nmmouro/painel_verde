@@ -549,7 +549,7 @@ html += `
 <td>${v[7]}</td>
 <td>
   
-  <button onclick="editarRegistro('${v[0]}','AGENDA DO DIA')">
+  <button onclick="editarRegistro('${String(v[0]).replace(/'/g,'')}','AGENDA DO DIA')">
 ✏️
 </button>
 
@@ -665,8 +665,10 @@ async function carregarServicoSocial(){
 
   agendaFiltrada.forEach(row=>{
 
-    const v =
-    (row.c || []).map(getCell);
+if(!row.c) return;
+
+const v =
+  row.c.map(c => c?.v ?? c?.f ?? "");
 
     html += `
     <tr>
@@ -680,7 +682,7 @@ async function carregarServicoSocial(){
       <td>${v[6] || ""}</td>
       
       <td>
-  <button onclick="editarRegistro('${v[0]}','AGENDA SERVIÇO SOCIAL')">
+  <button onclick="editarRegistro('${String(v[0]).replace(/'/g,'')}','AGENDA SERVIÇO SOCIAL')">
 ✏️
 </button>
 
