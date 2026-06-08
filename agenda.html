@@ -842,20 +842,22 @@ async function salvarAgenda(){
     document.getElementById("novoMotivo").value = "";
     document.getElementById("novoItinerario").value = "";
 
-    document.querySelector(
-      'button[onclick="salvarAgenda()"]'
-    ).innerHTML = "➕ Salvar";
+   document.querySelector(
+  'button[onclick="salvarAgenda()"]'
+).innerHTML = "➕ Salvar";
 
-    carregarAgenda();
-    carregarServicoSocial();
+carregarAgenda();
+carregarServicoSocial();
 
-    alert("Registro salvo com sucesso!");
+alert("Registro salvo com sucesso!");
 
-  }else{
+}else{
 
-    alert(json.erro || "Erro ao gravar.");
-  }
-  }
+  alert(json.erro || "Erro ao gravar.");
+
+}
+
+} // fecha salvarAgenda()
 
 carregarAgenda();
 carregarServicoSocial();
@@ -865,11 +867,9 @@ setInterval(async () => {
 
   await carregarAgenda();
   await carregarServicoSocial();
-}
 
 }, 30000);
 
 </script>
-
 </body>
 </html>
