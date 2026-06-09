@@ -153,13 +153,27 @@ tr:nth-child(even){
 <!-- FORM -->
 <div class="formulario">
 
-<select id="tipoAgenda">
-  <option>AGENDA DO DIA</option>
-  <option>AGENDA SERVIÇO SOCIAL</option>
+<select id="tipoAgenda" onchange="ajustarCampos()">
+  <option value="AGENDA DO DIA">AGENDA DO DIA</option>
+  <option value="AGENDA SERVIÇO SOCIAL">AGENDA SERVIÇO SOCIAL</option>
 </select>
-
+  
+<label id="labelData">Data</label>
 <input type="date" id="novaData">
-<input type="time" id="novaHora">
+
+<!-- CAMPO HORA -->
+<div id="campoHora">
+  <input type="time" id="novaHora">
+</div>
+
+<!-- CAMPO PERÍODO -->
+<div id="campoPeriodo" style="display:none;">
+  <select id="novoPeriodo">
+    <option value="">Selecione</option>
+    <option value="MANHÃ">MANHÃ</option>
+    <option value="TARDE">TARDE</option>
+  </select>
+</div>
 <input type="text" id="novoPassageiro" placeholder="Passageiro">
 <input type="text" id="novoSetor" placeholder="Setor">
 <input type="text" id="novoMotivo" placeholder="Motivo">
@@ -205,6 +219,39 @@ function linhaValida(v){
     v.every(x => String(x).trim()==="") ||
     !v[1]
   );
+}
+
+  function ajustarCampos(){
+
+  const tipo = document.getElementById("tipoAgenda").value;
+
+  const campoHora = document.getElementById("campoHora");
+  const campoPeriodo = document.getElementById("campoPeriodo");
+  const label = document.getElementById("labelData");
+  const campoData = document.getElementById("novaData");
+
+  if(tipo === "AGENDA DO DIA"){
+
+    campoHora.style.display = "block";
+    campoPeriodo.style.display = "none";
+
+    // ✅ mostrar data
+    campoData.style.display = "block";
+
+    // ✅ label
+    label.innerText = "Data";
+
+  }else{
+
+    campoHora.style.display = "none";
+    campoPeriodo.style.display = "block";
+
+    // ✅ esconder data
+    campoData.style.display = "none";
+
+    // ✅ label
+    label.innerText = "Período";
+  }
 }
 
 /* KPIs */
@@ -317,18 +364,31 @@ async function carregarSocial(){
 /* SALVAR */
 async function salvar(){
 
+  const tipo = document.getElementById("tipoAgenda").value;
+
+  const horaOuPeriodo =
+    tipo === "AGENDA SERVIÇO SOCIAL"
+    ? document.getElementById("novoPeriodo").value
+    : document.getElementById("novaHora").value;
+
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda",document.getElementById("tipoAgenda").value);
-  form.append("data",document.getElementById("novaData").value);
-  form.append("hora",document.getElementById("novaHora").value);
-  form.append("passageiro",document.getElementById("novoPassageiro").value);
+  form.append("agenda", tipo);
+  form.append("data", document.getElementById("novaData").value);
+  form.append("hora", horaOuPeriodo);
 
-  await fetch(WEBAPP,{method:"POST",body:form});
+  form.append("passageiro", document.getElementById("novoPassageiro").value);
+  form.append("setor", document.getElementById("novoSetor").value);
+  form.append("motivo", document.getElementById("novoMotivo").value);
+  form.append("itinerario", document.getElementById("novoItinerario").value);
+
+  await fetch(WEBAPP,{
+    method:"POST",
+    body:form
+  });
 
   carregarTudo();
-
 }
 /* EDITAR */
   
