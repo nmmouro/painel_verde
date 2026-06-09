@@ -132,63 +132,59 @@ tr:nth-child(even){
 
 <div class="layout">
 
-<!-- MENU -->
-<aside class="sidebar">
-  <h2>🚗 Frota</h2>
-
-  <button onclick="mostrar('agenda')">📅 Agenda</button>
-  <button onclick="mostrar('social')">🏥 Serviço Social</button>
+<!-- MENU --><aside class="sidebar">
+  <button onclick="mostrarTela('agenda')">📅 Agenda do Dia</button>
+  <button onclick="mostrarTela('social')">🏥 Serviço Social</button>
 </aside>
 
-<!-- CONTEÚDO -->
-<main class="conteudo">
+<main>
 
-<h1>Painel de Agenda</h1>
+  <!-- AGENDA DO DIA -->
+  <div id="telaAgenda">
 
-<div class="kpis" id="kpis"></div>
+    <h2>Agenda do Dia</h2>
 
-<!-- FILTRO -->
-<input type="date" id="filtroData" onchange="carregarTudo()">
+    <div class="formulario">
+      <input type="date" id="dataAgenda">
+      <input type="time" id="horaAgenda">
+      <input type="text" id="passageiroAgenda">
+      <input type="text" id="setorAgenda">
+      <input type="text" id="motivoAgenda">
+      <input type="text" id="itinerarioAgenda">
 
-<!-- FORM -->
-<div class="formulario">
+      <button onclick="salvarAgenda()">Salvar</button>
+    </div>
 
-<select id="tipoAgenda" onchange="ajustarCampos()">
-  <option value="AGENDA DO DIA">AGENDA DO DIA</option>
-  <option value="AGENDA SERVIÇO SOCIAL">AGENDA SERVIÇO SOCIAL</option>
-</select>
-  
-<label id="labelData">Data</label>
-<input type="date" id="novaData">
+    <div id="tabelaAgenda"></div>
 
-<!-- CAMPO HORA -->
-<div id="campoHora">
-  <input type="time" id="novaHora">
-</div>
+  </div>
 
-<!-- CAMPO PERÍODO -->
-<div id="campoPeriodo" style="display:none;">
-  <select id="novoPeriodo">
-    <option value="">Selecione</option>
-    <option value="MANHÃ">MANHÃ</option>
-    <option value="TARDE">TARDE</option>
-  </select>
-</div>
-<input type="text" id="novoPassageiro" placeholder="Passageiro">
-<input type="text" id="novoSetor" placeholder="Setor">
-<input type="text" id="novoMotivo" placeholder="Motivo">
-<input type="text" id="novoItinerario" placeholder="Itinerário">
+  <!-- SERVIÇO SOCIAL -->
+  <div id="telaSocial" style="display:none;">
 
-<button onclick="salvar()">Salvar</button>
+    <h2>Serviço Social</h2>
 
-</div>
+    <div class="formulario">
+      <input type="date" id="dataSocial">
 
-<!-- TABELAS -->
-<h2>Agenda</h2>
-<div id="tabela"></div>
+      <select id="periodoSocial">
+        <option value="">Selecione</option>
+        <option value="MANHÃ">MANHÃ</option>
+        <option value="TARDE">TARDE</option>
+      </select>
 
-<h2>Serviço Social</h2>
-<div id="tabela2"></div>
+      <input type="text" id="passageiroSocial">
+      <input type="text" id="motivoSocial">
+      <input type="text" id="itinerarioSocial">
+
+      <button onclick="salvarSocial()">Salvar</button>
+    </div>
+
+    <div id="tabelaSocial"></div>
+
+  </div>
+
+</main>
 
 </main>
 </div>
@@ -221,39 +217,14 @@ function linhaValida(v){
   );
 }
 
-  function ajustarCampos(){
+  function mostrarTela(tela){
 
-  const tipo = document.getElementById("tipoAgenda").value;
+  document.getElementById("telaAgenda").style.display =
+    tela === "agenda" ? "block" : "none";
 
-  const campoHora = document.getElementById("campoHora");
-  const campoPeriodo = document.getElementById("campoPeriodo");
-  const label = document.getElementById("labelData");
-  const campoData = document.getElementById("novaData");
-
-  if(tipo === "AGENDA DO DIA"){
-
-    campoHora.style.display = "block";
-    campoPeriodo.style.display = "none";
-
-    // ✅ mostrar data
-    campoData.style.display = "block";
-
-    // ✅ label
-    label.innerText = "Data";
-
-  }else{
-
-    campoHora.style.display = "none";
-    campoPeriodo.style.display = "block";
-
-    // ✅ esconder data
-    campoData.style.display = "none";
-
-    // ✅ label
-    label.innerText = "Período";
-  }
+  document.getElementById("telaSocial").style.display =
+    tela === "social" ? "block" : "none";
 }
-
 /* KPIs */
 function atualizarKPIs(rows){
 
@@ -329,6 +300,27 @@ async function carregarAgenda(){
 
   document.getElementById("tabela").innerHTML = html;
 }
+  
+  /* SALVA AGENDA */
+
+  async function salvarAgenda(){
+
+  const form = new FormData();
+
+  form.append("acao","novo");
+  form.append("agenda","AGENDA DO DIA");
+
+  form.append("data", document.getElementById("dataAgenda").value);
+  form.append("hora", document.getElementById("horaAgenda").value);
+  form.append("passageiro", document.getElementById("passageiroAgenda").value);
+  form.append("setor", document.getElementById("setorAgenda").value);
+  form.append("motivo", document.getElementById("motivoAgenda").value);
+  form.append("itinerario", document.getElementById("itinerarioAgenda").value);
+
+  await fetch(WEBAPP,{method:"POST",body:form});
+
+  carregarAgenda();
+}
 
 /* SOCIAL */
 async function carregarSocial(){
@@ -361,35 +353,27 @@ async function carregarSocial(){
   document.getElementById("tabela2").innerHTML = html;
 }
 
-/* SALVAR */
-async function salvar(){
-
-  const tipo = document.getElementById("tipoAgenda").value;
-
-  const horaOuPeriodo =
-    tipo === "AGENDA SERVIÇO SOCIAL"
-    ? document.getElementById("novoPeriodo").value
-    : document.getElementById("novaHora").value;
+/* SALVAR SOCIAL */
+async function salvarSocial(){
 
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda", tipo);
-  form.append("data", document.getElementById("novaData").value);
-  form.append("hora", horaOuPeriodo);
+  form.append("agenda","AGENDA SERVIÇO SOCIAL");
 
-  form.append("passageiro", document.getElementById("novoPassageiro").value);
-  form.append("setor", document.getElementById("novoSetor").value);
-  form.append("motivo", document.getElementById("novoMotivo").value);
-  form.append("itinerario", document.getElementById("novoItinerario").value);
+  form.append("data", document.getElementById("dataSocial").value);
+  form.append("hora", document.getElementById("periodoSocial").value);
 
-  await fetch(WEBAPP,{
-    method:"POST",
-    body:form
-  });
+  form.append("passageiro", document.getElementById("passageiroSocial").value);
+  form.append("setor", ""); // não usa
+  form.append("motivo", document.getElementById("motivoSocial").value);
+  form.append("itinerario", document.getElementById("itinerarioSocial").value);
 
-  carregarTudo();
+  await fetch(WEBAPP,{method:"POST",body:form});
+
+  carregarSocial();
 }
+  
 /* EDITAR */
   
   async function editarCampo(id, campo, valor, agenda){
