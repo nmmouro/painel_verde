@@ -142,48 +142,51 @@ tr:nth-child(even){
   <!-- AGENDA DO DIA -->
   <div id="telaAgenda">
 
-    <h2>Agenda do Dia</h2>
+  <h2 style="text-align:center;">📅 AGENDA DO DIA</h2>
 
-    <div class="formulario">
-      <input type="date" id="dataAgenda">
-      <input type="time" id="horaAgenda">
-      <input type="text" id="passageiroAgenda">
-      <input type="text" id="setorAgenda">
-      <input type="text" id="motivoAgenda">
-      <input type="text" id="itinerarioAgenda">
+  <div class="formulario">
 
-      <button onclick="salvarAgenda()">Salvar</button>
-    </div>
+    <input type="date" id="dataAgenda">
+    <input type="time" id="horaAgenda">
 
-    <div id="tabelaAgenda"></div>
+    <input type="text" id="passageiroAgenda" placeholder="Passageiro">
+    <input type="text" id="setorAgenda" placeholder="Setor">
+    <input type="text" id="motivoAgenda" placeholder="Motivo">
+    <input type="text" id="itinerarioAgenda" placeholder="Itinerário">
+
+    <button onclick="salvarAgenda()">Salvar</button>
 
   </div>
 
+  <div id="tabelaAgenda"></div>
+
+</div>
   <!-- SERVIÇO SOCIAL -->
   <div id="telaSocial" style="display:none;">
 
-    <h2>Serviço Social</h2>
+  <h2 style="text-align:center;">🏥 AGENDA SERVIÇO SOCIAL</h2>
 
-    <div class="formulario">
-      <input type="date" id="dataSocial">
+  <div class="formulario">
 
-      <select id="periodoSocial">
-        <option value="">Selecione</option>
-        <option value="MANHÃ">MANHÃ</option>
-        <option value="TARDE">TARDE</option>
-      </select>
+    <input type="date" id="dataSocial">
 
-      <input type="text" id="passageiroSocial">
-      <input type="text" id="motivoSocial">
-      <input type="text" id="itinerarioSocial">
+    <select id="periodoSocial">
+      <option value="">Selecione o período</option>
+      <option value="MANHÃ">MANHÃ</option>
+      <option value="TARDE">TARDE</option>
+    </select>
 
-      <button onclick="salvarSocial()">Salvar</button>
-    </div>
+    <input type="text" id="passageiroSocial" placeholder="Passageiro">
+    <input type="text" id="motivoSocial" placeholder="Motivo">
+    <input type="text" id="itinerarioSocial" placeholder="Itinerário">
 
-    <div id="tabelaSocial"></div>
+    <button onclick="salvarSocial()">Salvar</button>
 
   </div>
 
+  <div id="tabelaSocial"></div>
+
+</div>
 </main>
 
 </main>
@@ -225,6 +228,7 @@ function linhaValida(v){
   document.getElementById("telaSocial").style.display =
     tela === "social" ? "block" : "none";
 }
+  
 /* KPIs */
 function atualizarKPIs(rows){
 
@@ -246,59 +250,51 @@ function atualizarKPIs(rows){
 /* AGENDA */
 async function carregarAgenda(){
 
-  let res = await fetch(
-`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=AGENDA DO DIA&tqx=out:json`
-  );
+  document.getElementById("tabelaAgenda").innerHTML = "⏳ Carregando...";
 
-  const json = parse(await res.text());
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=AGENDA DO DIA&tqx=out:json`;
 
-  let rows = json.table.rows || [];
+  const res = await fetch(url);
+  const json = parseGviz(await res.text());
+  const rows = json.table.rows || [];
 
-  let lista = rows.map(r => r.c.map(getCell)).filter(linhaValida);
+  let html = `
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Hora</th>
+        <th>Passageiro</th>
+        <th>Setor</th>
+        <th>Motivo</th>
+        <th>Itinerário</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
 
-  atualizarKPIs(rows);
+  rows.forEach(row=>{
 
-  let html = "<table><tr><th>Data</th><th>Hora</th><th>Passageiro</th><th>Setor</th><th>Motivo</th><th>Itinerário</th><th>Status</th></tr>";
+    const v = (row.c || []).map(getCell);
 
-  lista.forEach(v=>{
+    if(!v[1]) return;
+
     html += `
     <tr>
-
-<td>${v[1]}</td>
-
-<td contenteditable="true"
-    onblur="editarCampo('${v[0]}','hora',this.innerText,'AGENDA DO DIA')">
-    ${v[2]}
-</td>
-
-<td contenteditable="true"
-    onblur="editarCampo('${v[0]}','passageiro',this.innerText,'AGENDA DO DIA')">
-    ${v[3]}
-</td>
-
-<td contenteditable="true"
-    onblur="editarCampo('${v[0]}','setor',this.innerText,'AGENDA DO DIA')">
-    ${v[4]}
-</td>
-
-<td contenteditable="true"
-    onblur="editarCampo('${v[0]}','motivo',this.innerText,'AGENDA DO DIA')">
-    ${v[5]}
-</td>
-
-<td contenteditable="true"
-    onblur="editarCampo('${v[0]}','itinerario',this.innerText,'AGENDA DO DIA')">
-    ${v[6]}
-</td>
-
-<td>${statusHTML(v[7])}</td>
-
-</tr>`;
+      <td>${v[1]}</td>
+      <td>${v[2]}</td>
+      <td>${v[3]}</td>
+      <td>${v[4]}</td>
+      <td>${v[5]}</td>
+      <td>${v[6]}</td>
+      <td>${statusHTML(v[7])}</td>
+    </tr>`;
   });
 
-  html += "</table>";
+  html += "</tbody></table>";
 
-  document.getElementById("tabela").innerHTML = html;
+  document.getElementById("tabelaAgenda").innerHTML = html;
 }
   
   /* SALVA AGENDA */
@@ -325,32 +321,49 @@ async function carregarAgenda(){
 /* SOCIAL */
 async function carregarSocial(){
 
-  let res = await fetch(
-`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}&tqx=out:json`
-  );
+  document.getElementById("tabelaSocial").innerHTML = "⏳ Carregando...";
 
-  const json = parse(await res.text());
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}&tqx=out:json`;
 
-  let rows = json.table.rows || [];
+  const res = await fetch(url);
+  const json = parseGviz(await res.text());
+  const rows = json.table.rows || [];
 
-  let lista = rows.map(r => r.c.map(getCell)).filter(linhaValida);
+  let html = `
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Período</th>
+        <th>Passageiro</th>
+        <th>Motivo</th>
+        <th>Itinerário</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
 
-  let html = "<table><tr><th>Data</th><th>Período</th><th>Passageiro</th><th>Motivo</th><th>Itinerário</th></tr>";
+  rows.forEach(row=>{
 
-  lista.forEach(v=>{
+    const v = (row.c || []).map(getCell);
+
+    if(!v[1]) return;
+
     html += `
     <tr>
       <td>${v[1]}</td>
       <td>${v[2]}</td>
       <td>${v[3]}</td>
-      <td>${v[4]}</td>
       <td>${v[5]}</td>
+      <td>${v[6]}</td>
+      <td>${statusHTML(v[7])}</td>
     </tr>`;
   });
 
-  html += "</table>";
+  html += "</tbody></table>";
 
-  document.getElementById("tabela2").innerHTML = html;
+  document.getElementById("tabelaSocial").innerHTML = html;
 }
 
 /* SALVAR SOCIAL */
