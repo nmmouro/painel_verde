@@ -247,42 +247,6 @@ function atualizarKPIs(rows){
   `;
 }
 
-  /* FORMATA DATA */
-  function formatarDataSaida(valor){
-
-  if(!valor) return "";
-
-  if(Object.prototype.toString.call(valor) === '[object Date]'){
-
-    return Utilities.formatDate(
-      valor,
-      Session.getScriptTimeZone(),
-      "dd/MM/yyyy"
-    );
-  }
-
-  return valor;
-}
-
-  /* FORMATA DATA */
-  function formatarHoraSaida(valor){
-
-  if(!valor) return "";
-
-  // ✅ se for DATA (hora do Sheets)
-  if(Object.prototype.toString.call(valor) === '[object Date]'){
-
-    return Utilities.formatDate(
-      valor,
-      Session.getScriptTimeZone(),
-      "HH:mm"
-    );
-  }
-
-  // ✅ se for texto (MANHÃ/TARDE)
-  return valor;
-}
-
 /* AGENDA */
 async function carregarAgenda(){
 
