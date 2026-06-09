@@ -194,14 +194,21 @@ tr:nth-child(even){
 
 <script>
 
-const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
+// =========================
+// CONFIG
+// =========================
+const API_URL = "https://script.google.com/macros/s/AKfycbytYilSSehwhi5qIQc6ZLziK8vmVrZF18wvnT2kQ2ZCL5Xs4lnqnzJEl6lo2HxR5B6Kvw/exec";
 
-const WEBAPP = "https://script.google.com/macros/s/AKfycbytYilSSehwhi5qIQc6ZLziK8vmVrZF18wvnT2kQ2ZCL5Xs4lnqnzJEl6lo2HxR5B6Kvw/exec";
 
-/* HELPERS */
-const getCell = c => c?.f ?? c?.v ?? "";
-
-const parse = t => JSON.parse(t.substring(t.indexOf("{"), t.lastIndexOf("}")+1));
+// =========================
+// HELPERS
+// =========================
+const escapeHTML = str =>
+  String(str ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
 
 function statusHTML(s){
   const map = {
@@ -209,164 +216,176 @@ function statusHTML(s){
     "CONCLUÍDO":"ok",
     "CANCELADO":"cancelado"
   };
-
-  return `<span class="status ${map[s]||''}">${s||""}</span>`;
+  return `<span class="status ${map[s]||""}">${s||""}</span>`;
 }
 
-function linhaValida(v){
-  return !(
-    v.every(x => String(x).trim()==="") ||
-    !v[1]
-  );
+function toast(msg){
+  console.log(msg);
+  alert(msg); // pode evoluir depois
 }
 
-  function mostrarTela(tela){
+// =========================
+// API LAYER
+// =========================
+const API = {
 
-  document.getElementById("telaAgenda").style.display =
-    tela === "agenda" ? "block" : "none";
+  async listar(sheet){
+    const res = await fetch(`${API_URL}?agenda=${sheet}`);
+    const json = await res.json();
+    return json;
+  },
 
-  document.getElementById("telaSocial").style.display =
-    tela === "social" ? "block" : "none";
-}
-  
-/* KPIs */
-function atualizarKPIs(rows){
-
-  const total = rows.length;
-
-  const pessoas = new Set();
-
-  rows.forEach(r=>{
-    const v = r.c.map(getCell);
-    pessoas.add(v[3]);
-  });
-
-  document.getElementById("kpis").innerHTML = `
-    <div class="card">📅 ${total}</div>
-    <div class="card">👤 ${pessoas.size}</div>
-  `;
-}
-
-/* AGENDA */
-async function carregarAgenda(){
-
-  const res = await fetch(
-    WEBAPP + "?agenda=AGENDA DO DIA"
-  );
-
-  const json = await res.json();
-
-  if(!json.success){
-    document.getElementById("tabelaAgenda").innerHTML = "Erro ao carregar";
-    return;
+  async salvar(data){
+    await fetch(API_URL,{
+      method:"POST",
+      body:data
+    });
   }
 
-  const dados = json.dados;
+};
+
+// =========================
+// TABLE ENGINE
+// =========================
+function renderTabela({target, dados, colunas, sheet}){
 
   let html = `
   <table>
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Hora</th>
-        <th>Passageiro</th>
-        <th>Setor</th>
-        <th>Motivo</th>
-        <th>Itinerário</th>
-        <th>Status</th>
-      </tr>
-    </thead>
+    <thead><tr>
+      ${colunas.map(c=>`<th>${c.label}</th>`).join("")}
+      <th>Ações</th>
+    </tr></thead>
     <tbody>
   `;
 
-  dados.forEach(v=>{
+  dados.forEach(v => {
+
+    const id = v[0];
+
+    html += "<tr>";
+
+    colunas.forEach(c => {
+
+      let valor = v[c.index];
+
+      if(c.render){
+        valor = c.render(valor);
+      } else {
+        valor = escapeHTML(valor);
+      }
+
+      if(c.editable){
+        html += `
+        <td contenteditable="true"
+          onblur="editarCampo('${id}','${c.field}',this.innerText,'${sheet}')">
+          ${valor}
+        </td>`;
+      } else {
+        html += `<td>${valor}</td>`;
+      }
+
+    });
 
     html += `
-    <tr>
-      <td>${v[1]}</td>
-      <td>${v[2]}</td>
-      <td>${v[3]}</td>
-      <td>${v[4]}</td>
-      <td>${v[5]}</td>
-      <td>${v[6]}</td>
-      <td>${statusHTML(v[7])}</td>
-    </tr>`;
+      <td>
+        <button onclick="deletar('${id}','${sheet}')">🗑️</button>
+      </td>
+    `;
+
+    html += "</tr>";
+
   });
 
-  html += `</tbody></table>`;
+  html += "</tbody></table>";
 
-  document.getElementById("tabelaAgenda").innerHTML = html;
-}  
-  /* SALVA AGENDA */
+  document.getElementById(target).innerHTML = html;
+}
 
-  async function salvarAgenda(){
+
+// =========================
+// CONTROLLERS
+// =========================
+
+async function carregarAgenda(){
+
+  const res = await API.listar("AGENDA DO DIA");
+
+  if(!res.success){
+    toast("Erro ao carregar Agenda");
+    return;
+  }
+
+  renderTabela({
+    target:"tabelaAgenda",
+    dados:res.dados,
+    sheet:"AGENDA DO DIA",
+    colunas:[
+      {label:"Data", index:1, field:"data", editable:true},
+      {label:"Hora", index:2, field:"hora", editable:true},
+      {label:"Passageiro", index:3, field:"passageiro", editable:true},
+      {label:"Setor", index:4, field:"setor", editable:true},
+      {label:"Motivo", index:5, field:"motivo", editable:true},
+      {label:"Itinerário", index:6, field:"itinerario", editable:true},
+      {label:"Status", index:7, field:"status", render:statusHTML, editable:false}
+    ]
+  });
+
+}
+
+
+
+async function carregarSocial(){
+
+  const res = await API.listar("AGENDA SERVIÇO SOCIAL");
+
+  if(!res.success){
+    toast("Erro ao carregar Social");
+    return;
+  }
+
+  renderTabela({
+    target:"tabelaSocial",
+    dados:res.dados,
+    sheet:"AGENDA SERVIÇO SOCIAL",
+    colunas:[
+      {label:"Data", index:1, field:"data", editable:true},
+      {label:"Período", index:2, field:"hora", editable:true},
+      {label:"Passageiro", index:3, field:"passageiro", editable:true},
+      {label:"Motivo", index:5, field:"motivo", editable:true},
+      {label:"Itinerário", index:6, field:"itinerario", editable:true},
+      {label:"Status", index:7, field:"status", render:statusHTML}
+    ]
+  });
+
+}
+
+
+// =========================
+// ACTIONS
+// =========================
+
+async function salvarAgenda(){
 
   const form = new FormData();
 
   form.append("acao","novo");
   form.append("agenda","AGENDA DO DIA");
 
-  form.append("data", document.getElementById("dataAgenda").value);
-  form.append("hora", document.getElementById("horaAgenda").value);
-  form.append("passageiro", document.getElementById("passageiroAgenda").value);
-  form.append("setor", document.getElementById("setorAgenda").value);
-  form.append("motivo", document.getElementById("motivoAgenda").value);
-  form.append("itinerario", document.getElementById("itinerarioAgenda").value);
+  form.append("data", dataAgenda.value);
+  form.append("hora", horaAgenda.value);
+  form.append("passageiro", passageiroAgenda.value);
+  form.append("setor", setorAgenda.value);
+  form.append("motivo", motivoAgenda.value);
+  form.append("itinerario", itinerarioAgenda.value);
 
-  await fetch(WEBAPP,{method:"POST",body:form});
+  await API.salvar(form);
 
+  limparAgenda();
   carregarAgenda();
+  toast("Salvo ✅");
 }
 
-/* SOCIAL */
-async function carregarSocial(){
 
-  const res = await fetch(
-    WEBAPP + "?agenda=AGENDA SERVIÇO SOCIAL"
-  );
-
-  const json = await res.json();
-
-  if(!json.success){
-    document.getElementById("tabelaSocial").innerHTML = "Erro ao carregar";
-    return;
-  }
-
-  const dados = json.dados;
-
-  let html = `
-  <table>
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Período</th>
-        <th>Passageiro</th>
-        <th>Motivo</th>
-        <th>Itinerário</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-  `;
-
-  dados.forEach(v=>{
-
-    html += `
-    <tr>
-      <td>${v[1]}</td>
-      <td>${v[2]}</td>
-      <td>${v[3]}</td>
-      <td>${v[5]}</td>
-      <td>${v[6]}</td>
-      <td>${statusHTML(v[7])}</td>
-    </tr>`;
-  });
-
-  html += `</tbody></table>`;
-
-  document.getElementById("tabelaSocial").innerHTML = html;
-}
-/* SALVAR SOCIAL */
 async function salvarSocial(){
 
   const form = new FormData();
@@ -374,46 +393,88 @@ async function salvarSocial(){
   form.append("acao","novo");
   form.append("agenda","AGENDA SERVIÇO SOCIAL");
 
-  form.append("data", document.getElementById("dataSocial").value);
-  form.append("hora", document.getElementById("periodoSocial").value);
+  form.append("data", dataSocial.value);
+  form.append("hora", periodoSocial.value);
 
-  form.append("passageiro", document.getElementById("passageiroSocial").value);
-  form.append("setor", ""); // não usa
-  form.append("motivo", document.getElementById("motivoSocial").value);
-  form.append("itinerario", document.getElementById("itinerarioSocial").value);
+  form.append("passageiro", passageiroSocial.value);
+  form.append("setor","");
+  form.append("motivo", motivoSocial.value);
+  form.append("itinerario", itinerarioSocial.value);
 
-  await fetch(WEBAPP,{method:"POST",body:form});
+  await API.salvar(form);
 
+  limparSocial();
   carregarSocial();
+  toast("Salvo ✅");
 }
-  
-/* EDITAR */
-  
-  async function editarCampo(id, campo, valor, agenda){
+
+
+// =========================
+// EDIT / DELETE
+// =========================
+
+async function editarCampo(id, campo, valor, agenda){
 
   const form = new FormData();
-
   form.append("acao","editar_campo");
-  form.append("id", id);
-  form.append("campo", campo);
-  form.append("valor", valor);
-  form.append("agenda", agenda);
+  form.append("id",id);
+  form.append("campo",campo);
+  form.append("valor",valor);
+  form.append("agenda",agenda);
 
-  await fetch(WEBAPP,{
-    method:"POST",
-    body:form
-  });
-
-  toast("Atualizado ✅");
+  await API.salvar(form);
 }
 
-function carregarTudo(){
+
+async function deletar(id, agenda){
+
+  if(!confirm("Deseja excluir?")) return;
+
+  const form = new FormData();
+  form.append("acao","deletar");
+  form.append("id",id);
+  form.append("agenda",agenda);
+
+  await API.salvar(form);
+
+  carregarAgenda();
+  carregarSocial();
+
+  toast("Excluído ✅");
+}
+
+
+// =========================
+// UTILS
+// =========================
+
+function limparAgenda(){
+  ["dataAgenda","horaAgenda","passageiroAgenda","setorAgenda","motivoAgenda","itinerarioAgenda"]
+  .forEach(id=>document.getElementById(id).value="");
+}
+
+function limparSocial(){
+  ["dataSocial","periodoSocial","passageiroSocial","motivoSocial","itinerarioSocial"]
+  .forEach(id=>document.getElementById(id).value="");
+}
+
+function mostrarTela(tela){
+
+  telaAgenda.style.display = tela === "agenda" ? "block" : "none";
+  telaSocial.style.display = tela === "social" ? "block" : "none";
+}
+
+
+// =========================
+// INIT
+// =========================
+
+function init(){
   carregarAgenda();
   carregarSocial();
 }
 
-carregarTudo();
-setInterval(carregarTudo,30000);
+init();
 
 </script>
 
