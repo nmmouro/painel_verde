@@ -196,7 +196,7 @@ tr:nth-child(even){
 
 const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
 
-const WEBAPP = "https://script.google.com/macros/s/AKfycbyU8x40qRH7zbwjuyIqxzXLSrN7pDr0iqWOg5omIibX0qADYm0tdLwW724tVukdEaquJw/exec";
+const WEBAPP = "https://script.google.com/macros/s/AKfycbwmF7O7GKvjVaizFyRhZaeVTZ4Lb688si7FxaO2hF84PC4xpBZMV1EDZ7qV5pVxom2ZZA/exec";
 
 /* HELPERS */
 const getCell = c => c?.f ?? c?.v ?? "";
@@ -292,9 +292,28 @@ async function carregarAgenda(){
 
   const json = await res.json();
 
+  if(!json.success){
+    document.getElementById("tabelaAgenda").innerHTML = "Erro ao carregar";
+    return;
+  }
+
   const dados = json.dados;
 
-  let html = `<table>...`;
+  let html = `
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Hora</th>
+        <th>Passageiro</th>
+        <th>Setor</th>
+        <th>Motivo</th>
+        <th>Itinerário</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
 
   dados.forEach(v=>{
 
@@ -306,11 +325,11 @@ async function carregarAgenda(){
       <td>${v[4]}</td>
       <td>${v[5]}</td>
       <td>${v[6]}</td>
-      <td>${v[7]}</td>
+      <td>${statusHTML(v[7])}</td>
     </tr>`;
   });
 
-  html += `</table>`;
+  html += `</tbody></table>`;
 
   document.getElementById("tabelaAgenda").innerHTML = html;
 }  
@@ -344,9 +363,27 @@ async function carregarSocial(){
 
   const json = await res.json();
 
+  if(!json.success){
+    document.getElementById("tabelaSocial").innerHTML = "Erro ao carregar";
+    return;
+  }
+
   const dados = json.dados;
 
-  let html = `<table>...`;
+  let html = `
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Período</th>
+        <th>Passageiro</th>
+        <th>Motivo</th>
+        <th>Itinerário</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
 
   dados.forEach(v=>{
 
@@ -357,11 +394,11 @@ async function carregarSocial(){
       <td>${v[3]}</td>
       <td>${v[5]}</td>
       <td>${v[6]}</td>
-      <td>${v[7]}</td>
+      <td>${statusHTML(v[7])}</td>
     </tr>`;
   });
 
-  html += `</table>`;
+  html += `</tbody></table>`;
 
   document.getElementById("tabelaSocial").innerHTML = html;
 }
