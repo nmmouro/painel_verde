@@ -240,7 +240,7 @@ async function carregarAgenda(){
 
   atualizarKPIs(rows);
 
-  let html = "<table><tr><th>Data</th><th>Hora</th><th>Passageiro</th><th>Status</th></tr>";
+  let html = "<table><tr><th>Data</th><th>Hora</th><th>Passageiro</th><th>Setor</th><th>Motivo</th><th>Status</th></tr>";
 
   lista.forEach(v=>{
     html += `
@@ -296,7 +296,7 @@ async function carregarSocial(){
 
   let lista = rows.map(r => r.c.map(getCell)).filter(linhaValida);
 
-  let html = "<table><tr><th>Data</th><th>Período</th><th>Passageiro</th></tr>";
+  let html = "<table><tr><th>Data</th><th>Período</th><th>Passageiro</th><th>Motivo</th<th>Itinerário</th></tr>";
 
   lista.forEach(v=>{
     html += `
