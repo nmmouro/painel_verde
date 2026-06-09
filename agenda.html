@@ -196,7 +196,7 @@ tr:nth-child(even){
 
 const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
 
-const WEBAPP = "https://script.google.com/macros/s/AKfycbz46GHOE1LmtbMYxwPgXQeGKGpUMIvPGKeUvojBbQwan71ZB_qJGV5YclYDId1g6Y9kjQ/exec";
+const WEBAPP = "https://script.google.com/macros/s/AKfycbznRcvyI33T8EoLKd11NwvA_zMWwi14WGzvvxl0ntK-PIBuVsJZ0cN6LnvA_UV1wSBLgA/exec";
 
 /* HELPERS */
 const getCell = c => c?.f ?? c?.v ?? "";
@@ -250,35 +250,17 @@ function atualizarKPIs(rows){
 /* AGENDA */
 async function carregarAgenda(){
 
-  document.getElementById("tabelaAgenda").innerHTML = "⏳ Carregando...";
+  const res = await fetch(
+    WEBAPP + "?agenda=AGENDA DO DIA"
+  );
 
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=AGENDA DO DIA&tqx=out:json`;
+  const json = await res.json();
 
-  const res = await fetch(url);
-  const json = parseGviz(await res.text());
-  const rows = json.table.rows || [];
+  const dados = json.dados;
 
-  let html = `
-  <table>
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Hora</th>
-        <th>Passageiro</th>
-        <th>Setor</th>
-        <th>Motivo</th>
-        <th>Itinerário</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-  `;
+  let html = `<table>...`;
 
-  rows.forEach(row=>{
-
-    const v = (row.c || []).map(getCell);
-
-    if(!v[1]) return;
+  dados.forEach(v=>{
 
     html += `
     <tr>
@@ -288,15 +270,14 @@ async function carregarAgenda(){
       <td>${v[4]}</td>
       <td>${v[5]}</td>
       <td>${v[6]}</td>
-      <td>${statusHTML(v[7])}</td>
+      <td>${v[7]}</td>
     </tr>`;
   });
 
-  html += "</tbody></table>";
+  html += `</table>`;
 
   document.getElementById("tabelaAgenda").innerHTML = html;
-}
-  
+}  
   /* SALVA AGENDA */
 
   async function salvarAgenda(){
@@ -321,34 +302,17 @@ async function carregarAgenda(){
 /* SOCIAL */
 async function carregarSocial(){
 
-  document.getElementById("tabelaSocial").innerHTML = "⏳ Carregando...";
+  const res = await fetch(
+    WEBAPP + "?agenda=AGENDA SERVIÇO SOCIAL"
+  );
 
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent("AGENDA SERVIÇO SOCIAL")}&tqx=out:json`;
+  const json = await res.json();
 
-  const res = await fetch(url);
-  const json = parseGviz(await res.text());
-  const rows = json.table.rows || [];
+  const dados = json.dados;
 
-  let html = `
-  <table>
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Período</th>
-        <th>Passageiro</th>
-        <th>Motivo</th>
-        <th>Itinerário</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-  `;
+  let html = `<table>...`;
 
-  rows.forEach(row=>{
-
-    const v = (row.c || []).map(getCell);
-
-    if(!v[1]) return;
+  dados.forEach(v=>{
 
     html += `
     <tr>
@@ -357,15 +321,14 @@ async function carregarSocial(){
       <td>${v[3]}</td>
       <td>${v[5]}</td>
       <td>${v[6]}</td>
-      <td>${statusHTML(v[7])}</td>
+      <td>${v[7]}</td>
     </tr>`;
   });
 
-  html += "</tbody></table>";
+  html += `</table>`;
 
   document.getElementById("tabelaSocial").innerHTML = html;
 }
-
 /* SALVAR SOCIAL */
 async function salvarSocial(){
 
