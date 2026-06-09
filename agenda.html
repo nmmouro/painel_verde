@@ -100,6 +100,15 @@ td{
   text-align:center;
   border:1px solid #1e2f5c;
 }
+  
+td[contenteditable="true"]{
+  cursor:text;
+}
+
+td[contenteditable="true"]:focus{
+  background:#1e3a8a;
+  outline:none;
+}
 
 tr:nth-child(even){
   background:#0c1d40;
@@ -174,7 +183,7 @@ tr:nth-child(even){
 
 const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
 
-const WEBAPP = "https://script.google.com/macros/s/AKfycbwohPDcQ8Mzz-9KnPkS5LdzN1zBj23vI0JNY-sC96N3__9D-GxVdWwYBhA7pC6lcAZ7mg/exec";
+const WEBAPP = "https://script.google.com/macros/s/AKfycbz46GHOE1LmtbMYxwPgXQeGKGpUMIvPGKeUvojBbQwan71ZB_qJGV5YclYDId1g6Y9kjQ/exec";
 
 /* HELPERS */
 const getCell = c => c?.f ?? c?.v ?? "";
@@ -236,11 +245,37 @@ async function carregarAgenda(){
   lista.forEach(v=>{
     html += `
     <tr>
-      <td>${v[1]}</td>
-      <td>${v[2]}</td>
-      <td>${v[3]}</td>
-      <td>${statusHTML(v[7])}</td>
-    </tr>`;
+
+<td>${v[1]}</td>
+
+<td contenteditable="true"
+    onblur="editarCampo('${v[0]}','hora',this.innerText,'AGENDA DO DIA')">
+    ${v[2]}
+</td>
+
+<td contenteditable="true"
+    onblur="editarCampo('${v[0]}','passageiro',this.innerText,'AGENDA DO DIA')">
+    ${v[3]}
+</td>
+
+<td contenteditable="true"
+    onblur="editarCampo('${v[0]}','setor',this.innerText,'AGENDA DO DIA')">
+    ${v[4]}
+</td>
+
+<td contenteditable="true"
+    onblur="editarCampo('${v[0]}','motivo',this.innerText,'AGENDA DO DIA')">
+    ${v[5]}
+</td>
+
+<td contenteditable="true"
+    onblur="editarCampo('${v[0]}','itinerario',this.innerText,'AGENDA DO DIA')">
+    ${v[6]}
+</td>
+
+<td>${statusHTML(v[7])}</td>
+
+</tr>`;
   });
 
   html += "</table>";
@@ -292,6 +327,25 @@ async function salvar(){
 
   carregarTudo();
 
+}
+/* EDITAR */
+  
+  async function editarCampo(id, campo, valor, agenda){
+
+  const form = new FormData();
+
+  form.append("acao","editar_campo");
+  form.append("id", id);
+  form.append("campo", campo);
+  form.append("valor", valor);
+  form.append("agenda", agenda);
+
+  await fetch(WEBAPP,{
+    method:"POST",
+    body:form
+  });
+
+  toast("Atualizado ✅");
 }
 
 function carregarTudo(){
