@@ -196,7 +196,7 @@ tr:nth-child(even){
 
 const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
 
-const WEBAPP = "https://script.google.com/macros/s/AKfycbznRcvyI33T8EoLKd11NwvA_zMWwi14WGzvvxl0ntK-PIBuVsJZ0cN6LnvA_UV1wSBLgA/exec";
+const WEBAPP = "https://script.google.com/macros/s/AKfycbyU8x40qRH7zbwjuyIqxzXLSrN7pDr0iqWOg5omIibX0qADYm0tdLwW724tVukdEaquJw/exec";
 
 /* HELPERS */
 const getCell = c => c?.f ?? c?.v ?? "";
@@ -245,6 +245,42 @@ function atualizarKPIs(rows){
     <div class="card">📅 ${total}</div>
     <div class="card">👤 ${pessoas.size}</div>
   `;
+}
+
+  /* FORMATA DATA */
+  function formatarDataSaida(valor){
+
+  if(!valor) return "";
+
+  if(Object.prototype.toString.call(valor) === '[object Date]'){
+
+    return Utilities.formatDate(
+      valor,
+      Session.getScriptTimeZone(),
+      "dd/MM/yyyy"
+    );
+  }
+
+  return valor;
+}
+
+  /* FORMATA DATA */
+  function formatarHoraSaida(valor){
+
+  if(!valor) return "";
+
+  // ✅ se for DATA (hora do Sheets)
+  if(Object.prototype.toString.call(valor) === '[object Date]'){
+
+    return Utilities.formatDate(
+      valor,
+      Session.getScriptTimeZone(),
+      "HH:mm"
+    );
+  }
+
+  // ✅ se for texto (MANHÃ/TARDE)
+  return valor;
 }
 
 /* AGENDA */
