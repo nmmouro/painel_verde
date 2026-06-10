@@ -308,7 +308,7 @@ function renderTabela({target, dados, colunas, sheet}){
 
 async function carregarAgenda(){
 
-  const res = await API.listar("AGENDA DO DIA");
+  const res = await API.listar("AGENDA");
 
   if(!res.success){
     toast("Erro ao carregar Agenda");
@@ -336,7 +336,7 @@ async function carregarAgenda(){
 
 async function carregarSocial(){
 
-  const res = await API.listar("AGENDA SERVIÇO SOCIAL");
+  const res = await API.listar("SOCIAL");
 
   if(!res.success){
     toast("Erro ao carregar Social");
@@ -369,7 +369,7 @@ async function salvarAgenda(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda","AGENDA DO DIA");
+  form.append("agenda","AGENDA");
 
   form.append("data", dataAgenda.value);
   form.append("hora", horaAgenda.value);
@@ -391,7 +391,7 @@ async function salvarSocial(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda","AGENDA SERVIÇO SOCIAL");
+  form.append("agenda","SOCIAL");
 
   form.append("data", dataSocial.value);
   form.append("hora", periodoSocial.value);
