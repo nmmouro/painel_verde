@@ -238,8 +238,7 @@ const API = {
 
   async listar(sheet){
     const res = await fetch(`${API_URL}?agenda=${sheet}`);
-    const json = await res.json();
-    return json;
+    return await res.json();
   },
 
   async salvar(data){
