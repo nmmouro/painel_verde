@@ -311,14 +311,14 @@ async function carregarAgenda(){
   const res = await API.listar(SHEETS.AGENDA);
 
   if(!res.success){
-    toast("Erro ao carregar Agenda");
+    toast("Erro: " + res.erro);
     return;
   }
 
   renderTabela({
     target:"tabelaAgenda",
     dados:res.dados,
-    sheet:"AGENDA DO DIA",
+    sheet:SHEETS.AGENDA, // ✅ corrigido
     colunas:[
       {label:"Data", index:1, field:"data", editable:true},
       {label:"Hora", index:2, field:"hora", editable:true},
@@ -326,27 +326,26 @@ async function carregarAgenda(){
       {label:"Setor", index:4, field:"setor", editable:true},
       {label:"Motivo", index:5, field:"motivo", editable:true},
       {label:"Itinerário", index:6, field:"itinerario", editable:true},
-      {label:"Status", index:7, field:"status", render:statusHTML, editable:false}
+      {label:"Status", index:7, field:"status", render:statusHTML}
     ]
   });
-
 }
 
 
 
 async function carregarSocial(){
 
-  const res = await API.listar("SOCIAL");
+  const res = await API.listar(SHEETS.SOCIAL);
 
   if(!res.success){
-    toast("Erro ao carregar Social");
+    toast("Erro: " + res.erro);
     return;
   }
 
   renderTabela({
     target:"tabelaSocial",
     dados:res.dados,
-    sheet:"AGENDA SERVIÇO SOCIAL",
+    sheet:SHEETS.SOCIAL, // ✅ corrigido
     colunas:[
       {label:"Data", index:1, field:"data", editable:true},
       {label:"Período", index:2, field:"hora", editable:true},
@@ -356,7 +355,6 @@ async function carregarSocial(){
       {label:"Status", index:7, field:"status", render:statusHTML}
     ]
   });
-
 }
 
 
@@ -369,7 +367,7 @@ async function salvarAgenda(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda", SHEETS.AGENDA);
+  form.append("agenda", SHEETS.AGENDA); // ✅ corrigido
 
   form.append("data", dataAgenda.value);
   form.append("hora", horaAgenda.value);
@@ -391,11 +389,10 @@ async function salvarSocial(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda","SOCIAL");
+  form.append("agenda", SHEETS.SOCIAL); // ✅ corrigido
 
   form.append("data", dataSocial.value);
   form.append("hora", periodoSocial.value);
-
   form.append("passageiro", passageiroSocial.value);
   form.append("setor","");
   form.append("motivo", motivoSocial.value);
@@ -414,7 +411,6 @@ async function salvarSocial(){
 // =========================
 
 async function editarCampo(id, campo, valor, agenda){
-
   const form = new FormData();
   form.append("acao","editar_campo");
   form.append("id",id);
@@ -424,7 +420,6 @@ async function editarCampo(id, campo, valor, agenda){
 
   await API.salvar(form);
 }
-
 
 async function deletar(id, agenda){
 
@@ -442,6 +437,7 @@ async function deletar(id, agenda){
 
   toast("Excluído ✅");
 }
+
 
 
 // =========================
