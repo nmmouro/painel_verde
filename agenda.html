@@ -308,7 +308,7 @@ function renderTabela({target, dados, colunas, sheet}){
 
 async function carregarAgenda(){
 
-  const res = await API.listar("AGENDA");
+  const res = await API.listar(SHEETS.AGENDA);
 
   if(!res.success){
     toast("Erro ao carregar Agenda");
@@ -369,7 +369,7 @@ async function salvarAgenda(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda","AGENDA");
+  form.append("agenda", SHEETS.AGENDA);
 
   form.append("data", dataAgenda.value);
   form.append("hora", horaAgenda.value);
