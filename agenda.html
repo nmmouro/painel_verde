@@ -373,7 +373,7 @@ async function salvarAgenda(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda", SHEETS.AGENDA); // ✅ corrigido
+  form.append("agenda", AGENDA); // ✅ corrigido
 
   form.append("data", dataAgenda.value);
   form.append("hora", horaAgenda.value);
@@ -395,7 +395,7 @@ async function salvarSocial(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda", SHEETS.SOCIAL); // ✅ corrigido
+  form.append("agenda", SOCIAL); // ✅ corrigido
 
   form.append("data", dataSocial.value);
   form.append("hora", periodoSocial.value);
