@@ -236,15 +236,26 @@ function statusHTML(s){
   return `<span class="status ${map[s]||""}">${s||""}</span>`;
 }
 
+let loaded = {
+  agenda: false,
+  social: false
+};
+
 function mostrarTela(tela){
 
-  document.getElementById("telaAgenda").style.display =
-    tela === "agenda" ? "block" : "none";
+  telaAgenda.style.display = tela === "agenda" ? "block" : "none";
+  telaSocial.style.display = tela === "social" ? "block" : "none";
 
-  document.getElementById("telaSocial").style.display =
-    tela === "social" ? "block" : "none";
+  if(tela === "agenda" && !loaded.agenda){
+    carregarAgenda();
+    loaded.agenda = true;
+  }
+
+  if(tela === "social" && !loaded.social){
+    carregarSocial();
+    loaded.social = true;
+  }
 }
-
   
 
 function toast(msg){
@@ -493,8 +504,7 @@ function mostrarTela(tela){
 // =========================
 
 function init(){
-  carregarAgenda();
-  carregarSocial();
+  mostrarTela("agenda"); // inicia já carregando agenda
 }
 
 init();
