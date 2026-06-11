@@ -184,13 +184,24 @@ tr:nth-child(even){
 
   </div>
 
-  <div id="tabelaSocial"></div>
+       <h2 style="margin-top:40px;text-align:center;">
+🏥 AGENDA DO DIA
+</h2>
+
+ 
+
+<div id="tabela"></div>
+
+   <h3 style="margin-top:40px;text-align:center;">
+🏥 AGENDA SERVIÇO SOCIAL
+</h3>
+
+<div id="tabelaServicoSocial"></div>
 
 </div>
 </main>
 
-</main>
-</div>
+
 
 <script>
 
@@ -224,6 +235,17 @@ function statusHTML(s){
   };
   return `<span class="status ${map[s]||""}">${s||""}</span>`;
 }
+
+function mostrarTela(tela){
+
+  document.getElementById("telaAgenda").style.display =
+    tela === "agenda" ? "block" : "none";
+
+  document.getElementById("telaSocial").style.display =
+    tela === "social" ? "block" : "none";
+}
+
+  
 
 function toast(msg){
   console.log(msg);
@@ -348,7 +370,7 @@ async function carregarSocial(){
   }
 
   renderTabela({
-    target:"tabelaSocial",
+    target:"tabelaServicoSocial",
     dados:res.dados,
     sheet:SHEETS.SOCIAL, // ✅ corrigido
     colunas:[
@@ -372,7 +394,7 @@ async function salvarAgenda(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda", AGENDA); // ✅ corrigido
+  form.append("agenda", SHEETS.AGENDA); // ✅ corrigido
 
   form.append("data", dataAgenda.value);
   form.append("hora", horaAgenda.value);
@@ -394,7 +416,7 @@ async function salvarSocial(){
   const form = new FormData();
 
   form.append("acao","novo");
-  form.append("agenda", SOCIAL); // ✅ corrigido
+  form.append("agenda", SHEETS.SOCIAL); // ✅ corrigido
 
   form.append("data", dataSocial.value);
   form.append("hora", periodoSocial.value);
