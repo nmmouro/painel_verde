@@ -130,6 +130,38 @@ tr:nth-child(even){
 
 <body>
 
+
+<div style="
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+">
+
+  <label>📅 Data:</label>
+
+  <input
+  type="date"
+  id="filtroData"
+  onchange="carregarAgenda();
+    carregarServicoSocial()"
+    style="
+      padding:20px;
+      border-radius:10px;
+      border:none;
+      font-size:20px;
+      font-weight:bold;
+      height:20px;
+    "
+  >
+
+</div>
+
+
+
+  
+
 <div class="layout">
 
 <!-- MENU --><aside class="sidebar">
