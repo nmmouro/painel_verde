@@ -239,7 +239,7 @@
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-edit" onclick="saveRowP2(this)">Salvar</button>
+      <button class="btn btn-edit" onclick="saveRowP1(this)">Salvar</button>
       <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
     </td>
   `;
@@ -249,6 +249,18 @@
       cell.contentEditable = true;
     }
 
+    function saveRowP1(btn) {
+  const row = btn.parentElement.parentElement;
+
+  const data = row.cells[0].querySelector("input").value;
+  
+  row.cells[0].innerText = formatDate(data);
+  
+  for (let i = 2; i < 7; i++) {
+    row.cells[i].contentEditable = false;
+  }
+}
+
     const actions = row.insertCell(7);
     actions.innerHTML = `
       <button class="btn btn-edit" onclick="editRow(this)">Salvar</button>
@@ -256,14 +268,14 @@
     `;
   }
 
-  function editRow(btn) {
+  function editRowP1(btn) {
     const row = btn.parentElement.parentElement;
     for (let i = 0; i < 7; i++) {
       row.cells[i].contentEditable = false;
     }
   }
 
-  function deleteRow(btn) {
+  function deleteRowP1(btn) {
     const row = btn.parentElement.parentElement;
     row.remove();
   }
