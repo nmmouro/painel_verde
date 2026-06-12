@@ -254,6 +254,83 @@
     row.remove();
   }
 
+  /* ============================
+   PLANILHA 2 CRUD
+============================ */
+
+function addRowP2() {
+  const table = document.querySelector("#table2 tbody");
+  const row = table.insertRow();
+
+  row.innerHTML = `
+    <td><input type="date"></td>
+    <td>
+      <select>
+        <option>Manhã</option>
+        <option>Tarde</option>
+      </select>
+    </td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td>
+      <button class="btn btn-edit" onclick="saveRowP2(this)">Salvar</button>
+      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+    </td>
+  `;
+}
+
+function saveRowP2(btn) {
+  const row = btn.parentElement.parentElement;
+
+  const data = row.cells[0].querySelector("input").value;
+  const periodo = row.cells[1].querySelector("select").value;
+
+  row.cells[0].innerText = formatDate(data);
+  row.cells[1].innerText = periodo;
+
+  for (let i = 2; i < 6; i++) {
+    row.cells[i].contentEditable = false;
+  }
+}
+
+function formatDate(data) {
+  if (!data) return "";
+  const d = new Date(data);
+  return d.toLocaleDateString('pt-BR');
+}
+
+/* ============================
+   BUSCA / FILTRO
+============================ */
+
+function filtrar() {
+  const dataBusca = document.getElementById("searchDate").value;
+  const planilha = document.getElementById("searchPlan").value;
+
+  if (planilha === "p1" || planilha === "p2") {
+    showPlanilha(planilha);
+  }
+
+  if (!dataBusca) return;
+
+  const formatted = formatDate(dataBusca);
+
+  const tables = [];
+
+  if (planilha === "all" || planilha === "p1") tables.push("#table1");
+  if (planilha === "all" || planilha === "p2") tables.push("#table2");
+
+  tables.forEach(id => {
+    document.querySelectorAll(id + " tbody tr").forEach(row => {
+      const cellDate = row.cells[0].innerText;
+      row.style.display = (cellDate === formatted) ? "" : "none";
+    });
+  });
+}
+
+
   /* SOM */
   function toggleSound() {
     alert("Controle de som implementável futuramente");
