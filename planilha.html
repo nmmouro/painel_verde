@@ -209,31 +209,42 @@
 
 <script>
 
-  /* DATA E HORA */
-  function updateDateTime() {
-    const now = new Date();
-    document.getElementById("datetime").innerText =
-      now.toLocaleDateString() + " " + now.toLocaleTimeString();
-  }
-  setInterval(updateDateTime, 1000);
+/* ============================
+   DATA E HORA HEADER
+============================ */
 
-  /* TROCA PLANILHA */
-  function showPlanilha(id) {
-    document.getElementById('planilha1').style.display = "none";
-    document.getElementById('planilha2').style.display = "none";
+function updateDateTime() {
+  const now = new Date();
+  document.getElementById("datetime").innerText =
+    now.toLocaleDateString() + " " + now.toLocaleTimeString();
+}
+setInterval(updateDateTime, 1000);
 
-    if (id === 'p1') document.getElementById('planilha1').style.display = "block";
-    else document.getElementById('planilha2').style.display = "block";
-  }
 
-  /* CRUD PLANILHA 1 */
-  function addRowP1() {
-    const table = document.querySelector("#table1 tbody");
-    const row = table.insertRow();
+/* ============================
+   TROCA DE PLANILHA
+============================ */
 
-    row.innerHTML = `
+function showPlanilha(id) {
+  document.getElementById('planilha1').style.display = "none";
+  document.getElementById('planilha2').style.display = "none";
+
+  document.getElementById(id === 'p1' ? 'planilha1' : 'planilha2').style.display = "block";
+}
+
+
+/* ============================
+   PLANILHA 1 (CRUD)
+============================ */
+
+function addRowP1() {
+  const table = document.querySelector("#table1 tbody");
+  const row = table.insertRow();
+
+  row.innerHTML = `
     <td><input type="date"></td>
-    <td><input type="hora"></td>
+    <td><input type="time"></td>
+    <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
@@ -243,43 +254,33 @@
       <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
     </td>
   `;
+}
 
-   
-    function saveRowP1(btn) {
+function saveRowP1(btn) {
   const row = btn.parentElement.parentElement;
 
   const data = row.cells[0].querySelector("input").value;
   const hora = row.cells[1].querySelector("input").value;
-  
+
   row.cells[0].innerText = formatDate(data);
   row.cells[1].innerText = hora;
-  
-  for (let i = 2; i < 7; i++) {
+
+  for (let i = 2; i <= 6; i++) {
     row.cells[i].contentEditable = false;
   }
 }
 
-  const actions = row.insertCell(7);
-  actions.innerHTML = `
-      <button class="btn btn-edit" onclick="editRow(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
-    `;
-  }
+function editRowP1(btn) {
+  const row = btn.parentElement.parentElement;
 
-  function editRowP1(btn) {
-    const row = btn.parentElement.parentElement;
-    for (let i = 2; i < 7; i++) {
-      row.cells[i].contentEditable = false;
-    }
+  for (let i = 2; i <= 6; i++) {
+    row.cells[i].contentEditable = true;
   }
+}
 
-  function deleteRowP1(btn) {
-    const row = btn.parentElement.parentElement;
-    row.remove();
-  }
 
-  /* ============================
-   PLANILHA 2 CRUD
+/* ============================
+   PLANILHA 2 (CRUD)
 ============================ */
 
 function addRowP2() {
@@ -314,9 +315,19 @@ function saveRowP2(btn) {
   row.cells[0].innerText = formatDate(data);
   row.cells[1].innerText = periodo;
 
-  for (let i = 2; i < 7; i++) {
+  for (let i = 2; i <= 5; i++) {
     row.cells[i].contentEditable = false;
   }
+}
+
+
+/* ============================
+   FUNÇÕES GERAIS
+============================ */
+
+function deleteRow(btn) {
+  const row = btn.parentElement.parentElement;
+  row.remove();
 }
 
 function formatDate(data) {
@@ -325,8 +336,9 @@ function formatDate(data) {
   return d.toLocaleDateString('pt-BR');
 }
 
+
 /* ============================
-   BUSCA / FILTRO
+   FILTRO
 ============================ */
 
 function filtrar() {
@@ -355,19 +367,21 @@ function filtrar() {
 }
 
 
-  /* SOM */
-  function toggleSound() {
-    alert("Controle de som implementável futuramente");
-  }
+/* ============================
+   SOM + FULLSCREEN
+============================ */
 
-  /* FULLSCREEN */
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
+function toggleSound() {
+  alert("Controle de som implementável futuramente");
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
   }
+}
 
 </script>
 
