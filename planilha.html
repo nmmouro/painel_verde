@@ -418,8 +418,8 @@ function addRowP1() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-edit" onclick="saveRowP1(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+      <button onclick="createRowP1(this)">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
     </td>
   `;
 }
@@ -438,6 +438,100 @@ function addRowP1() {
     // montar tabela aqui
   });
 }
+
+function createRowP1(btn) {
+  const row = btn.parentElement.parentElement;
+
+  const dataInput = row.cells[0].querySelector("input");
+  const horaInput = row.cells[1].querySelector("input");
+
+  const passageiro = row.cells[2].innerText;
+  const setor = row.cells[3].innerText;
+  const motivo = row.cells[4].innerText;
+  const itinerario = row.cells[5].innerText;
+  const status = row.cells[6].innerText;
+
+  const data = dataInput.value;
+  const hora = horaInput.value;
+
+  /* ============================
+     VALIDAÇÃO
+  ============================ */
+
+  if (!validarCampo(data, "Data")) {
+    destacarErro(dataInput);
+    return;
+  }
+
+  if (!validarCampo(hora, "Hora")) {
+    destacarErro(horaInput);
+    return;
+  }
+
+  if (!validarCampo(passageiro, "Passageiro")) {
+    destacarErro(row.cells[2]);
+    return;
+  }
+
+  if (!validarCampo(setor, "Setor")) {
+    destacarErro(row.cells[3]);
+    return;
+  }
+
+  if (!validarCampo(status, "Status")) {
+    destacarErro(row.cells[6]);
+    return;
+  }
+
+  /* ============================
+     LIMPAR ERROS
+  ============================ */
+
+  limparErro(dataInput);
+  limparErro(horaInput);
+
+  for (let i = 2; i <= 6; i++) {
+    limparErro(row.cells[i]);
+  }
+
+  /* ============================
+     ENVIO PARA GOOGLE SHEETS
+  ============================ */
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha1",
+      valores: [
+        formatDate(data),
+        hora,
+        passageiro,
+        setor,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      // feedback leve (evita alert pesado)
+      console.log("✅ Registro criado com sucesso");
+
+      // recarrega tabela sincronizada
+      carregarPlanilha("Planilha1");
+    } else {
+      alert("❌ Erro ao salvar no Google Sheets");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Erro de conexão com API");
+  });
+}
+  
 
 function saveRowP1(btn) {
   const row = btn.parentElement.parentElement;
@@ -541,6 +635,7 @@ function addRowP2() {
     <td><input type="date"></td>
     <td>
       <select>
+        <option value="">Selecione</option>
         <option>Manhã</option>
         <option>Tarde</option>
       </select>
@@ -550,10 +645,56 @@ function addRowP2() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-edit" onclick="saveRowP2(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+      <button class="btn btn-add" onclick="createRowP2(this)">Salvar</button>
+      <button class="btn btn-delete" onclick="deleteRow(this)">Cancelar</button>
     </td>
   `;
+} 
+
+function createRowP2(btn) {
+  const row = btn.parentElement.parentElement;
+
+  const dataInput = row.cells[0].querySelector("input");
+  const periodoSelect = row.cells[1].querySelector("select");
+
+  const passageiro = row.cells[2].innerText;
+  const motivo = row.cells[3].innerText;
+  const itinerario = row.cells[4].innerText;
+  const status = row.cells[5].innerText;
+
+  const data = dataInput.value;
+  const periodo = periodoSelect.value;
+
+  /* VALIDAÇÃO */
+  if (!validarCampo(data, "Data")) return;
+  if (!validarCampo(periodo, "Período")) return;
+  if (!validarCampo(passageiro, "Passageiro")) return;
+
+  /* ENVIO */
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha2",
+      valores: [
+        formatDate(data),
+        periodo,
+        passageiro,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      alert("✅ Registro criado!");
+      carregarPlanilha("Planilha2");
+    } else {
+      alert("❌ Erro ao salvar");
+    }
+  });
 }
 
 function saveRowP2(btn) {
