@@ -230,6 +230,19 @@
     const table = document.querySelector("#table1 tbody");
     const row = table.insertRow();
 
+    row.innerHTML = `
+    <td><input type="date"></td>
+    <td><input type="hora"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td>
+      <button class="btn btn-edit" onclick="saveRowP2(this)">Salvar</button>
+      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+    </td>
+  `;
+
     for (let i = 0; i < 7; i++) {
       const cell = row.insertCell(i);
       cell.contentEditable = true;
