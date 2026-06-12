@@ -553,10 +553,25 @@ function limparSocial(){
   .forEach(id=>document.getElementById(id).value="");
 }
 
+let loaded = {
+  agenda: false,
+  social: false
+};
+
 function mostrarTela(tela){
 
   telaAgenda.style.display = tela === "agenda" ? "block" : "none";
   telaSocial.style.display = tela === "social" ? "block" : "none";
+
+  if(tela === "agenda" && !loaded.agenda){
+    carregarAgenda();
+    loaded.agenda = true;
+  }
+
+  if(tela === "social" && !loaded.social){
+    carregarSocial();
+    loaded.social = true;
+  }
 }
 
 
@@ -565,12 +580,7 @@ function mostrarTela(tela){
 // =========================
 
 function init(){
-
-  const hoje = new Date().toISOString().split("T")[0];
-  filtroData.value = hoje;
-
-  mostrarTela("agenda");
-  carregarAgenda();
+  mostrarTela("agenda"); // inicia já carregando agenda
 }
 
 init();
