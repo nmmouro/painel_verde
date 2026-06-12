@@ -409,6 +409,8 @@ function addRowP1() {
   const table = document.querySelector("#table1 tbody");
   const row = table.insertRow();
 
+  row.classList.add("editing");
+
   row.innerHTML = `
     <td><input type="date"></td>
     <td><input type="time"></td>
@@ -418,8 +420,8 @@ function addRowP1() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button onclick="createRowP1(this)">Salvar</button>
-      <button onclick="deleteRow(this)">Cancelar</button>
+      <button class="btn btn-add" onclick="createRowP1(this)">💾 Salvar</button>
+      <button class="btn btn-delete" onclick="cancelRow(this)">✖ Cancelar</button>
     </td>
   `;
 }
@@ -645,8 +647,8 @@ function addRowP2() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-add" onclick="createRowP2(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Cancelar</button>
+      <button class="btn btn-add" onclick="createRowP1(this)">💾 Salvar</button>
+      <button class="btn btn-delete" onclick="cancelRow(this)">✖ Cancelar</button>
     </td>
   `;
 } 
