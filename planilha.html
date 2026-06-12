@@ -405,69 +405,62 @@ function showPlanilha(id) {
    PLANILHA 1 (CRUD)
 ============================ */
 
-function addRowP1() {
-  const table = document.querySelector("#table1 tbody");
-  const row = table.insertRow();
+function saveRowP1(btn) {
+  const row = btn.parentElement.parentElement;
 
-  row.innerHTML = `
-    <td><input type="date"></td>
-    <td><input type="time"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td>
-      <button class="btn btn-edit" onclick="saveRowP1(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
-    </td>
-  `;
+  const dataInput = row.cells[0].querySelector("input");
+  const horaInput = row.cells[1].querySelector("input");
+
+  const passageiro = row.cells[2].innerText;
+  const setor = row.cells[3].innerText;
+  const motivo = row.cells[4].innerText;
+  const itinerario = row.cells[5].innerText;
+  const status = row.cells[6].innerText;
+
+  const data = dataInput.value;
+  const hora = horaInput.value;
+
+  /* ============================
+     VALIDAÇÃO
+  ============================ */
+
+  if (!validarCampo(data, "Data")) return;
+  if (!validarCampo(hora, "Hora")) return;
+  if (!validarCampo(passageiro, "Passageiro")) return;
+
+  /* ============================
+     ENVIO PARA GOOGLE SHEETS
+  ============================ */
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha1",
+      valores: [
+        formatDate(data),
+        hora,
+        passageiro,
+        setor,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      alert("✅ Registro salvo!");
+
+      // recarrega tabela sincronizada
+      carregarPlanilha("Planilha1");
+    } else {
+      alert("❌ Erro ao salvar");
+    }
+  });
 }
-
-  fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "create",
-    planilha: "Planilha1",
-    valores: [
-      formatDate(data),
-      hora,
-      passageiro,
-      setor,
-      motivo,
-      itinerario,
-      status
-    ]
-  })
-});
-
-  fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "update",
-    planilha: "Planilha1",
-    id: row.dataset.id,
-    valores: [
-      data,
-      hora,
-      passageiro,
-      setor,
-      motivo,
-      itinerario,
-      status
-    ]
-  })
-});
-
-  fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "delete",
-    planilha: "Planilha1",
-    id: row.dataset.id
-  })
-});
-
+  
   function carregarPlanilha(planilha) {
   fetch(API_URL, {
     method: "POST",
