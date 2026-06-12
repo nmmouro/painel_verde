@@ -244,17 +244,15 @@
     </td>
   `;
 
-    for (let i = 0; i < 7; i++) {
-      const cell = row.insertCell(i);
-      cell.contentEditable = true;
-    }
-
+   
     function saveRowP1(btn) {
   const row = btn.parentElement.parentElement;
 
   const data = row.cells[0].querySelector("input").value;
+  const hora = row.cells[1].querySelector("input").value;
   
   row.cells[0].innerText = formatDate(data);
+  row.cells[1].innerText = hora;
   
   for (let i = 2; i < 7; i++) {
     row.cells[i].contentEditable = false;
