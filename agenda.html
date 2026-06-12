@@ -304,7 +304,22 @@ function formatarHoraBR(hora){
   return hora.slice(0,5); // HH:mm
 }
 
+function normalizarData(data){
+  if(!data) return "";
 
+  // se vier no formato ISO completo
+  if(data.includes("T")){
+    return data.split("T")[0];
+  }
+
+  // se vier DD/MM/YYYY
+  if(data.includes("/")){
+    const [d,m,a] = data.split("/");
+    return `${a}-${m}-${d}`;
+  }
+
+  return data;
+}
 
 
 
@@ -410,14 +425,14 @@ async function carregarAgenda(){
     dados = dados.filter(v => v[1] === dataSelecionada);
   }
 
-  dados.sort((a,b) => a[2].localeCompare(b[2]));
+  
 
   renderTabela({
     target:"tabelaAgenda",
-    dados:res.dados,
+    dados:dados,
     sheet:SHEETS.AGENDA, // ✅ corrigido
     colunas:[
-      {label:"Data", index:1, field:"data", editable:true, render:(v)=>formatarDataBR(v)},
+      {label:"Data", index:1, field:"data", editable:false, render:(v)=>formatarDataBR(v)},
       {label:"Hora", index:2, field:"hora", editable:true, render:(v)=>formatarHoraBR(v)},
       {label:"Passageiro", index:3, field:"passageiro", editable:true},
       {label:"Setor", index:4, field:"setor", editable:true},
@@ -443,10 +458,10 @@ async function carregarSocial(){
   
   renderTabela({
     target:"tabelaServicoSocial",
-    dados:res.dados,
+    dados:dados,
     sheet:SHEETS.SOCIAL, // ✅ corrigido
     colunas:[
-      {label:"Data", index:1, field:"data", editable:true, render:(v)=>formatarDataBR(v)},
+      {label:"Data", index:1, field:"data", editable:false, render:(v)=>formatarDataBR(v)},
       {label:"Período", index:2, field:"hora", editable:true},
       {label:"Passageiro", index:3, field:"passageiro", editable:true},
       {label:"Motivo", index:5, field:"motivo", editable:true},
