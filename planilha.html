@@ -259,11 +259,16 @@
   }
 }
 
-   
+  const actions = row.insertCell(7);
+  actions.innerHTML = `
+      <button class="btn btn-edit" onclick="editRow(this)">Salvar</button>
+      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+    `;
+  }
 
   function editRowP1(btn) {
     const row = btn.parentElement.parentElement;
-    for (let i = 0; i < 7; i++) {
+    for (let i = 2; i < 7; i++) {
       row.cells[i].contentEditable = false;
     }
   }
