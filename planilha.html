@@ -667,20 +667,25 @@ function addRowP2() {
 } 
 
 function createRowP2(btn) {
-  const row = btn.closest("tr");
+  const row = btn.parentElement.parentElement;
 
-  const data = row.cells[0].querySelector("input").value;
-  const periodo = row.cells[1].querySelector("select").value;
+  const dataInput = row.cells[0].querySelector("input");
+  const periodoSelect = row.cells[1].querySelector("select");
 
-  const passageiro = row.cells[2].innerText.trim();
-  const motivo = row.cells[3].innerText.trim();
-  const itinerario = row.cells[4].innerText.trim();
-  const status = row.cells[5].innerText.trim();
+  const passageiro = row.cells[2].innerText;
+  const motivo = row.cells[3].innerText;
+  const itinerario = row.cells[4].innerText;
+  const status = row.cells[5].innerText;
 
+  const data = dataInput.value;
+  const periodo = periodoSelect.value;
+
+  /* VALIDAÇÃO */
   if (!validarCampo(data, "Data")) return;
   if (!validarCampo(periodo, "Período")) return;
   if (!validarCampo(passageiro, "Passageiro")) return;
 
+  /* ENVIO */
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
@@ -696,7 +701,6 @@ function createRowP2(btn) {
       ]
     })
   })
-  .then(res => res.json())
   .then(res => res.json())
   .then(res => {
     if (res.success) {
