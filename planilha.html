@@ -86,6 +86,14 @@
       background: #374151;
     }
 
+    .editing {
+  background: #fff3cd;
+}
+
+button {
+  cursor: pointer;
+}
+
     /* CONTEÚDO */
     .content {
       flex: 1;
@@ -211,6 +219,161 @@
 
 
 const API_URL = "https://script.google.com/macros/s/AKfycbz67LG_8h-EWJs6t132FnT5ask5dE12nFiZECdxEjYig21-hH_L5tXTB_uX1o4WeOjgFw/exec";
+
+
+/* ============================
+   CARREGAR DADOS
+============================ */
+
+function carregarPlanilha(planilha) {
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "read",
+      planilha: planilha
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (planilha === "Planilha1") {
+      renderTable1(res.data);
+    }
+  });
+}
+
+/* ============================
+   RENDER TABELA
+============================ */
+
+function renderTable1(dados) {
+  const tbody = document.querySelector("#table1 tbody");
+  tbody.innerHTML = "";
+
+  dados.slice(1).forEach(row => {
+    const tr = document.createElement("tr");
+    tr.dataset.id = row[0];
+
+    tr.innerHTML = `
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+      <td>${row[6]}</td>
+      <td>${row[7]}</td>
+      <td>
+        <button onclick="editInline(this)">✏️</button>
+        <button onclick="saveInline(this)">💾</button>
+        <button onclick="deleteInline(this)">🗑</button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+/* ============================
+   EDITAR INLINE
+============================ */
+
+function editInline(btn) {
+  const row = btn.parentElement.parentElement;
+  row.classList.add("editing");
+
+  row.cells[0].innerHTML = `<input type="date" value="${toISO(row.cells[0].innerText)}">`;
+  row.cells[1].innerHTML = `<input type="time" value="${row.cells[1].innerText}">`;
+
+  for (let i = 2; i <= 6; i++) {
+    const val = row.cells[i].innerText;
+    row.cells[i].innerHTML = `<input value="${val}">`;
+  }
+}
+
+/* ============================
+   SALVAR INLINE (UPDATE)
+============================ */
+
+function saveInline(btn) {
+  const row = btn.parentElement.parentElement;
+  const id = row.dataset.id;
+
+  const data = row.cells[0].querySelector("input").value;
+  const hora = row.cells[1].querySelector("input").value;
+
+  const valores = [
+    formatDate(data),
+    hora,
+    row.cells[2].querySelector("input").value,
+    row.cells[3].querySelector("input").value,
+    row.cells[4].querySelector("input").value,
+    row.cells[5].querySelector("input").value,
+    row.cells[6].querySelector("input").value
+  ];
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "update",
+      planilha: "Planilha1",
+      id: id,
+      valores: valores
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      carregarPlanilha("Planilha1");
+    } else {
+      alert("Erro ao atualizar");
+    }
+  });
+}
+
+/* ============================
+   EXCLUIR INLINE
+============================ */
+
+function deleteInline(btn) {
+  const row = btn.parentElement.parentElement;
+  const id = row.dataset.id;
+
+  if (!confirm("Deseja excluir este registro?")) return;
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "delete",
+      planilha: "Planilha1",
+      id: id
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      row.remove();
+    } else {
+      alert("Erro ao excluir");
+    }
+  });
+}
+
+/* ============================
+   FORMATAÇÃO DATA
+============================ */
+
+function formatDate(data) {
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+function toISO(dataBR) {
+  const [dia, mes, ano] = dataBR.split("/");
+  return `${ano}-${mes}-${dia}`;
+}
+
+
+
+  
 
   
 
@@ -585,7 +748,13 @@ function toggleFullscreen() {
   }
 }
 
+   window.onload = () => {
+  carregarPlanilha("Planilha1");
+};
+
 </script>
+
+ 
 
 </body>
 </html>
