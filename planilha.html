@@ -140,10 +140,23 @@
   </div>
 </header>
 
+<!-- SIDEBAR COM BUSCA -->
 <aside class="sidebar">
+
+  <div style="padding:10px;">
+    <input type="date" id="searchDate" style="width:100%; margin-bottom:5px;">
+    <select id="searchPlan" style="width:100%; margin-bottom:10px;">
+      <option value="all">Todas</option>
+      <option value="p1">Planilha 1</option>
+      <option value="p2">Planilha 2</option>
+    </select>
+    <button onclick="filtrar()" style="width:100%;">Pesquisar</button>
+  </div>
+
   <button onclick="showPlanilha('p1')">PLANILHA 1</button>
   <button onclick="showPlanilha('p2')">PLANILHA 2</button>
 </aside>
+
 
 <main class="content">
 
