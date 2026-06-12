@@ -197,6 +197,7 @@
           <th>Motivo</th>
           <th>Itinerário</th>
           <th>Status</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -252,6 +253,7 @@
     actions.innerHTML = `
       <button class="btn btn-edit" onclick="editRow(this)">Salvar</button>
       <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+      <button class="btn btn-edit" onclick="deleteRow(this)">Excluir</button>
     `;
   }
 
@@ -303,7 +305,7 @@ function saveRowP2(btn) {
   row.cells[0].innerText = formatDate(data);
   row.cells[1].innerText = periodo;
 
-  for (let i = 2; i < 6; i++) {
+  for (let i = 2; i < 7; i++) {
     row.cells[i].contentEditable = false;
   }
 }
