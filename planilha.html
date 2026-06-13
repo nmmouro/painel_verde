@@ -222,148 +222,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbz67LG_8h-EWJs6t132FnT5
 
 
 /* ============================
-   CARREGAR DADOS
-============================ */
-
-
-
-/* ============================
-   RENDER TABELA
-============================ */
-
-function renderTable1(dados) {
-  const tbody = document.querySelector("#table1 tbody");
-  tbody.innerHTML = "";
-
-  dados.slice(1).forEach(row => {
-    const tr = document.createElement("tr");
-    tr.dataset.id = row[0];
-
-    tr.innerHTML = `
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-      <td>${row[6]}</td>
-      <td>${row[7]}</td>
-      <td>
-        <button onclick="editInline(this)">✏️</button>
-        <button onclick="saveInline(this)">💾</button>
-        <button onclick="deleteInline(this)">🗑</button>
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-  });
-}
-
-/* ============================
-   EDITAR INLINE
-============================ */
-
-function editInline(btn) {
-  const row = btn.parentElement.parentElement;
-  row.classList.add("editing");
-
-  row.cells[0].innerHTML = `<input type="date" value="${toISO(row.cells[0].innerText)}">`;
-  row.cells[1].innerHTML = `<input type="time" value="${row.cells[1].innerText}">`;
-
-  for (let i = 2; i <= 6; i++) {
-    const val = row.cells[i].innerText;
-    row.cells[i].innerHTML = `<input value="${val}">`;
-  }
-}
-
-/* ============================
-   SALVAR INLINE (UPDATE)
-============================ */
-
-function saveInline(btn) {
-  const row = btn.parentElement.parentElement;
-  const id = row.dataset.id;
-
-  const data = row.cells[0].querySelector("input").value;
-  const hora = row.cells[1].querySelector("input").value;
-
-  const valores = [
-    formatDate(data),
-    hora,
-    row.cells[2].querySelector("input").value,
-    row.cells[3].querySelector("input").value,
-    row.cells[4].querySelector("input").value,
-    row.cells[5].querySelector("input").value,
-    row.cells[6].querySelector("input").value
-  ];
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "update",
-      planilha: "Planilha1",
-      id: id,
-      valores: valores
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      carregarPlanilha("Planilha1");
-    } else {
-      alert("Erro ao atualizar");
-    }
-  });
-}
-
-/* ============================
-   EXCLUIR INLINE
-============================ */
-
-function deleteInline(btn) {
-  const row = btn.parentElement.parentElement;
-  const id = row.dataset.id;
-
-  if (!confirm("Deseja excluir este registro?")) return;
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "delete",
-      planilha: "Planilha1",
-      id: id
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      row.remove();
-    } else {
-      alert("Erro ao excluir");
-    }
-  });
-}
-
-/* ============================
-   FORMATAÇÃO DATA
-============================ */
-
-function formatDate(data) {
-  const [ano, mes, dia] = data.split("-");
-  return `${dia}/${mes}/${ano}`;
-}
-
-function toISO(dataBR) {
-  const [dia, mes, ano] = dataBR.split("/");
-  return `${ano}-${mes}-${dia}`;
-}
-
-
-
-  
-
-  
-
-/* ============================
    DATA E HORA HEADER
 ============================ */
 
@@ -395,8 +253,6 @@ function addRowP1() {
   const table = document.querySelector("#table1 tbody");
   const row = table.insertRow();
 
-  row.classList.add("editing");
-
   row.innerHTML = `
     <td><input type="date"></td>
     <td><input type="time"></td>
@@ -406,141 +262,25 @@ function addRowP1() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button onclick="createRowP1(this)">💾</button>
-      <button onclick="cancelRow(this)">✖</button>
+      <button class="btn btn-edit" onclick="saveRowP1(this)">Salvar</button>
+      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
     </td>
   `;
-
-  setTimeout(() => {
-    row.cells[0].querySelector("input").focus();
-  }, 100);
 }
-  
-  function carregarPlanilha(planilha) {
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "read",
-      planilha: planilha
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success && planilha === "Planilha1") {
-      renderTable1(res.data);
-    }
-  })
-  .catch(err => console.error("Erro ao carregar:", err));
-}
-
-function createRowP1(btn) {
-  const row = btn.closest("tr");
-
-  const dataInput = row.cells[0].querySelector("input").value;
-  const horaInput = row.cells[1].querySelector("input").value;
-
-  const passageiro = row.cells[2].innerText.trim();
-  const setor = row.cells[3].innerText.trim();
-  const motivo = row.cells[4].innerText.trim();
-  const itinerario = row.cells[5].innerText.trim();
-  const status = row.cells[6].innerText.trim();
-
-  if (!validarCampo(data, "Data")) return;
-  if (!validarCampo(hora, "Hora")) return;
-  if (!validarCampo(passageiro, "Passageiro")) return;
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha: "Planilha1",
-      valores: [
-        formatDate(data),
-        hora,
-        passageiro,
-        setor,
-        motivo,
-        itinerario,
-        status
-      ]
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      carregarPlanilha("Planilha1");
-    } else {
-      alert("Erro ao salvar");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Erro de conexão");
-  });
-}
-  
 
 function saveRowP1(btn) {
   const row = btn.parentElement.parentElement;
 
-  const dataInput = row.cells[0].querySelector("input");
-  const horaInput = row.cells[1].querySelector("input");
+  const data = row.cells[0].querySelector("input").value;
+  const hora = row.cells[1].querySelector("input").value;
 
-  const passageiro = row.cells[2].innerText;
-  const setor = row.cells[3].innerText;
-  const motivo = row.cells[4].innerText;
-  const itinerario = row.cells[5].innerText;
-  const status = row.cells[6].innerText;
+  row.cells[0].innerText = formatDate(data);
+  row.cells[1].innerText = hora;
 
-  const data = dataInput.value;
-  const hora = horaInput.value;
-
-  /* ============================
-     VALIDAÇÃO
-  ============================ */
-
-  if (!validarCampo(data, "Data")) return;
-  if (!validarCampo(hora, "Hora")) return;
-  if (!validarCampo(passageiro, "Passageiro")) return;
-
-  /* ============================
-     ENVIO PARA GOOGLE SHEETS
-  ============================ */
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha: "Planilha1",
-      valores: [
-        formatDate(data),
-        hora,
-        passageiro,
-        setor,
-        motivo,
-        itinerario,
-        status
-      ]
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro salvo!");
-
-      // recarrega tabela sincronizada
-      carregarPlanilha("Planilha1");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
+  for (let i = 2; i <= 6; i++) {
+    row.cells[i].contentEditable = false;
+  }
 }
-
-/* ============================
-   envio para Google Sheets
-============================ */
-
-  
 
 function editRowP1(btn) {
   const row = btn.parentElement.parentElement;
@@ -559,13 +299,10 @@ function addRowP2() {
   const table = document.querySelector("#table2 tbody");
   const row = table.insertRow();
 
-  row.classList.add("editing");
-
   row.innerHTML = `
     <td><input type="date"></td>
     <td>
       <select>
-        <option value="">Selecione</option>
         <option>Manhã</option>
         <option>Tarde</option>
       </select>
@@ -575,151 +312,25 @@ function addRowP2() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-add" onclick="createRowP2(this)">💾 Salvar</button>
-      <button class="btn btn-delete" onclick="cancelRow(this)">✖ Cancelar</button>
+      <button class="btn btn-edit" onclick="saveRowP2(this)">Salvar</button>
+      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
     </td>
   `;
-
-  // foco automático no primeiro campo
-  setTimeout(() => {
-    row.cells[0].querySelector("input").focus();
-  }, 100);
-} 
-
-function createRowP2(btn) {
-  const row = btn.parentElement.parentElement;
-
-  const dataInput = row.cells[0].querySelector("input");
-  const periodoSelect = row.cells[1].querySelector("select");
-
-  const passageiro = row.cells[2].innerText;
-  const motivo = row.cells[3].innerText;
-  const itinerario = row.cells[4].innerText;
-  const status = row.cells[5].innerText;
-
-  const data = dataInput.value;
-  const periodo = periodoSelect.value;
-
-  /* VALIDAÇÃO */
-  if (!validarCampo(data, "Data")) return;
-  if (!validarCampo(periodo, "Período")) return;
-  if (!validarCampo(passageiro, "Passageiro")) return;
-
-  /* ENVIO */
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha: "Planilha2",
-      valores: [
-        formatDate(data),
-        periodo,
-        passageiro,
-        motivo,
-        itinerario,
-        status
-      ]
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro criado!");
-      carregarPlanilha("Planilha2");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
 }
 
 function saveRowP2(btn) {
   const row = btn.parentElement.parentElement;
 
-  const dataInput = row.cells[0].querySelector("input");
-  const periodoSelect = row.cells[1].querySelector("select");
-
-  const passageiro = row.cells[2].innerText;
-  const motivo = row.cells[3].innerText;
-  const itinerario = row.cells[4].innerText;
-  const status = row.cells[5].innerText;
-
-  const data = dataInput.value;
-  const periodo = periodoSelect.value;
-
-  /* ============================
-     VALIDAÇÃO
-  ============================ */
-
-  if (!validarCampo(data, "Data")) {
-    destacarErro(dataInput);
-    return;
-  }
-
-  if (!validarCampo(periodo, "Período")) {
-    destacarErro(periodoSelect);
-    return;
-  }
-
-  if (!validarCampo(passageiro, "Passageiro")) {
-    destacarErro(row.cells[2]);
-    return;
-  }
-
-  /* ============================
-     LIMPAR ERROS
-  ============================ */
-
-  limparErro(dataInput);
-  limparErro(periodoSelect);
-
-  /* ============================
-     ENVIO PARA GOOGLE SHEETS
-  ============================ */
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha: "Planilha2",
-      valores: [
-        formatDate(data),
-        periodo,
-        passageiro,
-        motivo,
-        itinerario,
-        status
-      ]
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro salvo!");
-
-      // Atualiza tabela
-      carregarPlanilha("Planilha2");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
-
-  /* ============================
-     ATUALIZA UI (opcional)
-  ============================ */
+  const data = row.cells[0].querySelector("input").value;
+  const periodo = row.cells[1].querySelector("select").value;
 
   row.cells[0].innerText = formatDate(data);
   row.cells[1].innerText = periodo;
 
   for (let i = 2; i <= 5; i++) {
     row.cells[i].contentEditable = false;
-    limparErro(row.cells[i]);
   }
 }
-
-  /* ============================
-   envio para Google Sheets
-============================ */
-
 
 
 /* ============================
@@ -731,13 +342,10 @@ function deleteRow(btn) {
   row.remove();
 }
 
-function parseLocalDate(data) {
-  const [ano, mes, dia] = data.split("-");
-  return new Date(ano, mes - 1, dia); // LOCAL (sem UTC bug)
-}
-
-  function cancelRow(btn) {
-  btn.closest("tr").remove();
+function formatDate(data) {
+  if (!data) return "";
+  const d = new Date(data);
+  return d.toLocaleDateString('pt-BR');
 }
 
 
@@ -768,26 +376,6 @@ function filtrar() {
       row.style.display = (cellDate === formatted) ? "" : "none";
     });
   });
-}
-
-  /* ============================
-   VALIDAÇÃO DE DADOS
-============================ */
-
-  function validarCampo(campo, nome) {
-  if (!campo || campo.trim() === "") {
-    alert("Campo obrigatório: " + nome);
-    return false;
-  }
-  return true;
-}
-
-function destacarErro(element) {
-  element.style.border = "2px solid red";
-}
-
-function limparErro(element) {
-  element.style.border = "";
 }
 
 
