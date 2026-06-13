@@ -436,8 +436,8 @@ function addRowP1() {
 function createRowP1(btn) {
   const row = btn.closest("tr");
 
-  const data = row.cells[0].querySelector("input").value;
-  const hora = row.cells[1].querySelector("input").value;
+  const dataInput = row.cells[0].querySelector("input").value;
+  const horaInput = row.cells[1].querySelector("input").value;
 
   const passageiro = row.cells[2].innerText.trim();
   const setor = row.cells[3].innerText.trim();
