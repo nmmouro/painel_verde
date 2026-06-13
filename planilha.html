@@ -421,10 +421,20 @@ function deleteRow(btn) {
   row.remove();
 }
 
+/* ============================
+   FORMATAÇÃO DA DATA
+============================ */
+  
 function formatDate(data) {
   if (!data) return "";
-  const d = new Date(data);
-  return d.toLocaleDateString('pt-BR');
+
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+  function parseLocalDate(data) {
+  const [ano, mes, dia] = data.split("-");
+  return new Date(ano, mes - 1, dia); // LOCAL (sem UTC bug)
 }
 
   function validarCampo(campo, nome) {
