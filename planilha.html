@@ -431,6 +431,11 @@ function formatDate(data) {
   return `${dia}/${mes}/${ano}`;
 }
 
+function parseLocalDate(data) {
+  const [ano, mes, dia] = data.split("-");
+  return new Date(ano, mes - 1, dia); // LOCAL (sem UTC bug)
+}
+
 function validarCampo(valor, nome) {
   if (!valor || valor.trim() === "") {
     alert(`Campo obrigatório: ${nome}`);
