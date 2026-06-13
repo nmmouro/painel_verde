@@ -391,11 +391,32 @@ function editCell(td, tipo, planilha) {
 ============================ */
 function saveRow(row, planilha) {
   const id = row.dataset.id;
-  const campos = [...row.querySelectorAll("input, select")];
+  let valores;
 
-  if (!id || campos.length === 0) return;
+  if (planilha === "Planilha1") {
+    const campos = [...row.querySelectorAll("input")];
 
-  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
+    valores = [
+      formatDate(campos[0].value),
+      campos[1].value,
+      campos[2]?.value,
+      campos[3]?.value,
+      campos[4]?.value,
+      campos[5]?.value,
+      campos[6]?.value
+    ];
+  } else {
+    const campos = [...row.querySelectorAll("input, select")];
+
+    valores = [
+      formatDate(campos[0].value),
+      campos[1].value,
+      campos[2]?.value,
+      campos[3]?.value,
+      campos[4]?.value,
+      campos[5]?.value
+    ];
+  }
 
   fetch(API_URL, {
     method: "POST",
@@ -418,11 +439,40 @@ function saveRow(row, planilha) {
 ============================ */
 function createRow(btn, planilha) {
   const row = btn.closest("tr");
-  const campos = [...row.querySelectorAll("input, select")];
 
-  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
+  let valores;
 
-  if (!valores[0]) return alert("Data obrigatória");
+  if (planilha === "Planilha1") {
+    const data = row.cells[0].querySelector("input").value;
+    const hora = row.cells[1].querySelector("input").value;
+
+    valores = [
+      formatDate(data),
+      hora,
+      row.cells[2].innerText.trim(),
+      row.cells[3].innerText.trim(),
+      row.cells[4].innerText.trim(),
+      row.cells[5].innerText.trim(),
+      row.cells[6].innerText.trim()
+    ];
+  } else {
+    const data = row.cells[0].querySelector("input").value;
+    const periodo = row.cells[1].querySelector("select").value;
+
+    valores = [
+      formatDate(data),
+      periodo,
+      row.cells[2].innerText.trim(),
+      row.cells[3].innerText.trim(),
+      row.cells[4].innerText.trim(),
+      row.cells[5].innerText.trim()
+    ];
+  }
+
+  if (!valores[0]) {
+    alert("Data obrigatória");
+    return;
+  }
 
   fetch(API_URL, {
     method: "POST",
@@ -432,7 +482,20 @@ function createRow(btn, planilha) {
       valores
     })
   })
-  .then(() => carregarPlanilha(planilha));
+  .then(res => res.json())
+  .then(res => {
+    console.log("Resposta API:", res);
+
+    if (res.success) {
+      carregarPlanilha(planilha);
+    } else {
+      alert("Erro ao salvar");
+    }
+  })
+  .catch(err => {
+    console.error("Erro:", err);
+    alert("Erro na comunicação com API");
+  });
 }
 
 /* ============================
