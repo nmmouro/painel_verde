@@ -391,33 +391,11 @@ function editCell(td, tipo, planilha) {
 ============================ */
 function saveRow(row, planilha) {
   const id = row.dataset.id;
-
   const campos = [...row.querySelectorAll("input, select")];
 
-  if (campos.length === 0) return;
+  if (!id || campos.length === 0) return;
 
-  let valores;
-
-  if (planilha === "Planilha1") {
-    valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      campos[2]?.value,
-      campos[3]?.value,
-      campos[4]?.value,
-      campos[5]?.value,
-      campos[6]?.value
-    ];
-  } else {
-    valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      campos[2]?.value,
-      campos[3]?.value,
-      campos[4]?.value,
-      campos[5]?.value
-    ];
-  }
+  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
 
   fetch(API_URL, {
     method: "POST",
