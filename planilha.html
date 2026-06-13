@@ -262,8 +262,8 @@ function carregarPlanilha(planilha) {
    RENDER TABLE 1
 ============================ */
 function renderTable1(data) {
-  const row = document.querySelector("#table1 tbody");
-  row.innerHTML = "";
+  const tbody = document.querySelector("#table1 tbody");
+  tbody.innerHTML = "";
 
   data.slice(1).forEach(row => {
     const tr = document.createElement("tr");
@@ -309,7 +309,6 @@ function renderTable2(data) {
       <td onclick="editCell(this,'text','Planilha2')">${row[6]}</td>
       
     <td>
-      <button onclick="createRow(this,'Planilha2')">Salvar</button>
       <button onclick="deleteRow(this)">Cancelar</button>
     </td>
 
@@ -318,6 +317,52 @@ function renderTable2(data) {
     tbody.appendChild(tr);
   });
 }
+
+function addRow(planilha) {
+  const tableId = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
+  const row = document.querySelector(tableId).insertRow();
+
+  if (planilha === "Planilha1") {
+    row.innerHTML = `
+      <td><input type="date"></td>
+      <td><input type="time"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td>
+        <button onclick="createRow(this,'Planilha1')">Salvar</button>
+        <button onclick="deleteRow(this)">Cancelar</button>
+      </td>
+    `;
+  } else {
+    row.innerHTML = `
+      <td><input type="date"></td>
+      <td>
+        <select>
+          <option value="">Selecione</option>
+          <option>Manhã</option>
+          <option>Tarde</option>
+        </select>
+      </td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td>
+        <button onclick="createRow(this,'Planilha2')">Salvar</button>
+        <button onclick="deleteRow(this)">Cancelar</button>
+      </td>
+    `;
+  }
+
+  // foco automático
+  setTimeout(() => {
+    row.querySelector("input")?.focus();
+  }, 100);
+}
+  
 
 /* ============================
    INLINE EDIT
@@ -402,13 +447,37 @@ function saveRow(row, planilha) {
 ============================ */
 function createRow(btn, planilha) {
   const row = btn.closest("tr");
-
   const campos = [...row.querySelectorAll("input, select")];
 
-  const valores = campos.map((c, i) => {
-    if (i === 0) return formatDate(c.value);
-    return c.value;
-  });
+  if (campos.length === 0) return;
+
+  let valores;
+
+  if (planilha === "Planilha1") {
+    valores = [
+      formatDate(campos[0].value),
+      campos[1].value,
+      row.cells[2].innerText,
+      row.cells[3].innerText,
+      row.cells[4].innerText,
+      row.cells[5].innerText,
+      row.cells[6].innerText
+    ];
+  } else {
+    valores = [
+      formatDate(campos[0].value),
+      campos[1].value,
+      row.cells[2].innerText,
+      row.cells[3].innerText,
+      row.cells[4].innerText,
+      row.cells[5].innerText
+    ];
+  }
+
+  if (!valores[0]) {
+    alert("Data obrigatória");
+    return;
+  }
 
   fetch(API_URL, {
     method: "POST",
@@ -420,8 +489,11 @@ function createRow(btn, planilha) {
   })
   .then(res => res.json())
   .then(res => {
-    if (res.success) carregarPlanilha(planilha);
-    else alert("Erro ao salvar");
+    if (res.success) {
+      carregarPlanilha(planilha);
+    } else {
+      alert("Erro ao salvar");
+    }
   });
 }
 
