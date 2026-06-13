@@ -353,7 +353,6 @@ function editRowP1(btn) {
   }
 }
 
-
 /* ============================
    PLANILHA 2 (CRUD)
 ============================ */
@@ -400,11 +399,11 @@ fetch(API_URL, {
   method: "POST",
   body: JSON.stringify({
     action: "update",
-    planilha: "Planilha1",
+    planilha: "Planilha2",
     id: row.dataset.id,
     valores: [
       data,
-      hora,
+      período,
       passageiro,
       setor,
       motivo,
