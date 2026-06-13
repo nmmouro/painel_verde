@@ -397,24 +397,22 @@ function saveRow(row, planilha) {
     const inputs = row.querySelectorAll("input");
 
     valores = [
-      formatDate(inputs[0].value),
-      inputs[1].value,
-      inputs[2]?.value,
-      inputs[3]?.value,
-      inputs[4]?.value,
-      inputs[5]?.value,
-      inputs[6]?.value
+      formatDate(getValor(row.cells[0])),
+      getValor(row.cells[1]),
+      getValor(row.cells[2]),
+      getValor(row.cells[3]),
+      getValor(row.cells[4]),
+      getValor(row.cells[5]),
+      getValor(row.cells[6])
     ];
   } else {
-    const inputs = row.querySelectorAll("input, select");
-
     valores = [
-      formatDate(inputs[0].value),
-      inputs[1].value,
-      inputs[2]?.value,
-      inputs[3]?.value,
-      inputs[4]?.value,
-      inputs[5]?.value
+      formatDate(getValor(row.cells[0])),
+      getValor(row.cells[1]),
+      getValor(row.cells[2]),
+      getValor(row.cells[3]),
+      getValor(row.cells[4]),
+      getValor(row.cells[5])
     ];
   }
 
@@ -538,6 +536,16 @@ function toISO(data) {
   if (!data) return "";
   const [dia, mes, ano] = data.split("/");
   return `${ano}-${mes}-${dia}`;
+}
+
+  function getValor(td) {
+  const input = td.querySelector("input, select");
+
+  if (input) {
+    return input.value;
+  }
+
+  return td.innerText.trim();
 }
 
 /* ============================
