@@ -244,6 +244,7 @@ function showPlanilha(id) {
   document.getElementById(id === 'p1' ? 'planilha1' : 'planilha2').style.display = "block";
 }
 
+/*  
 function carregarPlanilha(planilha) {
   fetch(API_URL, {
     method: "POST",
@@ -258,7 +259,7 @@ function carregarPlanilha(planilha) {
     // montar tabela aqui
   });
 }
-
+*/
 
 /* ============================
    PLANILHA 1 (CRUD)
@@ -289,73 +290,60 @@ function saveRowP1(btn) {
   const dataInput = row.cells[0].querySelector("input");
   const horaInput = row.cells[1].querySelector("input");
 
-  const passageiro = row.cells[2];
-  const setor = row.cells[3];
-  const motivo = row.cells[4];
-  const itinerario = row.cells[5];
-  const status = row.cells[6];
+  const passageiro = row.cells[2].innerText;
+  const setor = row.cells[3].innerText;
+  const motivo = row.cells[4].innerText;
+  const itinerario = row.cells[5].innerText;
+  const status = row.cells[6].innerText;
 
   const data = dataInput.value;
   const hora = horaInput.value;
 
-  // envio para Google Sheets
-fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "create",
-    planilha: "Planilha1",
-    valores: [
-      formatDate(data),
-      hora,
-      passageiro,
-      setor,
-      motivo,
-      itinerario,
-      status
-    ]
-  })
-})
-.then(res => res.json())
-.then(res => {
-  if (!res.success) alert("Erro ao salvar");
-});
+  /* ============================
+     VALIDAÇÃO
+  ============================ */
 
-fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "delete",
-    planilha: "Planilha1",
-    id: row.dataset.id
+  if (!validarCampo(data, "Data")) {destacarErro(dataInput); return;
+  if (!validarCampo(hora, "Hora")) { destacarErro(horaInput); return;
+  if (!validarCampo(passageiro.innerText, "Passageiro")) {destacarErro(passageiro); return;
+  if (!validarCampo(setor.innerText, "Setor")) {destacarErro(setor); return;
+  if (!validarCampo(status.innerText, "Status")) { destacarErro(status); return;
+
+  /* ============================
+     ENVIO PARA GOOGLE SHEETS
+  ============================ */
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha1",
+      valores: [
+        formatDate(data),
+        hora,
+        passageiro,
+        setor,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
   })
-});
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      alert("✅ Registro salvo!");
+
+      // recarrega tabela sincronizada
+      carregarPlanilha("Planilha1");
+    } else {
+      alert("❌ Erro ao salvar");
+    }
+  });
+}
   
 
-  // VALIDAÇÃO
-  if (!validarCampo(data, "Data")) {
-    destacarErro(dataInput);
-    return;
-  }
-
-  if (!validarCampo(hora, "Hora")) {
-    destacarErro(horaInput);
-    return;
-  }
-
-  if (!validarCampo(passageiro.innerText, "Passageiro")) {
-    destacarErro(passageiro);
-    return;
-  }
-
-  if (!validarCampo(setor.innerText, "Setor")) {
-    destacarErro(setor);
-    return;
-  }
-
-  if (!validarCampo(status.innerText, "Status")) {
-    destacarErro(status);
-    return;
-  }
-
+ 
   // LIMPAR ERROS
   limparErro(dataInput);
   limparErro(horaInput);
@@ -363,6 +351,13 @@ fetch(API_URL, {
   // SALVAR
   row.cells[0].innerText = formatDate(data);
   row.cells[1].innerText = hora;
+
+   /* ============================
+     ATUALIZA UI (opcional)
+  ============================ */
+
+  row.cells[0].innerText = formatDate(data);
+  row.cells[1].innerText = periodo;
 
   for (let i = 2; i <= 6; i++) {
     row.cells[i].contentEditable = false;
@@ -411,39 +406,18 @@ function saveRowP2(btn) {
   const dataInput = row.cells[0].querySelector("input");
   const periodoSelect = row.cells[1].querySelector("select");
 
-  const passageiro = row.cells[2];
-  const motivo = row.cells[3];
-  const itinerario = row.cells[4];
-  const status = row.cells[5];
+  const passageiro = row.cells[2].innerText;
+  const motivo = row.cells[3].innerText;
+  const itinerario = row.cells[4].innerText;
+  const status = row.cells[5].innerText;
 
   const data = dataInput.value;
   const periodo = periodoSelect.value;
 
-  // envio para Google Sheets 
-fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    action: "update",
-    planilha: "Planilha2",
-    id: row.dataset.id,
-    valores: [
-      data,
-      período,
-      passageiro,
-      setor,
-      motivo,
-      itinerario,
-      status
-    ]
-  })
-})
+  /* ============================
+     VALIDAÇÃO
+  ============================ */
 
-.then(res => res.json())
-.then(res => {
-  if (!res.success) alert("Erro ao salvar");
-});
-
-  // VALIDAÇÃO
   if (!validarCampo(data, "Data")) {
     destacarErro(dataInput);
     return;
@@ -454,16 +428,61 @@ fetch(API_URL, {
     return;
   }
 
-  if (!validarCampo(passageiro.innerText, "Passageiro")) {
-    destacarErro(passageiro);
+  if (!validarCampo(passageiro, "Passageiro")) {
+    destacarErro(row.cells[2]);
     return;
   }
 
-  // LIMPAR ERROS
+  /* ============================
+     LIMPAR ERROS
+  ============================ */
+
   limparErro(dataInput);
   limparErro(periodoSelect);
 
+  /* ============================
+     ENVIO PARA GOOGLE SHEETS
+  ============================ */
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha2",
+      valores: [
+        formatDate(data),
+        periodo,
+        passageiro,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      alert("✅ Registro salvo!");
+
+      // Atualiza tabela
+      carregarPlanilha("Planilha2");
+    } else {
+      alert("❌ Erro ao salvar");
+    }
+  });
+
+  // LIMPAR ERROS
+  limparErro(dataInput);
+  limparErro(horaInput);
+
   // SALVAR
+  row.cells[0].innerText = formatDate(data);
+  row.cells[1].innerText = hora;
+
+  /* ============================
+     ATUALIZA UI (opcional)
+  ============================ */
+
   row.cells[0].innerText = formatDate(data);
   row.cells[1].innerText = periodo;
 
