@@ -284,6 +284,62 @@ function addRowP1() {
   `;
 }
 
+  function createRowP1(btn) {
+  const row = btn.parentElement.parentElement;
+
+  const dataInput = row.cells[0].querySelector("input");
+  const horaInput = row.cells[1].querySelector("input");
+
+  const passageiro = row.cells[2].innerText;
+  const setor = row.cells[3].innerText;
+  const motivo = row.cells[4].innerText;
+  const itinerario = row.cells[5].innerText;
+  const status = row.cells[6].innerText;
+
+  const data = dataInput.value;
+  const hora = horaInput.value;
+
+  /* ============================
+     VALIDAÇÃO
+  ============================ */
+
+  if (!validarCampo(data, "Data")) return;
+  if (!validarCampo(hora, "Hora")) return;
+  if (!validarCampo(passageiro, "Passageiro")) return;
+
+  /* ============================
+     ENVIO PARA GOOGLE SHEETS
+  ============================ */
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha1",
+      valores: [
+        formatDate(data),
+        hora,
+        passageiro,
+        setor,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      alert("✅ Registro criado!");
+
+      // recarrega tabela sincronizada
+      carregarPlanilha("Planilha1");
+    } else {
+      alert("❌ Erro ao salvar");
+    }
+  });
+}
+
 function saveRowP1(btn) {
   const row = btn.parentElement.parentElement;
 
@@ -399,6 +455,78 @@ function addRowP2() {
     </td>
   `;
 }
+
+ function createRowP2(btn) {
+  const row = btn.parentElement.parentElement;
+
+  const dataInput = row.cells[0].querySelector("input");
+  const periodoSelect = row.cells[1].querySelector("select");
+
+  const passageiro = row.cells[2].innerText;
+  const motivo = row.cells[3].innerText;
+  const itinerario = row.cells[4].innerText;
+  const status = row.cells[5].innerText;
+
+  const data = dataInput.value;
+  const periodo = periodoSelect.value;
+
+  /* ============================
+     VALIDAÇÃO
+  ============================ */
+
+  if (!validarCampo(data, "Data")) {
+    destacarErro(dataInput);
+    return;
+  }
+
+  if (!validarCampo(periodo, "Período")) {
+    destacarErro(periodoSelect);
+    return;
+  }
+
+  if (!validarCampo(passageiro, "Passageiro")) {
+    destacarErro(row.cells[2]);
+    return;
+  }
+
+  /* ============================
+     LIMPAR ERROS
+  ============================ */
+
+  limparErro(dataInput);
+  limparErro(periodoSelect);
+
+  /* ============================
+     ENVIO PARA GOOGLE SHEETS
+  ============================ */
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      planilha: "Planilha2",
+      valores: [
+        formatDate(data),
+        periodo,
+        passageiro,
+        motivo,
+        itinerario,
+        status
+      ]
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      alert("✅ Registro criado!");
+
+      // recarrega tabela sincronizada
+      carregarPlanilha("Planilha2");
+    } else {
+      alert("❌ Erro ao salvar");
+    }
+  });
+}                                                         
 
 function saveRowP2(btn) {
   const row = btn.parentElement.parentElement;
