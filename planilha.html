@@ -421,6 +421,25 @@ function createRowP2(btn) {
    UTIL
 ============================ */
 
+function enableInlineEdit(td, tipo = "text") {
+  const valor = td.innerText;
+
+  if (tipo === "date") {
+    td.innerHTML = `<input type="date" value="${toISO(valor)}">`;
+  } else if (tipo === "time") {
+    td.innerHTML = `<input type="time" value="${valor}">`;
+  } else {
+    td.innerHTML = `<input value="${valor}">`;
+  }
+
+  const input = td.querySelector("input");
+  input.focus();
+
+  // 🔥 salva automaticamente ao sair do campo
+  input.addEventListener("blur", () => saveCell(td, tipo));
+}
+  
+
 function deleteRow(btn) {
   btn.closest("tr").remove();
 }
