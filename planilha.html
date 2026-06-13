@@ -305,6 +305,16 @@ fetch(API_URL, {
   if (!res.success) alert("Erro ao salvar");
 });
 
+fetch(API_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    action: "delete",
+    planilha: "Planilha1",
+    id: row.dataset.id
+  })
+});
+  
+
   // VALIDAÇÃO
   if (!validarCampo(data, "Data")) {
     destacarErro(dataInput);
