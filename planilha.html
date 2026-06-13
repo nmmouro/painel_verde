@@ -394,29 +394,30 @@ function saveRow(row, planilha) {
   let valores;
 
   if (planilha === "Planilha1") {
-    const campos = [...row.querySelectorAll("input")];
+    const inputs = row.querySelectorAll("input");
 
     valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      campos[2]?.value,
-      campos[3]?.value,
-      campos[4]?.value,
-      campos[5]?.value,
-      campos[6]?.value
+      formatDate(inputs[0].value),
+      inputs[1].value,
+      inputs[2]?.value,
+      inputs[3]?.value,
+      inputs[4]?.value,
+      inputs[5]?.value,
+      inputs[6]?.value
     ];
   } else {
-    const campos = [...row.querySelectorAll("input, select")];
+    const inputs = row.querySelectorAll("input, select");
 
     valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      campos[2]?.value,
-      campos[3]?.value,
-      campos[4]?.value,
-      campos[5]?.value
+      formatDate(inputs[0].value),
+      inputs[1].value,
+      inputs[2]?.value,
+      inputs[3]?.value,
+      inputs[4]?.value,
+      inputs[5]?.value
     ];
   }
+
 
   fetch(API_URL, {
     method: "POST",
@@ -484,7 +485,7 @@ function createRow(btn, planilha) {
   })
   .then(res => res.json())
   .then(res => {
-    console.log("Resposta API:", res);
+    console.log("CREATE:", res);
 
     if (res.success) {
       carregarPlanilha(planilha);
@@ -493,7 +494,7 @@ function createRow(btn, planilha) {
     }
   })
   .catch(err => {
-    console.error("Erro:", err);
+    console.error("Erro API:", err);
     alert("Erro na comunicação com API");
   });
 }
