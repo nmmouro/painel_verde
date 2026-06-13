@@ -266,15 +266,17 @@ function renderTable1(data) {
 
   data.slice(1).forEach(row => {
     const tr = document.createElement("tr");
+    tr.dataset.id = row[0];
 
     tr.innerHTML = `
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-      <td>${row[6]}</td>
-      <td>${row[7]}</td>
+      <td onclick="editCell(this,'date')">${row[1]}</td>
+      <td onclick="editCell(this,'time')">${row[2]}</td>
+      <td onclick="editCell(this)">${row[3]}</td>
+      <td onclick="editCell(this)">${row[4]}</td>
+      <td onclick="editCell(this)">${row[5]}</td>
+      <td onclick="editCell(this)">${row[6]}</td>
+      <td onclick="editCell(this)">${row[7]}</td>
+      <td><button onclick="deleteRow(this)">🗑</button></td>
     `;
 
     tbody.appendChild(tr);
@@ -287,14 +289,17 @@ function renderTable2(data) {
 
   data.slice(1).forEach(row => {
     const tr = document.createElement("tr");
+    tr.dataset.id = row[0];
 
     tr.innerHTML = `
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-      <td>${row[6]}</td>
+      <td onclick="editCell(this,'date')">${row[1]}</td>
+      <td onclick="editCell(this,'período')">${row[2]}</td>
+      <td onclick="editCell(this)">${row[3]}</td>
+      <td onclick="editCell(this)">${row[4]}</td>
+      <td onclick="editCell(this)">${row[5]}</td>
+      <td onclick="editCell(this)">${row[6]}</td>
+      <td onclick="editCell(this)">${row[7]}</td>
+      <td><button onclick="deleteRow(this)">🗑</button></td>
     `;
 
     tbody.appendChild(tr);
@@ -322,12 +327,54 @@ function addRowP1() {
     </td>
   `;
 }
+  
+function saveRow(row) {
+  const id = row.dataset.id;
+  const inputs = row.querySelectorAll("input");
 
-function createRowP1(btn) {
+  const data = inputs[0]?.value;
+  const hora = inputs[1]?.value;
+
+  const valores = [
+    formatDate(data),
+    hora,
+    inputs[2]?.value,
+    inputs[3]?.value,
+    inputs[4]?.value,
+    inputs[5]?.value,
+    inputs[6]?.value
+  ];
+
+  if (!data || !hora) {
+    alert("Preencha data e hora");
+    return;
+  }
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "update",
+      planilha: "Planilha1",
+      id,
+      valores
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      carregarPlanilha();
+    } else {
+      alert("Erro ao salvar");
+    }
+  });
+}
+
+
+function createRowP1(row) {
   const row = btn.closest("tr");
-
-  const data = row.cells[1].querySelector("input").value;
-  const hora = row.cells[2].querySelector("input").value;
+  
+  const data = row.cells[0].querySelector("input").value;
+  const hora = row.cells[1].querySelector("input").value;
 
   const valores = [
     formatDate(data),
@@ -345,7 +392,7 @@ function createRowP1(btn) {
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
-      action: "create",
+      action: "update",
       planilha: "Planilha1",
       valores
     })
@@ -356,6 +403,30 @@ function createRowP1(btn) {
       else alert("Erro ao salvar");
     });
 }
+
+  function deleteRow(btn) {
+  const row = btn.closest("tr");
+
+  if (!row.dataset.id) {
+    row.remove();
+    return;
+  }
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "delete",
+      planilha: "Planilha1",
+      id: row.dataset.id
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) row.remove();
+    else alert("Erro ao excluir");
+  });
+}
+
 
 /* ============================
    PLANILHA 2
@@ -384,9 +455,49 @@ function addRowP2() {
   `;
 }
 
-function createRowP2(btn) {
-  const row = btn.closest("tr");
+  function saveRow(row) {
+  const id = row.dataset.id;
+  const inputs = row.querySelectorAll("input");
 
+  const data = inputs[0]?.value;
+  const hora = inputs[1]?.value;
+
+  const valores = [
+    formatDate(data),
+    hora,
+    inputs[2]?.value,
+    inputs[3]?.value,
+    inputs[4]?.value,
+    inputs[5]?.value,
+   ];
+
+  if (!data || !hora) {
+    alert("Preencha data e hora");
+    return;
+  }
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "update",
+      planilha: "Planilha2",
+      id,
+      valores
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      carregarPlanilha();
+    } else {
+      alert("Erro ao salvar");
+    }
+  });
+}
+
+function createRowP2(row) {
+  const row = btn.closest("tr");
+  
   const data = row.cells[0].querySelector("input").value;
   const periodo = row.cells[1].querySelector("select").value;
 
@@ -417,11 +528,55 @@ function createRowP2(btn) {
     });
 }
 
+  function deleteRow(btn) {
+  const row = btn.closest("tr");
+
+  if (!row.dataset.id) {
+    row.remove();
+    return;
+  }
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "delete",
+      planilha: "Planilha2",
+      id: row.dataset.id
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) row.remove();
+    else alert("Erro ao excluir");
+  });
+}
+
+
 /* ============================
    UTIL
 ============================ */
 
-function enableInlineEdit(td, tipo = "text") {
+  function editCell(td, tipo = "text") {
+  const valor = td.innerText;
+
+  if (td.querySelector("input")) return; // evita múltiplos inputs
+
+  if (tipo === "date") {
+    td.innerHTML = `<input type="date" value="${toISO(valor)}">`;
+  } else if (tipo === "time") {
+    td.innerHTML = `<input type="time" value="${valor}">`;
+  } else {
+    td.innerHTML = `<input value="${valor}">`;
+  }
+
+  const input = td.querySelector("input");
+  input.focus();
+
+  input.addEventListener("blur", () => saveRow(td.parentElement));
+}
+
+  
+  function enableInlineEdit(td, tipo = "text") {
   const valor = td.innerText;
 
   if (tipo === "date") {
@@ -440,14 +595,16 @@ function enableInlineEdit(td, tipo = "text") {
 }
   
 
-function deleteRow(btn) {
-  btn.closest("tr").remove();
-}
-
 function formatDate(data) {
   if (!data) return "";
   const [ano, mes, dia] = data.split("-");
   return `${dia}/${mes}/${ano}`;
+}
+
+function toISO(dataBR) {
+  if (!dataBR) return "";
+  const [dia, mes, ano] = dataBR.split("/");
+  return `${ano}-${mes}-${dia}`;
 }
 
 function parseLocalDate(data) {
