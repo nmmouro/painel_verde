@@ -262,8 +262,8 @@ function carregarPlanilha(planilha) {
    RENDER TABLE 1
 ============================ */
 function renderTable1(data) {
-  const tbody = document.querySelector("#table1 tbody");
-  tbody.innerHTML = "";
+  const row = document.querySelector("#table1 tbody");
+  row.innerHTML = "";
 
   data.slice(1).forEach(row => {
     const tr = document.createElement("tr");
