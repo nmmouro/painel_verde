@@ -277,7 +277,12 @@ function renderTable1(data) {
       <td onclick="editCell(this,'text','Planilha1')">${row[5]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[6]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[7]}</td>
-      <td><button onclick="deleteRow(this,'Planilha1')">🗑</button></td>
+      
+     <td>
+      <button onclick="createRow(this,'Planilha1')">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
+    </td>
+
     `;
 
     tbody.appendChild(tr);
@@ -302,7 +307,12 @@ function renderTable2(data) {
       <td onclick="editCell(this,'text','Planilha2')">${row[4]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[5]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[6]}</td>
-      <td><button onclick="deleteRow(this,'Planilha2')">🗑</button></td>
+      
+    <td>
+      <button onclick="createRow(this,'Planilha2')">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
+    </td>
+
     `;
 
     tbody.appendChild(tr);
