@@ -220,11 +220,9 @@ button {
 
 const API_URL = "https://script.google.com/macros/s/AKfycbz67LG_8h-EWJs6t132FnT5ask5dE12nFiZECdxEjYig21-hH_L5tXTB_uX1o4WeOjgFw/exec";
 
-
 /* ============================
    DATA E HORA HEADER
 ============================ */
-
 function updateDateTime() {
   const now = new Date();
   document.getElementById("datetime").innerText =
@@ -232,42 +230,83 @@ function updateDateTime() {
 }
 setInterval(updateDateTime, 1000);
 
-
 /* ============================
    TROCA DE PLANILHA
 ============================ */
-
 function showPlanilha(id) {
-  document.getElementById('planilha1').style.display = "none";
-  document.getElementById('planilha2').style.display = "none";
+  document.getElementById("planilha1").style.display = "none";
+  document.getElementById("planilha2").style.display = "none";
 
-  document.getElementById(id === 'p1' ? 'planilha1' : 'planilha2').style.display = "block";
+  document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
 }
 
-/*  
+/* ============================
+   CARREGAR DADOS
+============================ */
 function carregarPlanilha(planilha) {
   fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify({
-      action: "read",
-      planilha: planilha
-    })
+    body: JSON.stringify({ action: "read", planilha })
   })
-  .then(res => res.json())
-  .then(res => {
-    console.log(res.data);
-    // montar tabela aqui
-  });
+    .then(res => res.json())
+    .then(res => {
+      if (!res.success) return;
+
+      if (planilha === "Planilha1") renderTable1(res.data);
+      if (planilha === "Planilha2") renderTable2(res.data);
+    });
 }
-*/
 
 /* ============================
-   PLANILHA 1 (CRUD)
+   RENDER TABLES
+============================ */
+function renderTable1(data) {
+  const tbody = document.querySelector("#table1 tbody");
+  tbody.innerHTML = "";
+
+  data.slice(1).forEach(row => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+      <td>${row[6]}</td>
+      <td>${row[7]}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function renderTable2(data) {
+  const tbody = document.querySelector("#table2 tbody");
+  tbody.innerHTML = "";
+
+  data.slice(1).forEach(row => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+      <td>${row[6]}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+/* ============================
+   PLANILHA 1
 ============================ */
 
 function addRowP1() {
-  const table = document.querySelector("#table1 tbody");
-  const row = table.insertRow();
+  const row = document.querySelector("#table1 tbody").insertRow();
 
   row.innerHTML = `
     <td><input type="date"></td>
@@ -278,169 +317,58 @@ function addRowP1() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-add" onclick="saveRowP1(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+      <button onclick="createRowP1(this)">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
     </td>
   `;
 }
 
-  function createRowP1(btn) {
-  const row = btn.parentElement.parentElement;
+function createRowP1(btn) {
+  const row = btn.closest("tr");
 
-  const dataInput = row.cells[0].querySelector("input");
-  const horaInput = row.cells[1].querySelector("input");
+  const data = row.cells[0].querySelector("input").value;
+  const hora = row.cells[1].querySelector("input").value;
 
-  const passageiro = row.cells[2].innerText;
-  const setor = row.cells[3].innerText;
-  const motivo = row.cells[4].innerText;
-  const itinerario = row.cells[5].innerText;
-  const status = row.cells[6].innerText;
-
-  const data = dataInput.value;
-  const hora = horaInput.value;
-
-  /* ============================
-     VALIDAÇÃO
-  ============================ */
+  const valores = [
+    formatDate(data),
+    hora,
+    row.cells[2].innerText,
+    row.cells[3].innerText,
+    row.cells[4].innerText,
+    row.cells[5].innerText,
+    row.cells[6].innerText
+  ];
 
   if (!validarCampo(data, "Data")) return;
   if (!validarCampo(hora, "Hora")) return;
-  if (!validarCampo(passageiro, "Passageiro")) return;
-
-  /* ============================
-     ENVIO PARA GOOGLE SHEETS
-  ============================ */
 
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
       action: "create",
       planilha: "Planilha1",
-      valores: [
-        formatDate(data),
-        hora,
-        passageiro,
-        setor,
-        motivo,
-        itinerario,
-        status
-      ]
+      valores
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro criado!");
-
-      // recarrega tabela sincronizada
-      carregarPlanilha("Planilha1");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
-}
-
-function saveRowP1(btn) {
-  const row = btn.parentElement.parentElement;
-
-  const dataInput = row.cells[0].querySelector("input");
-  const horaInput = row.cells[1].querySelector("input");
-
-  const passageiro = row.cells[2].innerText;
-  const setor = row.cells[3].innerText;
-  const motivo = row.cells[4].innerText;
-  const itinerario = row.cells[5].innerText;
-  const status = row.cells[6].innerText;
-
-  const data = dataInput.value;
-  const hora = horaInput.value;
-
-  /* ============================
-     VALIDAÇÃO
-  ============================ */
-
-  if (!validarCampo(data, "Data")) {destacarErro(dataInput); return;
-  if (!validarCampo(hora, "Hora")) { destacarErro(horaInput); return;
-  if (!validarCampo(passageiro.innerText, "Passageiro")) {destacarErro(passageiro); return;
-  if (!validarCampo(setor.innerText, "Setor")) {destacarErro(setor); return;
-  if (!validarCampo(status.innerText, "Status")) { destacarErro(status); return;
-
-  /* ============================
-     ENVIO PARA GOOGLE SHEETS
-  ============================ */
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha: "Planilha1",
-      valores: [
-        formatDate(data),
-        hora,
-        passageiro,
-        setor,
-        motivo,
-        itinerario,
-        status
-      ]
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro salvo!");
-
-      // recarrega tabela sincronizada
-      carregarPlanilha("Planilha1");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
-}
-  
-
- 
-  // LIMPAR ERROS
-  limparErro(dataInput);
-  limparErro(horaInput);
-
-  // SALVAR
-  row.cells[0].innerText = formatDate(data);
-  row.cells[1].innerText = hora;
-
-   /* ============================
-     ATUALIZA UI (opcional)
-  ============================ */
-
-  row.cells[0].innerText = formatDate(data);
-  row.cells[1].innerText = periodo;
-
-  for (let i = 2; i <= 6; i++) {
-    row.cells[i].contentEditable = false;
-    limparErro(row.cells[i]);
-  }
-}
-
-function editRowP1(btn) {
-  const row = btn.parentElement.parentElement;
-
-  for (let i = 0; i <= 5; i++) {
-    row.cells[i].contentEditable = true;
-  }
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) carregarPlanilha("Planilha1");
+      else alert("Erro ao salvar");
+    });
 }
 
 /* ============================
-   PLANILHA 2 (CRUD)
+   PLANILHA 2
 ============================ */
 
 function addRowP2() {
-  const table = document.querySelector("#table2 tbody");
-  const row = table.insertRow();
+  const row = document.querySelector("#table2 tbody").insertRow();
 
   row.innerHTML = `
     <td><input type="date"></td>
     <td>
       <select>
+        <option value="">Selecione</option>
         <option>Manhã</option>
         <option>Tarde</option>
       </select>
@@ -450,276 +378,75 @@ function addRowP2() {
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td>
-      <button class="btn btn-add" onclick="saveRowP2(this)">Salvar</button>
-      <button class="btn btn-delete" onclick="deleteRow(this)">Excluir</button>
+      <button onclick="createRowP2(this)">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
     </td>
   `;
 }
 
- function createRowP2(btn) {
-  const row = btn.parentElement.parentElement;
+function createRowP2(btn) {
+  const row = btn.closest("tr");
 
-  const dataInput = row.cells[0].querySelector("input");
-  const periodoSelect = row.cells[1].querySelector("select");
+  const data = row.cells[0].querySelector("input").value;
+  const periodo = row.cells[1].querySelector("select").value;
 
-  const passageiro = row.cells[2].innerText;
-  const motivo = row.cells[3].innerText;
-  const itinerario = row.cells[4].innerText;
-  const status = row.cells[5].innerText;
+  const valores = [
+    formatDate(data),
+    periodo,
+    row.cells[2].innerText,
+    row.cells[3].innerText,
+    row.cells[4].innerText,
+    row.cells[5].innerText
+  ];
 
-  const data = dataInput.value;
-  const periodo = periodoSelect.value;
-
-  /* ============================
-     VALIDAÇÃO
-  ============================ */
-
-  if (!validarCampo(data, "Data")) {
-    destacarErro(dataInput);
-    return;
-  }
-
-  if (!validarCampo(periodo, "Período")) {
-    destacarErro(periodoSelect);
-    return;
-  }
-
-  if (!validarCampo(passageiro, "Passageiro")) {
-    destacarErro(row.cells[2]);
-    return;
-  }
-
-  /* ============================
-     LIMPAR ERROS
-  ============================ */
-
-  limparErro(dataInput);
-  limparErro(periodoSelect);
-
-  /* ============================
-     ENVIO PARA GOOGLE SHEETS
-  ============================ */
+  if (!validarCampo(data, "Data")) return;
+  if (!validarCampo(periodo, "Período")) return;
 
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
       action: "create",
       planilha: "Planilha2",
-      valores: [
-        formatDate(data),
-        periodo,
-        passageiro,
-        motivo,
-        itinerario,
-        status
-      ]
+      valores
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro criado!");
-
-      // recarrega tabela sincronizada
-      carregarPlanilha("Planilha2");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
-}                                                         
-
-function saveRowP2(btn) {
-  const row = btn.parentElement.parentElement;
-
-  const dataInput = row.cells[0].querySelector("input");
-  const periodoSelect = row.cells[1].querySelector("select");
-
-  const passageiro = row.cells[2].innerText;
-  const motivo = row.cells[3].innerText;
-  const itinerario = row.cells[4].innerText;
-  const status = row.cells[5].innerText;
-
-  const data = dataInput.value;
-  const periodo = periodoSelect.value;
-
-  /* ============================
-     VALIDAÇÃO
-  ============================ */
-
-  if (!validarCampo(data, "Data")) {
-    destacarErro(dataInput);
-    return;
-  }
-
-  if (!validarCampo(periodo, "Período")) {
-    destacarErro(periodoSelect);
-    return;
-  }
-
-  if (!validarCampo(passageiro, "Passageiro")) {
-    destacarErro(row.cells[2]);
-    return;
-  }
-
-  /* ============================
-     LIMPAR ERROS
-  ============================ */
-
-  limparErro(dataInput);
-  limparErro(periodoSelect);
-
-  /* ============================
-     ENVIO PARA GOOGLE SHEETS
-  ============================ */
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha: "Planilha2",
-      valores: [
-        formatDate(data),
-        periodo,
-        passageiro,
-        motivo,
-        itinerario,
-        status
-      ]
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      alert("✅ Registro salvo!");
-
-      // Atualiza tabela
-      carregarPlanilha("Planilha2");
-    } else {
-      alert("❌ Erro ao salvar");
-    }
-  });
-
-  // LIMPAR ERROS
-  limparErro(dataInput);
-  limparErro(horaInput);
-
-  // SALVAR
-  row.cells[0].innerText = formatDate(data);
-  row.cells[1].innerText = hora;
-
-  /* ============================
-     ATUALIZA UI (opcional)
-  ============================ */
-
-  row.cells[0].innerText = formatDate(data);
-  row.cells[1].innerText = periodo;
-
-  for (let i = 2; i <= 5; i++) {
-    row.cells[i].contentEditable = false;
-    limparErro(row.cells[i]);
-  }
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) carregarPlanilha("Planilha2");
+      else alert("Erro ao salvar");
+    });
 }
-
-  function editRowP2(btn) {
-  const row = btn.parentElement.parentElement;
-
-  for (let i = 0; i <= 4; i++) {
-    row.cells[i].contentEditable = true;
-  }
-}
-
 
 /* ============================
-   FUNÇÕES GERAIS
+   UTIL
 ============================ */
 
 function deleteRow(btn) {
-  const row = btn.parentElement.parentElement;
-  row.remove();
+  btn.closest("tr").remove();
 }
 
-/* ============================
-   FORMATAÇÃO DA DATA
-============================ */
-  
 function formatDate(data) {
   if (!data) return "";
-
   const [ano, mes, dia] = data.split("-");
   return `${dia}/${mes}/${ano}`;
 }
 
-  function parseLocalDate(data) {
-  const [ano, mes, dia] = data.split("-");
-  return new Date(ano, mes - 1, dia); // LOCAL (sem UTC bug)
-}
-
-  function validarCampo(campo, nome) {
-  if (!campo || campo.trim() === "") {
-    alert("Campo obrigatório: " + nome);
+function validarCampo(valor, nome) {
+  if (!valor || valor.trim() === "") {
+    alert(`Campo obrigatório: ${nome}`);
     return false;
   }
   return true;
 }
 
-function destacarErro(element) {
-  element.style.border = "2px solid red";
-}
-
-function limparErro(element) {
-  element.style.border = "";
-}
-
-
 /* ============================
-   FILTRO
+   INIT
 ============================ */
 
-function filtrar() {
-  const dataBusca = document.getElementById("searchDate").value;
-  const planilha = document.getElementById("searchPlan").value;
-
-  if (planilha === "p1" || planilha === "p2") {
-    showPlanilha(planilha);
-  }
-
-  if (!dataBusca) return;
-
-  const formatted = formatDate(dataBusca);
-
-  const tables = [];
-
-  if (planilha === "all" || planilha === "p1") tables.push("#table1");
-  if (planilha === "all" || planilha === "p2") tables.push("#table2");
-
-  tables.forEach(id => {
-    document.querySelectorAll(id + " tbody tr").forEach(row => {
-      const cellDate = row.cells[0].innerText;
-      row.style.display = (cellDate === formatted) ? "" : "none";
-    });
-  });
-}
-
-
-/* ============================
-   SOM + FULLSCREEN
-============================ */
-
-function toggleSound() {
-  alert("Controle de som implementável futuramente");
-}
-
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-}
-
-   window.onload = () => {
+window.onload = () => {
   carregarPlanilha("Planilha1");
 };
+  
 </script>
 
  
