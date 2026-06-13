@@ -287,15 +287,16 @@ function saveRowP1(btn) {
 fetch(API_URL, {
   method: "POST",
   body: JSON.stringify({
+    action: "create",
     planilha: "Planilha1",
     valores: [
       formatDate(data),
       hora,
-      passageiro.innerText,
-      setor.innerText,
-      motivo.innerText,
-      itinerario.innerText,
-      status.innerText
+      passageiro,
+      setor,
+      motivo,
+      itinerario,
+      status
     ]
   })
 })
@@ -394,20 +395,25 @@ function saveRowP2(btn) {
   const data = dataInput.value;
   const periodo = periodoSelect.value;
 
-  fetch(API_URL, {
+  // envio para Google Sheets 
+fetch(API_URL, {
   method: "POST",
   body: JSON.stringify({
-    planilha: "Planilha2",
+    action: "update",
+    planilha: "Planilha1",
+    id: row.dataset.id,
     valores: [
-      formatDate(data),
-      periodo,
-      passageiro.innerText,
-      motivo.innerText,
-      itinerario.innerText,
-      status.innerText
+      data,
+      hora,
+      passageiro,
+      setor,
+      motivo,
+      itinerario,
+      status
     ]
   })
 })
+
 .then(res => res.json())
 .then(res => {
   if (!res.success) alert("Erro ao salvar");
