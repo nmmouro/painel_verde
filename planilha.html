@@ -277,11 +277,7 @@ function renderTable1(data) {
       <td onclick="editCell(this,'text','Planilha1')">${row[5]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[6]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[7]}</td>
-      
-     <td>
-      <button onclick="createRow(this,'Planilha1')">Salvar</button>
-      <button onclick="deleteRow(this)">Cancelar</button>
-    </td>
+      <td><button onclick="deleteRow(this,'Planilha1')">🗑</button></td>
 
     `;
 
@@ -307,10 +303,7 @@ function renderTable2(data) {
       <td onclick="editCell(this,'text','Planilha2')">${row[4]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[5]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[6]}</td>
-      
-    <td>
-      <button onclick="deleteRow(this)">Cancelar</button>
-    </td>
+      <td><button onclick="deleteRow(this,'Planilha2')">🗑</button></td>
 
     `;
 
@@ -449,35 +442,9 @@ function createRow(btn, planilha) {
   const row = btn.closest("tr");
   const campos = [...row.querySelectorAll("input, select")];
 
-  if (campos.length === 0) return;
+  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
 
-  let valores;
-
-  if (planilha === "Planilha1") {
-    valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      row.cells[2].innerText,
-      row.cells[3].innerText,
-      row.cells[4].innerText,
-      row.cells[5].innerText,
-      row.cells[6].innerText
-    ];
-  } else {
-    valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      row.cells[2].innerText,
-      row.cells[3].innerText,
-      row.cells[4].innerText,
-      row.cells[5].innerText
-    ];
-  }
-
-  if (!valores[0]) {
-    alert("Data obrigatória");
-    return;
-  }
+  if (!valores[0]) return alert("Data obrigatória");
 
   fetch(API_URL, {
     method: "POST",
@@ -487,14 +454,7 @@ function createRow(btn, planilha) {
       valores
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      carregarPlanilha(planilha);
-    } else {
-      alert("Erro ao salvar");
-    }
-  });
+  .then(() => carregarPlanilha(planilha));
 }
 
 /* ============================
