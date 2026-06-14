@@ -221,27 +221,7 @@ button {
 const API_URL = "https://script.google.com/macros/s/AKfycbz67LG_8h-EWJs6t132FnT5ask5dE12nFiZECdxEjYig21-hH_L5tXTB_uX1o4WeOjgFw/exec";
 
 /* ============================
-   HEADER
-============================ */
-function updateDateTime() {
-  const now = new Date();
-  document.getElementById("datetime").innerText =
-    now.toLocaleDateString() + " " + now.toLocaleTimeString();
-}
-setInterval(updateDateTime, 1000);
-
-/* ============================
-   TROCA DE PLANILHA
-============================ */
-function showPlanilha(id) {
-  planilha1.style.display = "none";
-  planilha2.style.display = "none";
-
-  document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
-}
-
-/* ============================
-   CARREGAR DADOS
+   CARREGAR
 ============================ */
 function carregarPlanilha(planilha) {
   fetch(API_URL, {
@@ -251,15 +231,13 @@ function carregarPlanilha(planilha) {
   .then(res => res.json())
   .then(res => {
     if (!res.success) return;
-
     if (planilha === "Planilha1") renderTable1(res.data);
     if (planilha === "Planilha2") renderTable2(res.data);
-  })
-  .catch(err => console.error(err));
+  });
 }
 
 /* ============================
-   RENDER TABLE 1
+   RENDER PLANILHA 1
 ============================ */
 function renderTable1(data) {
   const tbody = document.querySelector("#table1 tbody");
@@ -270,23 +248,26 @@ function renderTable1(data) {
     tr.dataset.id = row[0];
 
     tr.innerHTML = `
-      <td onclick="editCell(this,'date','Planilha1')">${row[1]}</td>
-      <td onclick="editCell(this,'time','Planilha1')">${row[2]}</td>
-      <td onclick="editCell(this,'text','Planilha1')">${row[3]}</td>
-      <td onclick="editCell(this,'text','Planilha1')">${row[4]}</td>
-      <td onclick="editCell(this,'text','Planilha1')">${row[5]}</td>
-      <td onclick="editCell(this,'text','Planilha1')">${row[6]}</td>
-      <td onclick="editCell(this,'text','Planilha1')">${row[7]}</td>
-      <td><button onclick="deleteRow(this,'Planilha1')">🗑</button></td>
-
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+      <td>${row[6]}</td>
+      <td>${row[7]}</td>
+      <td>
+        <button onclick="editarLinha(this,'Planilha1')">✏️</button>
+        <button onclick="salvarLinha(this,'Planilha1')">💾</button>
+        <button onclick="cancelarEdicao(this)">❌</button>
+        <button onclick="deleteRow(this,'Planilha1')">🗑</button>
+      </td>
     `;
-
     tbody.appendChild(tr);
   });
 }
 
 /* ============================
-   RENDER TABLE 2
+   RENDER PLANILHA 2
 ============================ */
 function renderTable2(data) {
   const tbody = document.querySelector("#table2 tbody");
@@ -297,125 +278,77 @@ function renderTable2(data) {
     tr.dataset.id = row[0];
 
     tr.innerHTML = `
-      <td onclick="editCell(this,'date','Planilha2')">${row[1]}</td>
-      <td onclick="editCell(this,'select','Planilha2')">${row[2]}</td>
-      <td onclick="editCell(this,'text','Planilha2')">${row[3]}</td>
-      <td onclick="editCell(this,'text','Planilha2')">${row[4]}</td>
-      <td onclick="editCell(this,'text','Planilha2')">${row[5]}</td>
-      <td onclick="editCell(this,'text','Planilha2')">${row[6]}</td>
-      <td><button onclick="deleteRow(this,'Planilha2')">🗑</button></td>
-
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+      <td>${row[6]}</td>
+      <td>
+        <button onclick="editarLinha(this,'Planilha2')">✏️</button>
+        <button onclick="salvarLinha(this,'Planilha2')">💾</button>
+        <button onclick="cancelarEdicao(this)">❌</button>
+        <button onclick="deleteRow(this,'Planilha2')">🗑</button>
+      </td>
     `;
-
     tbody.appendChild(tr);
   });
 }
 
-function addRow(planilha) {
-  const tableId = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
-  const row = document.querySelector(tableId).insertRow();
-
-  if (planilha === "Planilha1") {
-    row.innerHTML = `
-      <td><input type="date"></td>
-      <td><input type="time"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td>
-        <button onclick="createRow(this,'Planilha1')">Salvar</button>
-        <button onclick="deleteRow(this)">Cancelar</button>
-      </td>
-    `;
-  } else {
-    row.innerHTML = `
-      <td><input type="date"></td>
-      <td>
-        <select>
-          <option value="">Selecione</option>
-          <option>Manhã</option>
-          <option>Tarde</option>
-        </select>
-      </td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td>
-        <button onclick="createRow(this,'Planilha2')">Salvar</button>
-        <button onclick="deleteRow(this)">Cancelar</button>
-      </td>
-    `;
-  }
-
-  // foco automático
-  setTimeout(() => {
-    row.querySelector("input")?.focus();
-  }, 100);
-}
-  
-
 /* ============================
-   INLINE EDIT
+   EDITAR LINHA
 ============================ */
-function editCell(td, tipo, planilha) {
-  if (td.querySelector("input") || td.querySelector("select")) return;
+function editarLinha(btn, planilha) {
+  const row = btn.closest("tr");
 
-  const valor = td.innerText;
+  const tipos = planilha === "Planilha1"
+    ? ["date", "time"]
+    : ["date", null];
 
-  if (tipo === "date") {
-    td.innerHTML = `<input type="date" value="${toISO(valor)}">`;
-  } else if (tipo === "time") {
-    td.innerHTML = `<input type="time" value="${valor}">`;
-  } else if (tipo === "select") {
-    td.innerHTML = `
-      <select>
-        <option ${valor === "Manhã" ? "selected" : ""}>Manhã</option>
-        <option ${valor === "Tarde" ? "selected" : ""}>Tarde</option>
-      </select>
-    `;
-  } else {
-    td.innerHTML = `<input value="${valor}">`;
+  for (let i = 0; i < row.cells.length - 1; i++) {
+    const valor = row.cells[i].innerText;
+
+    if (i === 0) {
+      row.cells[i].innerHTML = `<input type="date" value="${toISO(valor)}">`;
+    } else if (i === 1 && tipos[1] === "time") {
+      row.cells[i].innerHTML = `<input type="time" value="${valor}">`;
+    } else {
+      row.cells[i].innerHTML = `<input value="${valor}">`;
+    }
   }
-
-  const input = td.querySelector("input, select");
-  input.focus();
-
-  input.addEventListener("blur", () => saveRow(td.closest("tr"), planilha));
 }
 
 /* ============================
-   SALVAR AUTOMÁTICO
+   SALVAR LINHA
 ============================ */
-function saveRow(row, planilha) {
+function salvarLinha(btn, planilha) {
+  const row = btn.closest("tr");
   const id = row.dataset.id;
+
+  const inputs = row.querySelectorAll("input");
+
   let valores;
 
   if (planilha === "Planilha1") {
-    const inputs = row.querySelectorAll("input");
-
     valores = [
-      formatDate(getValor(row.cells[0])),
-      getValor(row.cells[1]),
-      getValor(row.cells[2]),
-      getValor(row.cells[3]),
-      getValor(row.cells[4]),
-      getValor(row.cells[5]),
-      getValor(row.cells[6])
+      formatDate(inputs[0].value),
+      inputs[1].value,
+      inputs[2].value,
+      inputs[3].value,
+      inputs[4].value,
+      inputs[5].value,
+      inputs[6].value
     ];
   } else {
     valores = [
-      formatDate(getValor(row.cells[0])),
-      getValor(row.cells[1]),
-      getValor(row.cells[2]),
-      getValor(row.cells[3]),
-      getValor(row.cells[4]),
-      getValor(row.cells[5])
+      formatDate(inputs[0].value),
+      inputs[1].value,
+      inputs[2].value,
+      inputs[3].value,
+      inputs[4].value,
+      inputs[5].value
     ];
   }
-
 
   fetch(API_URL, {
     method: "POST",
@@ -428,9 +361,61 @@ function saveRow(row, planilha) {
   })
   .then(res => res.json())
   .then(res => {
-    if (res.success) carregarPlanilha(planilha);
-    else alert("Erro ao salvar");
+    if (res.success) {
+      carregarPlanilha(planilha);
+    } else {
+      alert("Erro ao salvar");
+    }
   });
+}
+
+/* ============================
+   CANCELAR
+============================ */
+function cancelarEdicao(btn) {
+  const row = btn.closest("tr");
+  const planilha = row.closest("table").id === "table1"
+    ? "Planilha1"
+    : "Planilha2";
+
+  carregarPlanilha(planilha);
+}
+
+/* ============================
+   NOVA LINHA
+============================ */
+function addRow(planilha) {
+  const table = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
+  const row = document.querySelector(table).insertRow();
+
+  if (planilha === "Planilha1") {
+    row.innerHTML = `
+      <td><input type="date"></td>
+      <td><input type="time"></td>
+      <td><input></td>
+      <td><input></td>
+      <td><input></td>
+      <td><input></td>
+      <td><input></td>
+      <td>
+        <button onclick="createRow(this,'Planilha1')">💾</button>
+        <button onclick="deleteRow(this)">❌</button>
+      </td>
+    `;
+  } else {
+    row.innerHTML = `
+      <td><input type="date"></td>
+      <td><input></td>
+      <td><input></td>
+      <td><input></td>
+      <td><input></td>
+      <td><input></td>
+      <td>
+        <button onclick="createRow(this,'Planilha2')">💾</button>
+        <button onclick="deleteRow(this)">❌</button>
+      </td>
+    `;
+  }
 }
 
 /* ============================
@@ -438,40 +423,11 @@ function saveRow(row, planilha) {
 ============================ */
 function createRow(btn, planilha) {
   const row = btn.closest("tr");
+  const inputs = row.querySelectorAll("input");
 
-  let valores;
-
-  if (planilha === "Planilha1") {
-    const data = row.cells[0].querySelector("input").value;
-    const hora = row.cells[1].querySelector("input").value;
-
-    valores = [
-      formatDate(data),
-      hora,
-      row.cells[2].innerText.trim(),
-      row.cells[3].innerText.trim(),
-      row.cells[4].innerText.trim(),
-      row.cells[5].innerText.trim(),
-      row.cells[6].innerText.trim()
-    ];
-  } else {
-    const data = row.cells[0].querySelector("input").value;
-    const periodo = row.cells[1].querySelector("select").value;
-
-    valores = [
-      formatDate(data),
-      periodo,
-      row.cells[2].innerText.trim(),
-      row.cells[3].innerText.trim(),
-      row.cells[4].innerText.trim(),
-      row.cells[5].innerText.trim()
-    ];
-  }
-
-  if (!valores[0]) {
-    alert("Data obrigatória");
-    return;
-  }
+  const valores = [...inputs].map((i, idx) =>
+    idx === 0 ? formatDate(i.value) : i.value
+  );
 
   fetch(API_URL, {
     method: "POST",
@@ -482,19 +438,7 @@ function createRow(btn, planilha) {
     })
   })
   .then(res => res.json())
-  .then(res => {
-    console.log("CREATE:", res);
-
-    if (res.success) {
-      carregarPlanilha(planilha);
-    } else {
-      alert("Erro ao salvar");
-    }
-  })
-  .catch(err => {
-    console.error("Erro API:", err);
-    alert("Erro na comunicação com API");
-  });
+  .then(() => carregarPlanilha(planilha));
 }
 
 /* ============================
@@ -516,42 +460,22 @@ function deleteRow(btn, planilha) {
       id: row.dataset.id
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) row.remove();
-    else alert("Erro ao excluir");
-  });
+  .then(() => row.remove());
 }
 
 /* ============================
    UTIL
 ============================ */
-
-  function formatDate(data) {
+function formatDate(data) {
   if (!data) return "";
-  return data.includes("/") ? data : data.split("-").reverse().join("/");
+  const [y, m, d] = data.split("-");
+  return `${d}/${m}/${y}`;
 }
- /* 
-  function formatDate(data) {
-  if (!data) return "";
-  const [ano, mes, dia] = data.split("-");
-  return `${dia}/${mes}/${ano}`;
-}*/
 
 function toISO(data) {
   if (!data) return "";
-  const [dia, mes, ano] = data.split("/");
-  return `${ano}-${mes}-${dia}`;
-}
-
-  function getValor(td) {
-  const input = td.querySelector("input, select");
-
-  if (input) {
-    return input.value;
-  }
-
-  return td.innerText.trim();
+  const [d, m, y] = data.split("/");
+  return `${y}-${m}-${d}`;
 }
 
 /* ============================
@@ -561,7 +485,8 @@ window.onload = () => {
   carregarPlanilha("Planilha1");
   carregarPlanilha("Planilha2");
 };
-  
+
+ 
 </script>
 
  
