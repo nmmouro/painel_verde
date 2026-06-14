@@ -1,503 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Painel de Controle</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Painel Transporte</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<style>
+body { font-family: Arial; background: #f4f6f9; margin:0; }
 
-    body {
-      display: flex;
-      height: 100vh;
-      background: #f4f6f9;
-    }
-
-    /* HEADER */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 70px;
-      background: #1e293b;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 1000;
-    }
-
-    .logo {
-      font-weight: bold;
-      font-size: 20px;
-    }
-
-    .title {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .header-right {
-      text-align: right;
-    }
-
-    .header-right button {
-      margin-top: 5px;
-      margin-left: 5px;
-      padding: 5px 10px;
-      border: none;
-      cursor: pointer;
-      background: #3b82f6;
-      color: white;
-      border-radius: 5px;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: 200px;
-      background: #111827;
-      color: white;
-      padding-top: 80px;
-    }
-
-    .sidebar button {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      border: none;
-      background: none;
-      color: white;
-      cursor: pointer;
-      text-align: left;
-    }
-
-    .sidebar button:hover {
-      background: #374151;
-    }
-
-    .editing {
-  background: #fff3cd;
+header {
+  position:fixed; top:0; width:100%;
+  background:#1e293b; color:#fff;
+  height:60px; display:flex; align-items:center;
+  justify-content:center;
 }
 
-button {
-  cursor: pointer;
+.sidebar {
+  width:220px; position:fixed; top:60px; bottom:0;
+  background:#111827; color:#fff;
 }
 
-    /* CONTEÚDO */
-    .content {
-      flex: 1;
-      margin-top: 80px;
-      padding: 20px;
-      overflow: auto;
-    }
+.sidebar button { width:100%; padding:10px; background:none; color:#fff; border:none; cursor:pointer; }
+.sidebar button:hover { background:#374151; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      margin-top: 10px;
-    }
+.content {
+  margin-left:220px;
+  margin-top:70px;
+  padding:20px;
+}
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
+table {
+  width:100%; border-collapse:collapse;
+  background:white;
+}
 
-    th {
-      background: #3b82f6;
-      color: white;
-    }
+th, td { border:1px solid #ddd; padding:8px; }
+th { background:#3b82f6; color:white; }
 
-    .btn {
-      padding: 5px 10px;
-      margin: 2px;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-    }
+.btn { padding:5px 10px; cursor:pointer; border:none; }
+.btn-add { background:#10b981; color:#fff; }
 
-    .btn-add { background: #10b981; color: white; }
-    .btn-edit { background: #f59e0b; color: white; }
-    .btn-delete { background: #ef4444; color: white; }
+/* MODAL */
+.modal {
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.6);
+  align-items:center;
+  justify-content:center;
+}
 
-  </style>
+.modal-content {
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  width:400px;
+}
+
+.modal input, .modal select {
+  width:100%;
+  margin-bottom:10px;
+  padding:6px;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo">LOGO</div>
-  <div class="title">Painel de Transporte</div>
+<header>Painel Transporte</header>
 
-  <div class="header-right">
-    <div id="datetime"></div>
-    <button onclick="toggleSound()">Som ON</button>
-    <button onclick="toggleFullscreen()">Tela Cheia</button>
-  </div>
-</header>
-
-<!-- SIDEBAR COM BUSCA -->
 <aside class="sidebar">
+  <input type="date" id="filtroData">
+  <select id="filtroPlanilha">
+    <option value="all">Todas</option>
+    <option value="Planilha1">Planilha 1</option>
+    <option value="Planilha2">Planilha 2</option>
+  </select>
+  <button onclick="filtrar()">Pesquisar</button>
 
-  <div style="padding:10px;">
-    <input type="date" id="searchDate" style="width:100%; margin-bottom:5px;">
-    <select id="searchPlan" style="width:100%; margin-bottom:10px;">
-      <option value="all">Todas</option>
-      <option value="p1">Planilha 1</option>
-      <option value="p2">Planilha 2</option>
-    </select>
-    <button onclick="filtrar()" style="width:100%;">Pesquisar</button>
-  </div>
-
-  <button onclick="showPlanilha('p1')">PLANILHA 1</button>
-  <button onclick="showPlanilha('p2')">PLANILHA 2</button>
+  <button onclick="loadPage('Planilha1')">Planilha 1</button>
+  <button onclick="loadPage('Planilha2')">Planilha 2</button>
 </aside>
 
-
 <main class="content">
+  <h2 id="titulo"></h2>
+  <button class="btn btn-add" onclick="abrirForm()">➕ Novo</button>
 
-  <!-- PLANILHA 1 -->
-  <div id="planilha1">
-    <h2>Planilha 1</h2>
-    <button class="btn btn-add" onclick="addRow('Planilha1')">➕ Adicionar</button>
-
-    <table id="table1">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Hora</th>
-          <th>Passageiro</th>
-          <th>Setor</th>
-          <th>Motivo</th>
-          <th>Itinerário</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- PLANILHA 2 -->
-  
-  <div id="planilha2" style="display:none;">
-    <h2>Planilha 2</h2>
-    <button class="btn btn-add" onclick="addRow('Planilha2')">➕ Adicionar</button>
-
-    <table id="table2">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Período</th>
-          <th>Passageiro</th>
-          <th>Motivo</th>
-          <th>Itinerário</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-
+  <table>
+    <thead id="thead"></thead>
+    <tbody id="tbody"></tbody>
+  </table>
 </main>
 
-<script>
+<!-- MODAL FORM -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 id="formTitle"></h3>
 
+    <input type="date" id="data">
+    <input type="time" id="hora">
+    <input placeholder="Passageiro" id="passageiro">
+    <input placeholder="Setor" id="setor">
+    <input placeholder="Motivo" id="motivo">
+    <input placeholder="Itinerário" id="itinerario">
+    <input placeholder="Status" id="status">
 
-const API_URL = "https://script.google.com/macros/s/AKfycbz67LG_8h-EWJs6t132FnT5ask5dE12nFiZECdxEjYig21-hH_L5tXTB_uX1o4WeOjgFw/exec";
+    <button onclick="salvar()">Salvar</button>
+    <button onclick="fecharForm()">Cancelar</button>
+  </div>
+</div>
 
-/* ============================
-   HEADER
-============================ */
-function updateDateTime() {
-  const now = new Date();
-  document.getElementById("datetime").innerText =
-    now.toLocaleDateString() + " " + now.toLocaleTimeString();
-}
-setInterval(updateDateTime, 1000);
-
-  /* ============================
-   TROCA DE PLANILHA
-============================ */
-function showPlanilha(id) {
-  document.getElementById("planilha1").style.display = "none";
-  document.getElementById("planilha2").style.display = "none";
-
-  document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
-}
-
-  
-/* ============================
-   CARREGAR DADOS
-============================ */
-function carregarPlanilha(planilha) {
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ action: "read", planilha })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (!res.success) return;
-
-    if (planilha === "Planilha1") renderTable1(res.data);
-    if (planilha === "Planilha2") renderTable2(res.data);
-  });
-}
-
-/* ============================
-   FORMATOS
-============================ */
-function formatDate(data) {
-  if (!data) return "";
-  return data.includes("/") ? data : data.split("-").reverse().join("/");
-}
-
-function toISO(data) {
-  if (!data) return "";
-  const [d,m,y] = data.split("/");
-  return `${y}-${m}-${d}`;
-}
-
-/* ============================
-   RENDER PLANILHA 1
-============================ */
-function renderTable1(data) {
-  const tbody = document.querySelector("#table1 tbody");
-  tbody.innerHTML = "";
-
-  data.slice(1).forEach(row => {
-    const tr = document.createElement("tr");
-    tr.dataset.id = row[0];
-
-    tr.innerHTML = `
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-      <td>${row[6]}</td>
-      <td>${row[7]}</td>
-      <td>
-        <button onclick="editarLinha(this,'Planilha1')">✏️</button>
-        <button onclick="salvarLinha(this,'Planilha1')">💾</button>
-        <button onclick="cancelarLinha('Planilha1')">❌</button>
-        <button onclick="deleteRow(this,'Planilha1')">🗑</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ============================
-   RENDER PLANILHA 2
-============================ */
-function renderTable2(data) {
-  const tbody = document.querySelector("#table2 tbody");
-  tbody.innerHTML = "";
-
-  data.slice(1).forEach(row => {
-    const tr = document.createElement("tr");
-    tr.dataset.id = row[0];
-
-    tr.innerHTML = `
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-      <td>${row[6]}</td>
-      <td>
-        <button onclick="editarLinha(this,'Planilha2')">✏️</button>
-        <button onclick="salvarLinha(this,'Planilha2')">💾</button>
-        <button onclick="cancelarLinha('Planilha2')">❌</button>
-        <button onclick="deleteRow(this,'Planilha2')">🗑</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ============================
-   EDITAR
-============================ */
-function editarLinha(btn, planilha) {
-  const row = btn.closest("tr");
-
-  for (let i = 0; i < row.cells.length - 1; i++) {
-    const valor = row.cells[i].innerText;
-
-    if (i === 0) {
-      row.cells[i].innerHTML = `<input type="date" value="${toISO(valor)}">`;
-    } 
-    else if (planilha === "Planilha1" && i === 1) {
-      row.cells[i].innerHTML = `<input type="time" value="${valor}">`;
-    }
-    else {
-      row.cells[i].innerHTML = `<input value="${valor}">`;
-    }
-  }
-}
-
-/* ============================
-   SALVAR
-============================ */
-function salvarLinha(btn, planilha) {
-  const row = btn.closest("tr");
-  const id = row.dataset.id;
-  const inputs = row.querySelectorAll("input");
-
-  let valores;
-
-  if (planilha === "Planilha1") {
-    valores = [
-      formatDate(inputs[0].value),
-      inputs[1].value,
-      inputs[2].value,
-      inputs[3].value,
-      inputs[4].value,
-      inputs[5].value,
-      inputs[6].value
-    ];
-  } else {
-    valores = [
-      formatDate(inputs[0].value),
-      inputs[1].value,
-      inputs[2].value,
-      inputs[3].value,
-      inputs[4].value,
-      inputs[5].value
-    ];
-  }
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "update",
-      planilha,
-      id,
-      valores
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) carregarPlanilha(planilha);
-    else alert("Erro ao salvar");
-  });
-}
-
-/* ============================
-   CANCELAR
-============================ */
-function cancelarLinha(planilha) {
-  carregarPlanilha(planilha);
-}
-
-/* ============================
-   NOVA LINHA
-============================ */
-function addRow(planilha) {
-  const table = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
-  const row = document.querySelector(table).insertRow();
-
-  if (planilha === "Planilha1") {
-    row.innerHTML = `
-      <td><input type="date"></td>
-      <td><input type="time"></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td>
-        <button onclick="createRow(this,'Planilha1')">💾</button>
-        <button onclick="deleteRow(this)">❌</button>
-      </td>
-    `;
-  } else {
-    row.innerHTML = `
-      <td><input type="date"></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td>
-        <button onclick="createRow(this,'Planilha2')">💾</button>
-        <button onclick="deleteRow(this)">❌</button>
-      </td>
-    `;
-  }
-}
-
-/* ============================
-   CREATE
-============================ */
-function createRow(btn, planilha) {
-  const row = btn.closest("tr");
-  const inputs = row.querySelectorAll("input");
-
-  const valores = [...inputs].map((i, idx) =>
-    idx === 0 ? formatDate(i.value) : i.value
-  );
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "create",
-      planilha,
-      valores
-    })
-  })
-  .then(() => carregarPlanilha(planilha));
-}
-
-/* ============================
-   DELETE
-============================ */
-function deleteRow(btn, planilha) {
-  const row = btn.closest("tr");
-
-  if (!row.dataset.id) {
-    row.remove();
-    return;
-  }
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "delete",
-      planilha,
-      id: row.dataset.id
-    })
-  })
-  .then(() => row.remove());
-}
-
-/* ============================
-   INIT
-============================ */
-window.onload = () => {
-  carregarPlanilha("Planilha1");
-  carregarPlanilha("Planilha2");
-};
-  
-</script>
-
- 
-
+<script src="app.js"></script>
 </body>
 </html>
