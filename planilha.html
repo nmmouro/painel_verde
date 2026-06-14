@@ -171,7 +171,7 @@ button {
   <!-- PLANILHA 1 -->
   <div id="planilha1">
     <h2>Planilha 1</h2>
-    <button class="btn btn-add" onclick="addRowP1()">Adicionar</button>
+    <button class="btn btn-add" onclick="addRow('Planilha1')">➕ Adicionar</button>
 
     <table id="table1">
       <thead>
@@ -194,7 +194,7 @@ button {
   
   <div id="planilha2" style="display:none;">
     <h2>Planilha 2</h2>
-    <button class="btn btn-add" onclick="addRowP2()">Adicionar</button>
+    <button class="btn btn-add" onclick="addRow('Planilha2')">➕ Adicionar</button>
 
     <table id="table2">
       <thead>
@@ -234,8 +234,8 @@ setInterval(updateDateTime, 1000);
    TROCA DE PLANILHA
 ============================ */
 function showPlanilha(id) {
-  planilha1.style.display = "none";
-  planilha2.style.display = "none";
+  document.getElementById("planilha1").style.display = "none";
+  document.getElementById("planilha2").style.display = "none";
 
   document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
 }
@@ -254,8 +254,7 @@ function carregarPlanilha(planilha) {
 
     if (planilha === "Planilha1") renderTable1(res.data);
     if (planilha === "Planilha2") renderTable2(res.data);
-  })
-  .catch(err => console.error(err));
+  });
 }
 
 /* ============================
@@ -310,6 +309,51 @@ function renderTable2(data) {
 }
 
 /* ============================
+   BOTÃO ADICIONAR (NOVO)
+============================ */
+function addRow(planilha) {
+  const table = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
+  const row = document.querySelector(table).insertRow();
+
+  if (planilha === "Planilha1") {
+    row.innerHTML = `
+      <td><input type="date"></td>
+      <td><input type="time"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td>
+        <button onclick="createRow(this,'Planilha1')">Salvar</button>
+        <button onclick="deleteRow(this)">Cancelar</button>
+      </td>
+    `;
+  } else {
+    row.innerHTML = `
+      <td><input type="date"></td>
+      <td>
+        <select>
+          <option value="">Selecione</option>
+          <option>Manhã</option>
+          <option>Tarde</option>
+        </select>
+      </td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td contenteditable="true"></td>
+      <td>
+        <button onclick="createRow(this,'Planilha2')">Salvar</button>
+        <button onclick="deleteRow(this)">Cancelar</button>
+      </td>
+    `;
+  }
+
+  setTimeout(() => row.querySelector("input")?.focus(), 100);
+}
+
+/* ============================
    INLINE EDIT
 ============================ */
 function editCell(td, tipo, planilha) {
@@ -339,37 +383,15 @@ function editCell(td, tipo, planilha) {
 }
 
 /* ============================
-   SALVAR AUTOMÁTICO
+   SALVAR INLINE
 ============================ */
 function saveRow(row, planilha) {
   const id = row.dataset.id;
-
   const campos = [...row.querySelectorAll("input, select")];
 
-  if (campos.length === 0) return;
+  if (!id || campos.length === 0) return;
 
-  let valores;
-
-  if (planilha === "Planilha1") {
-    valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      campos[2]?.value,
-      campos[3]?.value,
-      campos[4]?.value,
-      campos[5]?.value,
-      campos[6]?.value
-    ];
-  } else {
-    valores = [
-      formatDate(campos[0].value),
-      campos[1].value,
-      campos[2]?.value,
-      campos[3]?.value,
-      campos[4]?.value,
-      campos[5]?.value
-    ];
-  }
+  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
 
   fetch(API_URL, {
     method: "POST",
@@ -379,11 +401,6 @@ function saveRow(row, planilha) {
       id,
       valores
     })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) carregarPlanilha(planilha);
-    else alert("Erro ao salvar");
   });
 }
 
@@ -392,13 +409,11 @@ function saveRow(row, planilha) {
 ============================ */
 function createRow(btn, planilha) {
   const row = btn.closest("tr");
-
   const campos = [...row.querySelectorAll("input, select")];
 
-  const valores = campos.map((c, i) => {
-    if (i === 0) return formatDate(c.value);
-    return c.value;
-  });
+  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
+
+  if (!valores[0]) return alert("Data obrigatória");
 
   fetch(API_URL, {
     method: "POST",
@@ -408,11 +423,7 @@ function createRow(btn, planilha) {
       valores
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) carregarPlanilha(planilha);
-    else alert("Erro ao salvar");
-  });
+  .then(() => carregarPlanilha(planilha));
 }
 
 /* ============================
@@ -421,10 +432,7 @@ function createRow(btn, planilha) {
 function deleteRow(btn, planilha) {
   const row = btn.closest("tr");
 
-  if (!row.dataset.id) {
-    row.remove();
-    return;
-  }
+  if (!row.dataset.id) return row.remove();
 
   fetch(API_URL, {
     method: "POST",
@@ -434,11 +442,7 @@ function deleteRow(btn, planilha) {
       id: row.dataset.id
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) row.remove();
-    else alert("Erro ao excluir");
-  });
+  .then(() => row.remove());
 }
 
 /* ============================
@@ -463,6 +467,7 @@ window.onload = () => {
   carregarPlanilha("Planilha1");
   carregarPlanilha("Planilha2");
 };
+
   
 </script>
 
