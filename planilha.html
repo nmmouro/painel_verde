@@ -240,6 +240,38 @@ function showPlanilha(id) {
   document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
 }
 
+function formatDisplayDate(valor) {
+  if (!valor) return "";
+
+  // se já estiver no padrão BR
+  if (typeof valor === "string" && valor.includes("/")) return valor;
+
+  const date = new Date(valor);
+
+ return date.toLocaleDateString("pt-BR", {
+    timeZone: "America/Sao_Paulo"
+  });
+}
+
+function formatDisplayTime(valor) {
+  if (!valor) return "";
+
+  // se já está correto
+  if (typeof valor === "string" && valor.includes(":")) {
+    return valor.substring(0,5);
+  }
+
+  const date = new Date(valor);
+
+  if (isNaN(date)) return valor;
+
+  return date.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+  
+
 /* ============================
    CARREGAR DADOS
 ============================ */
@@ -270,8 +302,8 @@ function renderTable1(data) {
     tr.dataset.id = row[0];
 
     tr.innerHTML = `
-      <td onclick="editCell(this,'date','Planilha1')">${row[1]}</td>
-      <td onclick="editCell(this,'time','Planilha1')">${row[2]}</td>
+      <td onclick="editCell(this,'date','Planilha1')">${formatDisplayDate(row[1])}</td>
+      <td onclick="editCell(this,'time','Planilha1')">${formatDisplayTime(row[2])}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[3]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[4]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[5]}</td>
@@ -297,7 +329,7 @@ function renderTable2(data) {
     tr.dataset.id = row[0];
 
     tr.innerHTML = `
-      <td onclick="editCell(this,'date','Planilha2')">${row[1]}</td>
+      <td onclick="editCell(this,'date','Planilha2')">${formatDisplayDate(row[1])}</td>
       <td onclick="editCell(this,'select','Planilha2')">${row[2]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[3]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[4]}</td>
