@@ -221,6 +221,27 @@ button {
 const API_URL = "https://script.google.com/macros/s/AKfycbz67LG_8h-EWJs6t132FnT5ask5dE12nFiZECdxEjYig21-hH_L5tXTB_uX1o4WeOjgFw/exec";
 
 /* ============================
+   DATA E HORA HEADER
+============================ */
+function updateDateTime() {
+  const now = new Date();
+  document.getElementById("datetime").innerText =
+    now.toLocaleDateString() + " " + now.toLocaleTimeString();
+}
+setInterval(updateDateTime, 1000);
+
+/* ============================
+   TROCA DE PLANILHA
+============================ */
+function showPlanilha(id) {
+  document.getElementById("planilha1").style.display = "none";
+  document.getElementById("planilha2").style.display = "none";
+
+  document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
+}
+
+  
+/* ============================
    CARREGAR
 ============================ */
 function carregarPlanilha(planilha) {
@@ -301,7 +322,7 @@ function renderTable2(data) {
 function editarLinha(btn, planilha) {
   const row = btn.closest("tr");
 
-  const tipos = planilha === "Planilha1"
+  const tipos = planilha === "Planilha"
     ? ["date", "time"]
     : ["date", null];
 
