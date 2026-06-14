@@ -489,9 +489,15 @@ function deleteRow(btn, planilha) {
 ============================ */
 function formatDate(data) {
   if (!data) return "";
-  const [y, m, d] = data.split("-");
-  return `${d}/${m}/${y}`;
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
 }
+
+  function parseLocalDate(data) {
+  const [ano, mes, dia] = data.split("-");
+  return new Date(ano, mes - 1, dia); // LOCAL (sem UTC bug)
+}
+
 
 function toISO(data) {
   if (!data) return "";
