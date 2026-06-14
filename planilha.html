@@ -234,8 +234,8 @@ setInterval(updateDateTime, 1000);
    TROCA DE PLANILHA
 ============================ */
 function showPlanilha(id) {
-  document.getElementById("planilha1").style.display = "none";
-  document.getElementById("planilha2").style.display = "none";
+  planilha1.style.display = "none";
+  planilha2.style.display = "none";
 
   document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
 }
@@ -254,7 +254,8 @@ function carregarPlanilha(planilha) {
 
     if (planilha === "Planilha1") renderTable1(res.data);
     if (planilha === "Planilha2") renderTable2(res.data);
-  });
+  })
+  .catch(err => console.error(err));
 }
 
 /* ============================
@@ -277,6 +278,7 @@ function renderTable1(data) {
       <td onclick="editCell(this,'text','Planilha1')">${row[6]}</td>
       <td onclick="editCell(this,'text','Planilha1')">${row[7]}</td>
       <td><button onclick="deleteRow(this,'Planilha1')">🗑</button></td>
+
     `;
 
     tbody.appendChild(tr);
@@ -302,18 +304,16 @@ function renderTable2(data) {
       <td onclick="editCell(this,'text','Planilha2')">${row[5]}</td>
       <td onclick="editCell(this,'text','Planilha2')">${row[6]}</td>
       <td><button onclick="deleteRow(this,'Planilha2')">🗑</button></td>
+
     `;
 
     tbody.appendChild(tr);
   });
 }
 
-/* ============================
-   BOTÃO ADICIONAR (NOVO)
-============================ */
 function addRow(planilha) {
-  const table = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
-  const row = document.querySelector(table).insertRow();
+  const tableId = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
+  const row = document.querySelector(tableId).insertRow();
 
   if (planilha === "Planilha1") {
     row.innerHTML = `
@@ -350,8 +350,12 @@ function addRow(planilha) {
     `;
   }
 
-  setTimeout(() => row.querySelector("input")?.focus(), 100);
+  // foco automático
+  setTimeout(() => {
+    row.querySelector("input")?.focus();
+  }, 100);
 }
+  
 
 /* ============================
    INLINE EDIT
@@ -383,15 +387,35 @@ function editCell(td, tipo, planilha) {
 }
 
 /* ============================
-   SALVAR INLINE
+   SALVAR AUTOMÁTICO
 ============================ */
 function saveRow(row, planilha) {
   const id = row.dataset.id;
-  const campos = [...row.querySelectorAll("input, select")];
+  let valores;
 
-  if (!id || campos.length === 0) return;
+  if (planilha === "Planilha1") {
+    const inputs = row.querySelectorAll("input");
 
-  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
+    valores = [
+      formatDate(getValor(row.cells[0])),
+      getValor(row.cells[1]),
+      getValor(row.cells[2]),
+      getValor(row.cells[3]),
+      getValor(row.cells[4]),
+      getValor(row.cells[5]),
+      getValor(row.cells[6])
+    ];
+  } else {
+    valores = [
+      formatDate(getValor(row.cells[0])),
+      getValor(row.cells[1]),
+      getValor(row.cells[2]),
+      getValor(row.cells[3]),
+      getValor(row.cells[4]),
+      getValor(row.cells[5])
+    ];
+  }
+
 
   fetch(API_URL, {
     method: "POST",
@@ -401,6 +425,11 @@ function saveRow(row, planilha) {
       id,
       valores
     })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) carregarPlanilha(planilha);
+    else alert("Erro ao salvar");
   });
 }
 
@@ -409,11 +438,40 @@ function saveRow(row, planilha) {
 ============================ */
 function createRow(btn, planilha) {
   const row = btn.closest("tr");
-  const campos = [...row.querySelectorAll("input, select")];
 
-  const valores = campos.map((c, i) => i === 0 ? formatDate(c.value) : c.value);
+  let valores;
 
-  if (!valores[0]) return alert("Data obrigatória");
+  if (planilha === "Planilha1") {
+    const data = row.cells[0].querySelector("input").value;
+    const hora = row.cells[1].querySelector("input").value;
+
+    valores = [
+      formatDate(data),
+      hora,
+      row.cells[2].innerText.trim(),
+      row.cells[3].innerText.trim(),
+      row.cells[4].innerText.trim(),
+      row.cells[5].innerText.trim(),
+      row.cells[6].innerText.trim()
+    ];
+  } else {
+    const data = row.cells[0].querySelector("input").value;
+    const periodo = row.cells[1].querySelector("select").value;
+
+    valores = [
+      formatDate(data),
+      periodo,
+      row.cells[2].innerText.trim(),
+      row.cells[3].innerText.trim(),
+      row.cells[4].innerText.trim(),
+      row.cells[5].innerText.trim()
+    ];
+  }
+
+  if (!valores[0]) {
+    alert("Data obrigatória");
+    return;
+  }
 
   fetch(API_URL, {
     method: "POST",
@@ -423,7 +481,20 @@ function createRow(btn, planilha) {
       valores
     })
   })
-  .then(() => carregarPlanilha(planilha));
+  .then(res => res.json())
+  .then(res => {
+    console.log("CREATE:", res);
+
+    if (res.success) {
+      carregarPlanilha(planilha);
+    } else {
+      alert("Erro ao salvar");
+    }
+  })
+  .catch(err => {
+    console.error("Erro API:", err);
+    alert("Erro na comunicação com API");
+  });
 }
 
 /* ============================
@@ -432,7 +503,10 @@ function createRow(btn, planilha) {
 function deleteRow(btn, planilha) {
   const row = btn.closest("tr");
 
-  if (!row.dataset.id) return row.remove();
+  if (!row.dataset.id) {
+    row.remove();
+    return;
+  }
 
   fetch(API_URL, {
     method: "POST",
@@ -442,22 +516,42 @@ function deleteRow(btn, planilha) {
       id: row.dataset.id
     })
   })
-  .then(() => row.remove());
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) row.remove();
+    else alert("Erro ao excluir");
+  });
 }
 
 /* ============================
    UTIL
 ============================ */
-function formatDate(data) {
+
+  function formatDate(data) {
+  if (!data) return "";
+  return data.includes("/") ? data : data.split("-").reverse().join("/");
+}
+ /* 
+  function formatDate(data) {
   if (!data) return "";
   const [ano, mes, dia] = data.split("-");
   return `${dia}/${mes}/${ano}`;
-}
+}*/
 
 function toISO(data) {
   if (!data) return "";
   const [dia, mes, ano] = data.split("/");
   return `${ano}-${mes}-${dia}`;
+}
+
+  function getValor(td) {
+  const input = td.querySelector("input, select");
+
+  if (input) {
+    return input.value;
+  }
+
+  return td.innerText.trim();
 }
 
 /* ============================
@@ -467,7 +561,6 @@ window.onload = () => {
   carregarPlanilha("Planilha1");
   carregarPlanilha("Planilha2");
 };
-
   
 </script>
 
