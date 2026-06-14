@@ -1,3 +1,6 @@
+Código base 1
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -171,7 +174,7 @@ button {
   <!-- PLANILHA 1 -->
   <div id="planilha1">
     <h2>Planilha 1</h2>
-    <button class="btn btn-add" onclick="addRow('Planilha1')">➕ Adicionar</button>
+    <button class="btn btn-add" onclick="addRowP1()">Adicionar</button>
 
     <table id="table1">
       <thead>
@@ -194,7 +197,7 @@ button {
   
   <div id="planilha2" style="display:none;">
     <h2>Planilha 2</h2>
-    <button class="btn btn-add" onclick="addRow('Planilha2')">➕ Adicionar</button>
+    <button class="btn btn-add" onclick="addRowP2()">Adicionar</button>
 
     <table id="table2">
       <thead>
@@ -240,25 +243,25 @@ function showPlanilha(id) {
   document.getElementById(id === "p1" ? "planilha1" : "planilha2").style.display = "block";
 }
 
-  
 /* ============================
-   CARREGAR
+   CARREGAR DADOS
 ============================ */
 function carregarPlanilha(planilha) {
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({ action: "read", planilha })
   })
-  .then(res => res.json())
-  .then(res => {
-    if (!res.success) return;
-    if (planilha === "Planilha1") renderTable1(res.data);
-    if (planilha === "Planilha2") renderTable2(res.data);
-  });
+    .then(res => res.json())
+    .then(res => {
+      if (!res.success) return;
+
+      if (planilha === "Planilha1") renderTable1(res.data);
+      if (planilha === "Planilha2") renderTable2(res.data);
+    });
 }
 
 /* ============================
-   RENDER PLANILHA 1
+   RENDER TABLES
 ============================ */
 function renderTable1(data) {
   const tbody = document.querySelector("#table1 tbody");
@@ -266,7 +269,6 @@ function renderTable1(data) {
 
   data.slice(1).forEach(row => {
     const tr = document.createElement("tr");
-    tr.dataset.id = row[0];
 
     tr.innerHTML = `
       <td>${row[1]}</td>
@@ -276,27 +278,18 @@ function renderTable1(data) {
       <td>${row[5]}</td>
       <td>${row[6]}</td>
       <td>${row[7]}</td>
-      <td>
-        <button onclick="editarLinha(this,'Planilha1')">✏️</button>
-        <button onclick="salvarLinha(this,'Planilha1')">💾</button>
-        <button onclick="cancelarEdicao(this)">❌</button>
-        <button onclick="deleteRow(this,'Planilha1')">🗑</button>
-      </td>
     `;
+
     tbody.appendChild(tr);
   });
 }
 
-/* ============================
-   RENDER PLANILHA 2
-============================ */
 function renderTable2(data) {
   const tbody = document.querySelector("#table2 tbody");
   tbody.innerHTML = "";
 
   data.slice(1).forEach(row => {
     const tr = document.createElement("tr");
-    tr.dataset.id = row[0];
 
     tr.innerHTML = `
       <td>${row[1]}</td>
@@ -305,215 +298,183 @@ function renderTable2(data) {
       <td>${row[4]}</td>
       <td>${row[5]}</td>
       <td>${row[6]}</td>
-      <td>
-        <button onclick="editarLinha(this,'Planilha2')">✏️</button>
-        <button onclick="salvarLinha(this,'Planilha2')">💾</button>
-        <button onclick="cancelarEdicao(this)">❌</button>
-        <button onclick="deleteRow(this,'Planilha2')">🗑</button>
-      </td>
     `;
+
     tbody.appendChild(tr);
   });
 }
 
 /* ============================
-   EDITAR LINHA
+   PLANILHA 1
 ============================ */
-function editarLinha(btn, planilha) {
-  const row = btn.closest("tr");
 
-  const tipos = planilha === "Planilha"
-    ? ["date", "time"]
-    : ["date", null];
+function addRowP1() {
+  const row = document.querySelector("#table1 tbody").insertRow();
 
-  for (let i = 0; i < row.cells.length - 1; i++) {
-    const valor = row.cells[i].innerText;
-
-    if (i === 0) {
-      row.cells[i].innerHTML = `<input type="date" value="${toISO(valor)}">`;
-    } else if (i === 1 && tipos[1] === "time") {
-      row.cells[i].innerHTML = `<input type="time" value="${valor}">`;
-    } else {
-      row.cells[i].innerHTML = `<input value="${valor}">`;
-    }
-  }
+  row.innerHTML = `
+    <td><input type="date"></td>
+    <td><input type="time"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td>
+      <button onclick="createRowP1(this)">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
+    </td>
+  `;
 }
 
-/* ============================
-   SALVAR LINHA
-============================ */
-function salvarLinha(btn, planilha) {
+function createRowP1(btn) {
   const row = btn.closest("tr");
-  const id = row.dataset.id;
 
-  const inputs = row.querySelectorAll("input");
+  const data = row.cells[0].querySelector("input").value;
+  const hora = row.cells[1].querySelector("input").value;
 
-  let valores;
+  const valores = [
+    formatDate(data),
+    hora,
+    row.cells[2].innerText,
+    row.cells[3].innerText,
+    row.cells[4].innerText,
+    row.cells[5].innerText,
+    row.cells[6].innerText
+  ];
 
-  if (planilha === "Planilha1") {
-    valores = [
-      formatDate(inputs[0].value),
-      inputs[1].value,
-      inputs[2].value,
-      inputs[3].value,
-      inputs[4].value,
-      inputs[5].value,
-      inputs[6].value
-    ];
-  } else {
-    valores = [
-      formatDate(inputs[0].value),
-      inputs[1].value,
-      inputs[2].value,
-      inputs[3].value,
-      inputs[4].value,
-      inputs[5].value
-    ];
-  }
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "update",
-      planilha,
-      id,
-      valores
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      carregarPlanilha(planilha);
-    } else {
-      alert("Erro ao salvar");
-    }
-  });
-}
-
-/* ============================
-   CANCELAR
-============================ */
-function cancelarEdicao(btn) {
-  const row = btn.closest("tr");
-  const planilha = row.closest("table").id === "table1"
-    ? "Planilha1"
-    : "Planilha2";
-
-  carregarPlanilha(planilha);
-}
-
-/* ============================
-   NOVA LINHA
-============================ */
-function addRow(planilha) {
-  const table = planilha === "Planilha1" ? "#table1 tbody" : "#table2 tbody";
-  const row = document.querySelector(table).insertRow();
-
-  if (planilha === "Planilha1") {
-    row.innerHTML = `
-      <td><input type="date"></td>
-      <td><input type="time"></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td>
-        <button onclick="createRow(this,'Planilha1')">💾</button>
-        <button onclick="deleteRow(this)">❌</button>
-      </td>
-    `;
-  } else {
-    row.innerHTML = `
-      <td><input type="date"></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td><input></td>
-      <td>
-        <button onclick="createRow(this,'Planilha2')">💾</button>
-        <button onclick="deleteRow(this)">❌</button>
-      </td>
-    `;
-  }
-}
-
-/* ============================
-   CREATE
-============================ */
-function createRow(btn, planilha) {
-  const row = btn.closest("tr");
-  const inputs = row.querySelectorAll("input");
-
-  const valores = [...inputs].map((i, idx) =>
-    idx === 0 ? formatDate(i.value) : i.value
-  );
+  if (!validarCampo(data, "Data")) return;
+  if (!validarCampo(hora, "Hora")) return;
 
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
       action: "create",
-      planilha,
+      planilha: "Planilha1",
       valores
     })
   })
-  .then(res => res.json())
-  .then(() => carregarPlanilha(planilha));
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) carregarPlanilha("Planilha1");
+      else alert("Erro ao salvar");
+    });
 }
 
 /* ============================
-   DELETE
+   PLANILHA 2
 ============================ */
-function deleteRow(btn, planilha) {
+
+function addRowP2() {
+  const row = document.querySelector("#table2 tbody").insertRow();
+
+  row.innerHTML = `
+    <td><input type="date"></td>
+    <td>
+      <select>
+        <option value="">Selecione</option>
+        <option>Manhã</option>
+        <option>Tarde</option>
+      </select>
+    </td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td>
+      <button onclick="createRowP2(this)">Salvar</button>
+      <button onclick="deleteRow(this)">Cancelar</button>
+    </td>
+  `;
+}
+
+function createRowP2(btn) {
   const row = btn.closest("tr");
 
-  if (!row.dataset.id) {
-    row.remove();
-    return;
-  }
+  const data = row.cells[0].querySelector("input").value;
+  const periodo = row.cells[1].querySelector("select").value;
+
+  const valores = [
+    formatDate(data),
+    periodo,
+    row.cells[2].innerText,
+    row.cells[3].innerText,
+    row.cells[4].innerText,
+    row.cells[5].innerText
+  ];
+
+  if (!validarCampo(data, "Data")) return;
+  if (!validarCampo(periodo, "Período")) return;
 
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
-      action: "delete",
-      planilha,
-      id: row.dataset.id
+      action: "create",
+      planilha: "Planilha2",
+      valores
     })
   })
-  .then(() => row.remove());
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) carregarPlanilha("Planilha2");
+      else alert("Erro ao salvar");
+    });
 }
 
 /* ============================
    UTIL
 ============================ */
+
+function enableInlineEdit(td, tipo = "text") {
+  const valor = td.innerText;
+
+  if (tipo === "date") {
+    td.innerHTML = `<input type="date" value="${toISO(valor)}">`;
+  } else if (tipo === "time") {
+    td.innerHTML = `<input type="time" value="${valor}">`;
+  } else {
+    td.innerHTML = `<input value="${valor}">`;
+  }
+
+  const input = td.querySelector("input");
+  input.focus();
+
+  // 🔥 salva automaticamente ao sair do campo
+  input.addEventListener("blur", () => saveCell(td, tipo));
+}
+  
+
+function deleteRow(btn) {
+  btn.closest("tr").remove();
+}
+
 function formatDate(data) {
   if (!data) return "";
   const [ano, mes, dia] = data.split("-");
   return `${dia}/${mes}/${ano}`;
 }
 
-  function parseLocalDate(data) {
+function parseLocalDate(data) {
   const [ano, mes, dia] = data.split("-");
   return new Date(ano, mes - 1, dia); // LOCAL (sem UTC bug)
 }
 
-
-function toISO(data) {
-  if (!data) return "";
-  const [d, m, y] = data.split("/");
-  return `${y}-${m}-${d}`;
+function validarCampo(valor, nome) {
+  if (!valor || valor.trim() === "") {
+    alert(`Campo obrigatório: ${nome}`);
+    return false;
+  }
+  return true;
 }
 
 /* ============================
    INIT
 ============================ */
+
 window.onload = () => {
   carregarPlanilha("Planilha1");
   carregarPlanilha("Planilha2");
 };
-
- 
+  
 </script>
 
  
