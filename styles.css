@@ -1,0 +1,33 @@
+body {
+  background: linear-gradient(135deg, #0a0f2c, #1a2a5a);
+  font-family: Inter, sans-serif;
+}
+
+.card {
+  background: rgba(15, 25, 60, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 12px;
+  margin: 10px;
+}
+
+.table-modern {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-modern th {
+  background: #2c4078;
+  padding: 10px;
+}
+
+.table-modern td {
+  padding: 10px;
+  text-align: center;
+}
+
+.status-concluido { background: #00c85333; }
+.status-andamento { background: #ffcc0033; }
+.status-cancelado { background: #ff4d4d33; }
+.status-manutencao { background: #4da6ff33; }
+.status-viagem { background: #d66bff33; }
