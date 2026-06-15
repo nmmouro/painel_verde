@@ -1483,8 +1483,18 @@ document.getElementById(
   }
 };
 
+  
 
-/* ================= PWA ================= */
+/* ================= INIT ================= */
+
+loadAll();
+
+setInterval(loadAll,30000);
+
+
+
+
+  /* ================= PWA ================= */
 
 if("serviceWorker" in navigator){
   navigator.serviceWorker
@@ -1493,13 +1503,6 @@ if("serviceWorker" in navigator){
     .catch(err => console.log("Erro SW:", err));
 }
 
-  
-
-/* ================= INIT ================= */
-
-loadAll();
-
-setInterval(loadAll,30000);
 
 </script>
 
