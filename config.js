@@ -1,9 +1,0 @@
-const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
-
-const TABS = [
-  "VEÍCULOS",
-  "MOTORISTAS",
-  "LANÇAMENTOS",
-  "AGENDA DO DIA",
-  "AGENDA SERVIÇO SOCIAL"
-];
