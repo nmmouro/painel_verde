@@ -3,11 +3,6 @@
 
 <head>
 
-
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#071029">
-
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
@@ -1465,42 +1460,12 @@ function playBeep(){
   updateAudioButton();
 }
 
-/* ================= FULLSCREEN ================= */
-
-document.getElementById(
-  "toggle-fullscreen"
-).onclick = async () => {
-
-  if(!document.fullscreenElement){
-
-    await document.documentElement
-      .requestFullscreen();
-
-  }else{
-
-    await document.exitFullscreen();
-  }
-};
-
-  
-
 /* ================= INIT ================= */
 
 loadAll();
 
 setInterval(loadAll,30000);
 
-
-
-
-  /* ================= PWA ================= */
-
-if("serviceWorker" in navigator){
-  navigator.serviceWorker
-    .register("sw.js")
-    .then(() => console.log("PWA ativo"))
-    .catch(err => console.log("Erro SW:", err));
-}
 
 
 </script>
