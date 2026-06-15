@@ -22,21 +22,18 @@ function getStatusClass(status) {
 
 export function renderTable(headers, rows) {
   return `
-    <table class="table-modern">
+    <table>
       <thead>
-        <tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>
+        <tr>
+          ${headers.map(h => `<th>${h}</th>`).join("")}
+        </tr>
       </thead>
       <tbody>
-        ${rows.map(row => {
-          const values = row.map(getCell);
-          const status = values.at(-1);
-
-          return `
-            <tr class="${getStatusClass(status)}">
-              ${values.map(v => `<td>${v || ""}</td>`).join("")}
-            </tr>
-          `;
-        }).join("")}
+        ${rows.map(row => `
+          <tr>
+            ${Object.values(row).map(v => `<td>${v ?? ""}</td>`).join("")}
+          </tr>
+        `).join("")}
       </tbody>
     </table>
   `;
