@@ -8,12 +8,7 @@ const TABS = [
     title:"VEÍCULOS",
     sheet:"VEÍCULOS",
 
-    headers:[
-      "TRAIL TXN1I89",
-      "CRETA TXJ6F18",
-      "CRETA TXJ6F19",
-      "CRETA TXJ6F20"
-    ]
+    
   },
 
   {
@@ -21,12 +16,7 @@ const TABS = [
   title:"MOTORISTAS",
   sheet:"MOTORISTAS",
 
-  headers:[
-    "Motorista",
-    "Status",
-    "Condição",
-    
-  ]
+  
 },
 
   {
@@ -34,15 +24,7 @@ const TABS = [
     title:"PAINEL",
     sheet:"LANÇAMENTOS",
 
-    headers:[
-      "Data",
-      "Hora",
-      "Empregado",
-      "Veículo",      
-      "Passageiro/ Setor/ Motivo",
-      "Itinerário",
-      "Status"
-    ]
+   
   },
 
   {
@@ -50,15 +32,7 @@ const TABS = [
     title:"AGENDA DO DIA",
     sheet:"AGENDA DO DIA",
 
-    headers:[
-      "Data",
-      "Hora",
-      "Passageiro",
-      "Setor",
-      "Motivo",
-      "Itinerário",
-      "Status"
-    ]
+    
   },
 
   {
@@ -66,14 +40,7 @@ const TABS = [
     title:"AGENDA SERVIÇO SOCIAL",
     sheet:"AGENDA SERVIÇO SOCIAL",
 
-    headers:[
-      "Data",
-      "Período",
-      "Passageiro",
-      "Motivo",
-      "Itinerário",
-      "Status"
-    ]
+   
   }
 
 ];
