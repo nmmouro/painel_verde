@@ -8,6 +8,14 @@
 
 <title>Painel Frota</title>
 
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#071029">
+
+
+
+  
+
 <style>
 
 /* ================= ROOT ================= */
@@ -37,6 +45,23 @@
   box-sizing:border-box;
 }
 
+
+
+html, body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+/* remove comportamentos mobile / toque */
+body{
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+}
+
+  
+/*
 body{
 
   background:var(--bg);
@@ -46,7 +71,7 @@ body{
 
   height:100vh;
   overflow:hidden;
-}
+} */
 
 /* ================= HEADER ================= */
 
@@ -1457,6 +1482,18 @@ document.getElementById(
     await document.exitFullscreen();
   }
 };
+
+
+/* ================= PWA ================= */
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker
+    .register("sw.js")
+    .then(() => console.log("PWA ativo"))
+    .catch(err => console.log("Erro SW:", err));
+}
+
+  
 
 /* ================= INIT ================= */
 
