@@ -81,6 +81,20 @@ export const CONFIG = {
 
   ],
 
- 
+  /* ================= HELPERS ================= */
+
+  getTabById(id) {
+    return this.TABS.find(tab => tab.id === id);
+  },
+
+  getSheetName(id) {
+    const tab = this.getTabById(id);
+    return tab ? tab.sheet : null;
+  },
+
+  getHeaders(id) {
+    const tab = this.getTabById(id);
+    return tab ? tab.headers : [];
+  }
 
 };
