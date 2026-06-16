@@ -1,78 +1,86 @@
-const SHEET_ID = "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4";
+/* ================= CONFIG GLOBAL ================= */
 
-const TABS = [
-  
-  {
-    id:"veiculos",
-    title:"VEÍCULOS",
-    sheet:"VEÍCULOS",
+export const CONFIG = {
 
-    headers:[
-      "TRAIL TXN1I89",
-      "CRETA TXJ6F18",
-      "CRETA TXJ6F19",
-      "CRETA TXJ6F20"
-    ]
-  },
+  SHEET_ID: "14T7zF0likp8YGeycOYBcOs9INY9gvMzpt7SMfghE8P4",
 
-  {
-  id:"motoristas",
-  title:"MOTORISTAS",
-  sheet:"MOTORISTAS",
+  /* ================= TABELAS ================= */
+  TABS: [
 
-  headers:[
-    "Motorista",
-    "Status",
-    "Condição",
-    
-  ]
-},
+    {
+      id: "veiculos",
+      title: "VEÍCULOS",
+      sheet: "VEÍCULOS",
 
-  {
-    id:"painel",
-    title:"PAINEL",
-    sheet:"LANÇAMENTOS",
+      headers: [
+        "TRAIL TXN1I89",
+        "CRETA TXJ6F18",
+        "CRETA TXJ6F19",
+        "CRETA TXJ6F20"
+      ]
+    },
 
-    headers:[
-      "Data",
-      "Hora",
-      "Empregado",
-      "Veículo",      
-      "Passageiro/ Setor/ Motivo",
-      "Itinerário",
-      "Status"
-    ]
-  },
+    {
+      id: "motoristas",
+      title: "MOTORISTAS",
+      sheet: "MOTORISTAS",
 
-  {
-    id:"agenda",
-    title:"AGENDA DO DIA",
-    sheet:"AGENDA DO DIA",
+      headers: [
+        "Motorista",
+        "Status",
+        "Condição"
+      ]
+    },
 
-    headers:[
-      "Data",
-      "Hora",
-      "Passageiro",
-      "Setor",
-      "Motivo",
-      "Itinerário",
-      "Status"
-    ]
-  },
+    {
+      id: "painel",
+      title: "PAINEL",
+      sheet: "LANÇAMENTOS",
 
-  {
-    id:"social",
-    title:"AGENDA SERVIÇO SOCIAL",
-    sheet:"AGENDA SERVIÇO SOCIAL",
+      headers: [
+        "Data",
+        "Hora",
+        "Empregado",
+        "Veículo",
+        "Passageiro / Setor / Motivo",
+        "Itinerário",
+        "Status"
+      ]
+    },
 
-    headers:[
-      "Data",
-      "Período",
-      "Passageiro",
-      "Motivo",
-      "Itinerário",
-      "Status"
-    ]
-  }
+    {
+      id: "agenda",
+      title: "AGENDA DO DIA",
+      sheet: "AGENDA DO DIA",
 
-];
+      headers: [
+        "Data",
+        "Hora",
+        "Passageiro",
+        "Setor",
+        "Motivo",
+        "Itinerário",
+        "Status"
+      ]
+    },
+
+    {
+      id: "social",
+      title: "AGENDA SERVIÇO SOCIAL",
+      sheet: "AGENDA SERVIÇO SOCIAL",
+
+      headers: [
+        "Data",
+        "Período",
+        "Passageiro",
+        "Motivo",
+        "Itinerário",
+        "Status"
+      ]
+    }
+
+  ],
+
+ 
+
+};
