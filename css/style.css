@@ -16,6 +16,14 @@
     --transition: 0.2s ease;
   }
 
+ #clock{
+
+  font-size:24px;
+  font-weight:700;
+
+  color:var(--muted);
+}
+
 .topbar{
 
   display:grid;
@@ -89,10 +97,7 @@ header {
   }
 
 
- #clock {
-    font-size: 18px;
-    color: var(--muted);
-  }
+
 
 
  button {
