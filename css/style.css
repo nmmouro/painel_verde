@@ -97,3 +97,50 @@ header {
 .content {
   font-size: 14px;
 }
+
+main{
+
+  display:grid;
+  gap:12px;
+
+  padding:6px;
+
+  height:calc(100vh - 120px);
+
+  overflow:auto;
+}
+
+/* CARD */
+
+.card{
+
+  background:var(--card);
+
+  border-radius:16px;
+
+  overflow:auto;
+
+  border:
+    1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.35);
+}
+
+.card h2{
+
+  text-align:center;
+
+  padding:10px;
+
+  font-size:20px;
+}
+  
+  .dual-cards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+
+    max-height:260px;
+  overflow-y:auto;
+}
