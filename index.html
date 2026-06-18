@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel Frota</title>
 
+  <link rel="stylesheet" href="css/style.css">
+
  </head>
 
 <body>
@@ -18,7 +20,7 @@
   <header class="topbar">
 
     <div>
-      <img src="logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <img src="logo.png" alt="Logo" class="logo">
     </div>
 
     <div class="center">
@@ -36,18 +38,29 @@
 
   </header>
 
-  <!-- ================= APP ================= -->
-  <main id="app" aria-live="polite"></main>
+  <main>
+  <div class="grid">
 
-  <!-- ================= JS ================= -->
-  <script src="css/style.css" defer></script>
-  <script src="js/01config.js" defer></script>
-  <script src="js/02status.js" defer></script>
-  <script src="js/03helpers.js" defer></script>
-  <script src="js/04fetch.js" defer></script>
-  <script src="js/05disponibilidade.js" defer></script>
-  <script src="js/06render.js" defer></script>
-  <script src="js/07app.js" defer></script>
+    <div class="card" id="painel">
+      <h2>Painel</h2>
+      <div class="content" id="painelData"></div>
+    </div>
 
+    <div class="card" id="agenda">
+      <h2>Agenda</h2>
+      <div class="content" id="agendaData"></div>
+    </div>
+
+    <div class="card" id="social">
+      <h2>Agenda Social</h2>
+      <div class="content" id="socialData"></div>
+    </div>
+
+  </div>
+</main>
+
+<script src="config/config.js"></script>
+
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
