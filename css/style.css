@@ -36,7 +36,7 @@ header {
 
 
 .logo {
-    height: 60px;
+    height: 20px;
     object-fit: contain;
   }
 
@@ -110,31 +110,7 @@ main{
   overflow:auto;
 }
 
-/* CARD */
 
-.card{
-
-  background:var(--card);
-
-  border-radius:16px;
-
-  overflow:auto;
-
-  border:
-    1px solid rgba(255,255,255,.08);
-
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.35);
-}
-
-.card h2{
-
-  text-align:center;
-
-  padding:10px;
-
-  font-size:20px;
-}
   
   .dual-cards{
   display:grid;
