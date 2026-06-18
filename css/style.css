@@ -16,6 +16,25 @@
     --transition: 0.2s ease;
   }
 
+.topbar{
+
+  display:grid;
+
+  grid-template-columns:
+    180px 1fr 260px;
+
+  gap:16px;
+
+  align-items:center;
+
+  padding:14px 20px;
+
+  background:#020617;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.1);
+}
+
 
 body {
     background: var(--bg);
@@ -36,7 +55,7 @@ header {
 
 
 .logo {
-    height: 20px;
+    height: 60px;
     object-fit: contain;
   }
 
