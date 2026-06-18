@@ -44,6 +44,18 @@
   overflow-y:auto;
 }
 
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
 
 
 body {
@@ -110,17 +122,7 @@ header {
   }
 
 
-.card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 10px;
-    border: 1px solid rgba(255,255,255,0.05);
-  }
 
-  .h2 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
 
 
 .content {
