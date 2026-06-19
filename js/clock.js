@@ -2,7 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateClock() {
     document.getElementById("clock").innerText =
-      new Date().toLocaleTimeString("pt-BR");
+      new Date().toLocaleTimeString("pt-BR") +
+    " — " +
+    now.toLocaleTimeString("pt-BR",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      });
   }
 
   updateClock();
