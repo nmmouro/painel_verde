@@ -1,0 +1,23 @@
+.status-atendido td{
+  background:rgba(0,255,156,.15);
+}
+
+.status-concluido td{
+  background:#32CD32;
+}
+
+.status-andamento td{
+  background:rgba(255,204,0,.15);
+}
+
+.status-cancelado td{
+  background:rgba(255,77,77,.15);
+}
+
+.status-manutencao td{
+  background:rgba(77,166,255,.15);
+}
+
+.status-viagem td{
+  background:rgba(214,107,255,.15);
+}
