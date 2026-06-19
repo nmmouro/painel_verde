@@ -1,3 +1,10 @@
+import { obterAgendaHoje} from "./agenda.js";
+
+const agendaRows =
+  await obterAgendaHoje(SHEET_ID);
+
+
+
 import { getData } from "../app/api.js";
 import { store } from "../app/store.js";
 import { renderList } from "../app/ui.js";
