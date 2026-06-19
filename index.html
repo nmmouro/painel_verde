@@ -1,83 +1,215 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel Frota</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <link rel="stylesheet" href="/css/style.css">
+<title>Painel Frota</title>
 
+<style>
+body{
+  margin:0;
+  background:#071029;
+  color:#fff;
+  font-family:Arial;
+}
 
- </head>
+header{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 20px;
+  background:#020617;
+}
+
+h1{margin:0;}
+
+button{
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+main{
+  padding:10px;
+  display:grid;
+  gap:10px;
+}
+
+.card{
+  background:#0b1a3a;
+  border-radius:10px;
+  padding:10px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:6px;
+  border:1px solid #1e2f5c;
+  text-align:center;
+}
+
+thead{
+  background:#2c4078;
+}
+
+.status{
+  font-weight:bold;
+}
+
+.livre{color:#00ff9c;}
+.ocupado{color:#ff4d4d;}
+.viagem{color:#d66bff;}
+.manutencao{color:#4da6ff;}
+
+</style>
+</head>
 
 <body>
 
-  <!-- ================= AUDIO ================= -->
-  <audio id="beep" preload="auto">
-    <source src="assets/alerta.mp3" type="audio/mpeg" />
-  </audio>
+<header>
+  <h1>Painel Frota</h1>
 
-  <!-- ================= HEADER ================= -->
-  <header class="topbar">
-
-    <div>
-      <img src="assets/logo.png" class="logo">
-    </div>
-
-    <div class="center">
-      <h1 class="title">MOVIMENTAÇÃO DIÁRIA</h1>
-    </div>
-
-    <div class="right">
-      <div id="clock"></div>
-
-      <div class="actions">
-        <button id="toggle-audio">🔊 SOM</button>
-        <button id="toggle-fullscreen">⛶ TELA</button>
-      </div>
-    </div>
-
-  </header>
-
-  <main>
-  <div class="dual-card">
-
-    <div class="card" id="veículos">
-      <h2>Veículos</h2>
-      <div class="content" id="veículosData"></div>
-    </div>
-    
-    <div class="card" id="motoristas">
-      <h2>motoristas</h2>
-      <div class="content" id="motoristasData"></div>
-    </div>
-
+  <div>
+    <span id="clock"></span>
+    <button onclick="toggleFull()">⛶</button>
   </div>
-    
-    <div class="card" id="painel">
-      <h2>Painel</h2>
-      <div class="content id="painelData"></div>
-    </div>
+</header>
 
-    <div class="card" id="agenda">
-      <h2>Agenda</h2>
-      <div class="content" id="agendaData"></div>
-    </div>
+<main id="app"></main>
 
-    <div class="card" id="social">
-      <h2>Agenda Social</h2>
-      <div class="content" id="socialData"></div>
-    </div>
+<script>
 
-  </div>
-</main>
+/* ================= CONFIG ================= */
 
-<script src="/js/config.js"></script>
+const WEBAPP =
+"https://script.google.com/macros/s/AKfycbwiaVBLh1B4ZpMbyDNX5RIhFhhUxX9jni8M6vmtFoYRaU2-7eazccWwngHzjajXp44t8w/exec";
 
-<script type="module" src="/js/app.js"></script>
+const TABS = [
+  { id:"veiculos", title:"VEÍCULOS" },
+  { id:"motoristas", title:"MOTORISTAS" },
+  { id:"painel", title:"PAINEL" },
+  { id:"agenda", title:"AGENDA" },
+  { id:"social", title:"SERVIÇO SOCIAL" }
+];
 
-<script src="/clock.js"></script>
-  
-</body>
+/* ================= FETCH ================= */
+
+async function getData(tab){
+  const res = await fetch(`${WEBAPP}?tab=${tab}`);
+  return res.json();
+}
+
+/* ================= STATUS ================= */
+
+function getStatusClass(status=""){
+  status = status.toLowerCase();
+
+  if(status.includes("viagem")) return "viagem";
+  if(status.includes("manut")) return "manutencao";
+  if(status.includes("ocup")) return "ocupado";
+
+  return "livre";
+}
+
+/* ================= RENDER ================= */
+
+function renderTable(data){
+
+  if(!data.length) return "<p>Sem dados</p>";
+
+  const headers = Object.keys(data[0]);
+
+  return `
+  <table>
+    <thead>
+      <tr>
+        ${headers.map(h=>`<th>${h}</th>`).join("")}
+      </tr>
+    </thead>
+
+    <tbody>
+      ${data.map(row=>{
+
+        const values = Object.values(row);
+
+        const status =
+          String(values.at(-1) || "");
+
+        return `
+          <tr>
+            ${values.map((v,i)=>{
+
+              const isLast =
+                i === values.length-1;
+
+              return `
+                <td class="${isLast ? getStatusClass(status):""}">
+                  ${v}
+                </td>
+              `;
+            }).join("")}
+          </tr>
+        `;
+
+      }).join("")}
+    </tbody>
+  </table>
+  `;
+}
+
+/* ================= LOAD ================= */
+
+async function load(){
+
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  for(const tab of TABS){
+
+    const data =
+      await getData(tab.id);
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+    card.innerHTML = `
+      <h2>${tab.title}</h2>
+      ${renderTable(data.rows || [])}
+    `;
+
+    app.appendChild(card);
+  }
+}
+
+/* ================= CLOCK ================= */
+
+setInterval(()=>{
+  document.getElementById("clock").innerText =
+    new Date().toLocaleString("pt-BR");
+},1000);
+
+/* ================= FULLSCREEN ================= */
+
+function toggleFull(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+  }else{
+    document.exitFullscreen();
+  }
+}
+
+/* ================= INIT ================= */
+
+load();
+setInterval(load,30000);
+
+</script>
 </body>
 </html>
