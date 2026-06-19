@@ -66,6 +66,47 @@ thead{
 .viagem{color:#d66bff;}
 .manutencao{color:#4da6ff;}
 
+/* ================= css logo; card h1. card h2; audio ================= */
+
+  .header-left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo{
+height:60px;
+width:auto;
+}
+
+#toggle-audio.off{
+background:#dc2626;
+color:white;
+}
+
+.resumo-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.resumo-card{
+background:#0b1a3a;
+border-radius:10px;
+padding:10px;
+}
+
+.resumo-card h2{
+margin-top:0;
+}
+
+
 </style>
 </head>
 
@@ -171,8 +212,16 @@ async function load(){
 
   const app = document.getElementById("app");
   app.innerHTML = "";
+  
 
-  for(const tab of TABS){
+ const resumoGrid =
+document.createElement("div");
+
+resumoGrid.className = "resumo-grid";
+
+for(const tab of TABS.slice(0,2)){
+
+
 
     const data =
       await getData(tab.id);
