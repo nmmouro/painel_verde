@@ -1,4 +1,4 @@
-  export function updateClock() {
+ setInterval(() => {
     const now = new Date();
 
     document.getElementById("clock").innerText =
@@ -7,11 +7,11 @@
       now.toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit"
-      });
+      }, 1000);
   }
 
-  setInterval(updateClock, 1000);
-  updateClock();
+ 
+  
 
 
 
