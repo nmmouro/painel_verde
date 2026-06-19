@@ -1,4 +1,4 @@
-import { API_URL } from "./config.js";
+import { API_URL } from "./assets/js/config.js";
 
 export async function getSheet(sheet) {
   try {
