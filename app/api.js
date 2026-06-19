@@ -9,11 +9,13 @@ export async function carregarAgenda(SHEET_ID) {
     `&tqx=out:json`;
 
   const res = await fetch(url);
-  const json = parseGviz(await res.text());
+
+  const json = parseGviz(
+    await res.text()
+  );
 
   return json.table.rows || [];
 }
-
 
 /*
 export async function getData(tipo) {
