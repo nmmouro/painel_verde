@@ -1,4 +1,4 @@
-  function updateClock() {
+  export function updateClock() {
     const now = new Date();
 
     document.getElementById("clock").innerText =
