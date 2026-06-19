@@ -1,12 +1,13 @@
+/*
 export async function getData(tipo) {
   const res = await fetch(`${API_URL}?tipo=${tipo}`);
   return await res.json();
 }
+*/
 
 
-document.addEventListener("DOMContentLoaded", () => {
 
-  function updateClock() {
+  export function updateClock() {
     const now = new Date();
 
     document.getElementById("clock").innerText =
@@ -21,4 +22,4 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateClock, 1000);
   updateClock();
 
-});
+
