@@ -1,4 +1,4 @@
-import { obterAgendaHoje} from "./agenda.js";
+import { obterAgendaHoje} from ".js/agenda.js";
 
 const agendaRows =
   await obterAgendaHoje(SHEET_ID);
