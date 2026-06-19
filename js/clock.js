@@ -1,20 +1,16 @@
-document.addEventListener("DOMContentLoaded", () => {
+setInterval(() => {
+  const now = new Date();
 
-  function updateClock() {
-    document.getElementById("clock").innerText =
-      new Date().toLocaleTimeString("pt-BR") +
+  document.getElementById("clock").innerText =
+    now.toLocaleDateString("pt-BR") +
     " — " +
-    now Date().toLocaleTimeString("pt-BR",
-      {
-        hour:"2-digit",
-        minute:"2-digit"
-      });
-  }
+    now.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit"
+      
+    });
 
-  updateClock();
-  setInterval(updateClock, 1000);
-
-});
+}, 1000);
 
 /*
 
