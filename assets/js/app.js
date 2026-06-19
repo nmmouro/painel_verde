@@ -1,4 +1,4 @@
-import { TABS } from "./config.js";
+import { TABS } from "./assets/js/config.js";
 import { getSheet } from "./api.js";
 import { renderTable } from "./render.js";
 import { updateClock } from "./ui.js";
