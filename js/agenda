@@ -1,8 +1,4 @@
-import {
-  carregarAgenda,
-  filtrarAgendaHoje,
-  ordenarAgenda
-} from "./api.js";
+import { carregarAgenda, filtrarAgendaHoje, ordenarAgenda} from "./api.js";
 
 export async function obterAgendaHoje(SHEET_ID){
 
