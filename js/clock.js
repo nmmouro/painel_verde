@@ -1,3 +1,20 @@
+document.addEventListener("DOMContentLoaded", () => {
+
+  function updateClock() {
+    document.getElementById("clock").innerText =
+      new Date().toLocaleTimeString("pt-BR");
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+});
+
+
+
+
+/*
+
 function updateClock() {
   const now = new Date();
 
@@ -21,7 +38,7 @@ setInterval(updateClock, 1000); // atualiza a cada segundo
 
 
 
-/*
+
 
 
 setInterval(() => {
