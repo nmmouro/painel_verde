@@ -1,14 +1,14 @@
-setInterval(() => {
-  const now = new Date().toLocaleTimeString();
-  document.getElementById("clock").innerText =
-    now.toLocaleDateString("pt-BR") +
-    " — " +
-    now.toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit";
-}, 1000);
+document.addEventListener("DOMContentLoaded", () => {
 
+  function updateClock() {
+    document.getElementById("clock").innerText =
+      new Date().toLocaleTimeString("pt-BR");
+  }
 
+  updateClock();
+  setInterval(updateClock, 1000);
+
+});
 
 /*
 
