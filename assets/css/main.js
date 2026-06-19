@@ -5,6 +5,14 @@ const agendaRows =
   await obterAgendaHoje(SHEET_ID);
 
 
+@import "./vars.css";
+@import "./base.css";
+@import "./layout.css";
+@import "./components.css";
+@import "./status.css";
+@import "./tv.css";
+
+
 
 import { getData } from "../app/api.js";
 import { store } from "../app/store.js";
