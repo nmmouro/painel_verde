@@ -218,28 +218,46 @@ let soundEnabled = true;
 
 function updateAudioButton(){
 
-  if(soundEnabled){
-    audioBtn.innerText = "🔊 SOM ON";
-    audioBtn.classList.remove("off");
-  }else{
-    audioBtn.innerText = "🔇 SOM OFF";
-    audioBtn.classList.add("off");
-  }
+  audioBtn.innerText =
+    soundEnabled
+      ? "🔊 SOM ON"
+      : "🔇 SOM OFF";
+
+  audioBtn.classList.toggle(
+    "off",
+    !soundEnabled
+  );
 }
-audioBtn.onclick = () => {
-  soundEnabled = !soundEnabled;
-  updateAudioButton();
-};
+
+audioBtn.addEventListener(
+  "click",
+  () => {
+
+    soundEnabled =
+      !soundEnabled;
+
+    updateAudioButton();
+
+  }
+);
 
 function playBeep(){
 
-  if(!soundEnabled)
-    return;
+  if(!soundEnabled) return;
 
+  audio.pause();
   audio.currentTime = 0;
-  audio.play().catch(()=>{});
-  updateAudioButton();
+
+  audio.play()
+    .catch(err =>
+      console.log(
+        "Áudio bloqueado:",
+        err
+      )
+    );
 }
+
+updateAudioButton();
 
 /* ================= FULLSCREEN ================= */
 
