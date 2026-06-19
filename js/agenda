@@ -1,0 +1,19 @@
+import {
+  carregarAgenda,
+  filtrarAgendaHoje,
+  ordenarAgenda
+} from "./api.js";
+
+export async function obterAgendaHoje(SHEET_ID){
+
+  let rows =
+    await carregarAgenda(SHEET_ID);
+
+  rows =
+    filtrarAgendaHoje(rows);
+
+  rows =
+    ordenarAgenda(rows);
+
+  return rows;
+}
