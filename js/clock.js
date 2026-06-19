@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("clock").innerText =
       new Date().toLocaleTimeString("pt-BR") +
     " — " +
-    now.toLocaleTimeString("pt-BR",
+    now Date().toLocaleTimeString("pt-BR",
       {
         hour:"2-digit",
         minute:"2-digit"
