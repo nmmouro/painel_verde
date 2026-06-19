@@ -1,5 +1,5 @@
 import { apiPut, apiDelete } from "../services/api.js";
-import { state } from "./state.js";
+import { state } from "./core/state.js";
 
 export function startEdit(rowEl){
   state.editingRow = rowEl;
