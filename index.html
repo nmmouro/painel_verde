@@ -240,6 +240,52 @@ const STATUS = {
 
 };
 
+  function getStatusClass(status){
+
+  const key =
+    getStatusKey(status);
+
+  return STATUS[key]?.class || "";
+}
+
+/* 🔹 retorna ícone */
+function getStatusIcon(status){
+
+  const key =
+    getStatusKey(status);
+
+  return STATUS[key]?.icon || "";
+}
+
+
+  function getStatusKey(status=""){
+
+  status = status
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"");
+
+  if(status.includes("manutencao"))
+    return "manutenção";
+
+  if(status.includes("viagem"))
+    return "viagem";
+
+  if(status.includes("andamento"))
+    return "andamento";
+
+  if(status.includes("atendido"))
+    return "atendido";
+
+  if(status.includes("concluido"))
+    return "concluido";
+
+  if(status.includes("cancelado"))
+    return "cancelado";
+
+  return null;
+}
+
 
 /* ================= RENDER ================= */
 
