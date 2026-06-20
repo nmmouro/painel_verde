@@ -289,7 +289,154 @@ function getStatusIcon(status){
 
 /* ================= RENDER ================= */
 
-function renderTable(data){
+  /* ===== veículos ===== */
+  
+   function renderVeiculos(rows, painelRows){
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Status</th>
+          <th>Odômetro</th>
+          <th>Combustível</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        ${rows.map(row => {
+
+          const v =
+            (row.c || []).map(getCell);
+
+          return `
+            <tr>
+              <td>
+                <strong>${v[0] || ""}</strong>
+              </td>
+              <td>
+                ${getDisponibilidade(
+    v[0],
+    painelRows,
+    "veiculo"
+)}
+              </td>
+              <td>
+                ${v[2] || ""} km
+              </td>
+              <td>
+                ⛽ ${v[3] || ""}
+              </td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
+  `;
+}
+ 
+  /* ===== motoristas ===== */
+
+function renderMotoristas(rows, painelRows, linhaFlutuante){
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Motorista</th>
+          <th>Status</th>
+          <th>Condição</th>
+         </tr>
+      </thead>
+      <tbody>
+        ${rows.map(row => {
+
+          const v =
+            (row.c || []).map(getCell);
+
+          return `
+            <tr>
+              <td>
+                <strong>${v[0] || ""}</strong>
+              </td>
+              <td>
+                ${getDisponibilidade(
+    v[0],
+    painelRows,
+    "motorista"
+)}
+              </td>
+              <td>
+                ${v[2] || ""}
+              </td>
+            </tr>
+          `;
+        }).join("")}
+        ${linhaFlutuante}
+      </tbody>
+    </table>
+  `;
+}
+
+  function getDisponibilidade(nome, painelRows, tipo){
+
+  const procurado =
+    String(nome || "").trim().toUpperCase();
+
+  for(const row of painelRows){
+
+    const valores =
+      (row.c || []).map(getCell);
+
+    const veiculo =
+      String(valores[3] || "").trim().toUpperCase();
+
+    const motorista =
+      String(valores[2] || "").trim().toUpperCase();
+
+    const status =
+      String(valores[6] || "").trim().toUpperCase();
+
+    const encontrado =
+      tipo === "veiculo"
+        ? veiculo === procurado
+        : motorista === procurado;
+
+    if(!encontrado){
+      continue;
+    }
+
+    // MANUTENÇÃO
+    if(
+      status.includes("MANUTENÇÃO") ||
+      status.includes("MANUTENCAO")
+    ){
+
+      if(tipo === "veiculo"){
+        return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
+      }
+
+      return '<span class="livre">🟢 LIVRE</span>';
+    }
+
+    // VIAGEM
+    if(status.includes("VIAGEM")){
+      return '<span class="viagem">🟣 VIAGEM</span>';
+    }
+
+    // OCUPADO
+    return '<span class="ocupado">🔴 OCUPADO</span>';
+  }
+
+  return '<span class="livre">🟢 LIVRE</span>';
+} 
+   
+  
+  
+   /* ===== painel ===== */
+  
+  function renderTable(headers, rows){
 
   if(!data.length) return "<p>Sem dados</p>";
 
@@ -335,51 +482,197 @@ function renderTable(data){
 
 /* ================= LOAD ================= */
 
-async function load(){
+let lastHash = "";
+let firstLoad = true;
+
+async function loadAll(){
 
   const app = document.getElementById("app");
-  app.innerHTML = "";
-  
 
- const resumoGrid =
-document.createElement("div");
+  try{
 
-resumoGrid.className = "resumo-grid";
+    // 🔄 carregar todas as abas via WebApp
+    const results = await Promise.all(
+      TABS.map(t => getData(t.id))
+    );
 
-for(const tab of TABS.slice(0,2)){
-  
-const data = await getData(tab.id);
+    // 🔔 DETECTA MUDANÇA
+    const hash = JSON.stringify(results);
 
-const card = document.createElement("div");
+    if(!firstLoad && hash !== lastHash){
+      playBeep();
+    }
 
-card.className = "resumo-card";
+    firstLoad = false;
+    lastHash = hash;
 
-card.innerHTML = `
-  <h2>${tab.title}</h2>
-  ${renderTable(data.rows || [])}
-`;
+    app.innerHTML = "";
 
-resumoGrid.appendChild(card);
+    /* ================= FILTROS ================= */
 
-}
+    const hoje = new Date().toLocaleDateString("pt-BR");
 
-app.appendChild(resumoGrid);
+    const painelIndex =
+      TABS.findIndex(t => t.id === "painel");
 
-/* DEMAIS CARDS */
-for(const tab of TABS.slice(2)){
+    const agendaIndex =
+      TABS.findIndex(t => t.id === "agenda");
 
-    const data = await getData(tab.id);
+    const socialIndex =
+      TABS.findIndex(t => t.id === "social");
 
-    const card = document.createElement("div");
+    const veiculosIndex =
+      TABS.findIndex(t => t.id === "veiculos");
 
-    card.className = "card";
+    const motoristasIndex =
+      TABS.findIndex(t => t.id === "motoristas");
 
-    card.innerHTML = `
-      <h2>${tab.title}</h2>
-      ${renderTable(data.rows || [])}
-    `;
+    const painelRows =
+      (results[painelIndex] || [])
+        .filter(row => {
 
-    app.appendChild(card);
+          const status =
+            String(row["Status"] || "")
+              .toUpperCase();
+
+          return (
+            status.includes("ANDAMENTO") ||
+            status.includes("VIAGEM") ||
+            status.includes("MANUT")
+          );
+        });
+
+    const agendaRows =
+      (results[agendaIndex] || [])
+        .filter(row =>
+          String(row["Data"] || "").trim() === hoje
+        );
+
+    const socialRows =
+      (results[socialIndex] || [])
+        .filter(row =>
+          String(row["Data"] || "").trim() === hoje
+        );
+
+    const motoristasRows =
+      results[motoristasIndex] || [];
+
+    /* ================= MOTORISTA FLUTUANTE ================= */
+
+    const motoristaFlutuante =
+      painelRows.find(p => {
+
+        const nome =
+          String(p["Empregado"] || "").trim();
+
+        return !motoristasRows.some(m =>
+          String(m["Motorista"] || "")
+          .trim() === nome
+        );
+      });
+
+    let linhaFlutuante = "";
+
+    if(motoristaFlutuante){
+
+      const nome =
+        motoristaFlutuante["Empregado"];
+
+      const status =
+        String(
+          motoristaFlutuante["Status"] || ""
+        ).toUpperCase();
+
+      let textoStatus = "🔴 OCUPADO";
+
+      if(status.includes("VIAGEM")){
+        textoStatus = "✈️ VIAGEM";
+      }
+
+      if(status.includes("MANUT")){
+        textoStatus = "🔧 MANUTENÇÃO";
+      }
+
+      linhaFlutuante = `
+        <tr>
+          <td><strong>${nome}</strong></td>
+          <td>${textoStatus}</td>
+          <td>USUÁRIO NÃO CADASTRADO</td>
+        </tr>
+      `;
+    }
+
+    /* ================= RESUMO (DUAL) ================= */
+
+    const dual = document.createElement("div");
+    dual.className = "dual-cards";
+
+    [veiculosIndex, motoristasIndex].forEach(index => {
+
+      const tab = TABS[index];
+      const rows = results[index] || [];
+
+      const section = document.createElement("section");
+
+      section.className = "card card-resumo";
+
+      section.innerHTML = `
+        <h2>${tab.title}</h2>
+        ${
+          tab.id === "veiculos"
+            ? renderTable(rows)
+            : renderMotoristas(rows, painelRows, linhaFlutuante)
+        }
+      `;
+
+      dual.appendChild(section);
+    });
+
+    app.appendChild(dual);
+
+    /* ================= DEMAIS CARDS ================= */
+
+    TABS.forEach((tab, index)=>{
+
+      if(
+        tab.id === "veiculos" ||
+        tab.id === "motoristas"
+      ) return;
+
+      let rows;
+
+      if(tab.id === "painel"){
+        rows = painelRows;
+      }
+      else if(tab.id === "agenda"){
+        rows = agendaRows;
+      }
+      else if(tab.id === "social"){
+        rows = socialRows;
+      }
+      else{
+        rows = results[index] || [];
+      }
+
+      const section = document.createElement("section");
+
+      section.className = `card ${tab.id}`;
+
+      section.innerHTML = `
+        <h2>${tab.title}</h2>
+        ${renderTable(rows)}
+      `;
+
+      app.appendChild(section);
+
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    app.innerHTML =
+      "<div>Erro ao carregar dados.</div>";
   }
 }
 
