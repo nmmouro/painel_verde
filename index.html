@@ -200,64 +200,30 @@ const TABS = [
 /* ================= FETCH ================= */
 
 async function getData(tab){
-  const res = await fetch(`${WEBAPP}?tab=${tab}`);
-  return res.json();
+  try{
+    const res = await fetch(`${WEBAPP}?tab=${tab}`);
+    const json = await res.json();
+    return json.rows || [];
+  }catch(e){
+    console.error("Erro fetch:", tab, e);
+    return [];
+  }
 }
+
 
 /* ================= STATUS ================= */
 
 const STATUS = {
-
-  atendido:{
-    icon:'<span style="color:#00ff9c">✔</span>',
-    class:"status-atendido"
-  },
-
-  concluido:{
-    icon:'<span style="color:#7CFC00">✔</span>',
-    class:"status-concluido"
-  },
-
-  andamento:{
-    icon:'<span style="color:#ffcc00">⏳</span>',
-    class:"status-andamento"
-  },
-
-  cancelado:{
-    icon:'<span style="color:#ff4d4d">✖</span>',
-    class:"status-cancelado"
-  },
-
-  manutenção:{
-    icon:'<span style="color:#ff0000">🔧</span>',
-    class:"status-manutencao"
-  },
-
-   viagem:{
-    icon:'<span style="color:#ff9800">✈️</span>',
-    class:"status-viagem"
-  }
-
+  atendido:{ class:"status-atendido" },
+  concluido:{ class:"status-concluido" },
+  andamento:{ class:"status-andamento" },
+  cancelado:{ class:"status-cancelado" },
+  manutenção:{ class:"status-manutencao" },
+  manutencao:{ class:"status-manutencao" },
+  viagem:{ class:"status-viagem" }
 };
 
-  function getStatusClass(status){
-
-  const key =
-    getStatusKey(status);
-
-  return STATUS[key]?.class || "";
-}
-
-/* 🔹 retorna ícone */
-function getStatusIcon(status){
-
-  const key =
-    getStatusKey(status);
-
-  return STATUS[key]?.icon || "";
-}
-
-
+  
   function getStatusKey(status=""){
 
   status = status
@@ -286,100 +252,13 @@ function getStatusIcon(status){
   return null;
 }
 
-
-/* ================= RENDER ================= */
-
-  /* ===== veículos ===== */
-  
-   function renderVeiculos(rows, painelRows){
-
-  return `
-    <table>
-      <thead>
-        <tr>
-          <th>Placa</th>
-          <th>Status</th>
-          <th>Odômetro</th>
-          <th>Combustível</th>
-        </tr>
-      </thead>
-      <tbody>
-
-        ${rows.map(row => {
-
-          const v =
-            (row.c || []).map(getCell);
-
-          return `
-            <tr>
-              <td>
-                <strong>${v[0] || ""}</strong>
-              </td>
-              <td>
-                ${getDisponibilidade(
-    v[0],
-    painelRows,
-    "veiculo"
-)}
-              </td>
-              <td>
-                ${v[2] || ""} km
-              </td>
-              <td>
-                ⛽ ${v[3] || ""}
-              </td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    </table>
-  `;
-}
- 
-  /* ===== motoristas ===== */
-
-function renderMotoristas(rows, painelRows, linhaFlutuante){
-
-  return `
-    <table>
-      <thead>
-        <tr>
-          <th>Motorista</th>
-          <th>Status</th>
-          <th>Condição</th>
-         </tr>
-      </thead>
-      <tbody>
-        ${rows.map(row => {
-
-          const v =
-            (row.c || []).map(getCell);
-
-          return `
-            <tr>
-              <td>
-                <strong>${v[0] || ""}</strong>
-              </td>
-              <td>
-                ${getDisponibilidade(
-    v[0],
-    painelRows,
-    "motorista"
-)}
-              </td>
-              <td>
-                ${v[2] || ""}
-              </td>
-            </tr>
-          `;
-        }).join("")}
-        ${linhaFlutuante}
-      </tbody>
-    </table>
-  `;
+  function getStatusClass(status){
+  return STATUS[getStatusKey(status)]?.class || "";
 }
 
-  function getDisponibilidade(nome, painelRows, tipo){
+ /* ================= DISPONIBILIDADE ================= */
+
+    function getDisponibilidade(nome, painelRows, tipo){
 
   const procurado =
     String(nome || "").trim().toUpperCase();
@@ -430,54 +309,101 @@ function renderMotoristas(rows, painelRows, linhaFlutuante){
   }
 
   return '<span class="livre">🟢 LIVRE</span>';
-} 
-   
-  
-  
-   /* ===== painel ===== */
-  
-  function renderTable(headers, rows){
+}
 
-  if(!data.length) return "<p>Sem dados</p>";
+/* ================= RENDER ================= */
 
-  const headers = Object.keys(data[0]);
+ /* ===== painel ===== */
+ function renderTable(rows){
+
+  if(!rows.length) return "<p>Sem dados</p>";
+
+  const headers = Object.keys(rows[0]);
 
   return `
   <table>
     <thead>
       <tr>
-        ${headers.map(h=>`<th>${h}</th>`).join("")}
+        ${headers.map(h => `<th>${h}</th>`).join("")}
       </tr>
     </thead>
-
     <tbody>
-      ${data.map(row=>{
+      ${rows.map(row => {
 
         const values = Object.values(row);
-
-        const status =
-          String(values.at(-1) || "");
+        const status = values.at(-1);
 
         return `
           <tr>
             ${values.map((v,i)=>{
-
-              const isLast =
-                i === values.length-1;
-
-              return `
-                <td class="${isLast ? getStatusClass(status):""}">
-                  ${v}
-                </td>
-              `;
+              const isLast = i === values.length - 1;
+              return `<td class="${isLast ? getStatusClass(status) : ""}">
+                ${v || ""}
+              </td>`;
             }).join("")}
           </tr>
         `;
-
       }).join("")}
     </tbody>
-  </table>
-  `;
+  </table>`;
+}
+
+  
+  /* ===== veículos ===== */
+  
+function renderVeiculos(rows, painelRows){
+
+  if(!rows.length) return "<p>Sem dados</p>";
+
+  return `
+  <table>
+    <thead>
+      <tr>
+        <th>Placa</th>
+        <th>Status</th>
+        <th>Odômetro</th>
+        <th>Combustível</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows.map(row => `
+        <tr>
+          <td><strong>${row["Placa"] || ""}</strong></td>
+          <td>${getDisponibilidade(row["Placa"], painelRows, "veiculo")}</td>
+          <td>${row["Odômetro"] || ""}</td>
+          <td>⛽ ${row["Combustível"] || ""}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>`;
+
+ 
+  /* ===== motoristas ===== */
+
+function renderMotoristas(rows, painelRows, linhaFlutuante){
+
+  if(!rows.length) return "<p>Sem dados</p>";
+
+  return `
+  <table>
+    <thead>
+      <tr>
+        <th>Motorista</th>
+        <th>Status</th>
+        <th>Condição</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows.map(row => `
+        <tr>
+          <td><strong>${row["Motorista"] || ""}</strong></td>
+          <td>${getDisponibilidade(row["Motorista"], painelRows, "motorista")}</td>
+          <td>${row["Condição"] || ""}</td>
+        </tr>
+      `).join("")}
+      ${linhaFlutuante}
+    </tbody>
+  </table>`;
 }
 
 /* ================= LOAD ================= */
@@ -485,18 +411,16 @@ function renderMotoristas(rows, painelRows, linhaFlutuante){
 let lastHash = "";
 let firstLoad = true;
 
-async function loadAll(){
+async function load(){
 
   const app = document.getElementById("app");
 
   try{
 
-    // 🔄 carregar todas as abas via WebApp
     const results = await Promise.all(
       TABS.map(t => getData(t.id))
     );
 
-    // 🔔 DETECTA MUDANÇA
     const hash = JSON.stringify(results);
 
     if(!firstLoad && hash !== lastHash){
@@ -508,173 +432,90 @@ async function loadAll(){
 
     app.innerHTML = "";
 
-    /* ================= FILTROS ================= */
-
     const hoje = new Date().toLocaleDateString("pt-BR");
 
-    const painelIndex =
-      TABS.findIndex(t => t.id === "painel");
+    const getTab = id =>
+      results[TABS.findIndex(t => t.id === id)] || [];
 
-    const agendaIndex =
-      TABS.findIndex(t => t.id === "agenda");
-
-    const socialIndex =
-      TABS.findIndex(t => t.id === "social");
-
-    const veiculosIndex =
-      TABS.findIndex(t => t.id === "veiculos");
-
-    const motoristasIndex =
-      TABS.findIndex(t => t.id === "motoristas");
-
-    const painelRows =
-      (results[painelIndex] || [])
-        .filter(row => {
-
-          const status =
-            String(row["Status"] || "")
-              .toUpperCase();
-
-          return (
-            status.includes("ANDAMENTO") ||
-            status.includes("VIAGEM") ||
-            status.includes("MANUT")
-          );
-        });
-
-    const agendaRows =
-      (results[agendaIndex] || [])
-        .filter(row =>
-          String(row["Data"] || "").trim() === hoje
-        );
-
-    const socialRows =
-      (results[socialIndex] || [])
-        .filter(row =>
-          String(row["Data"] || "").trim() === hoje
-        );
-
-    const motoristasRows =
-      results[motoristasIndex] || [];
-
-    /* ================= MOTORISTA FLUTUANTE ================= */
-
-    const motoristaFlutuante =
-      painelRows.find(p => {
-
-        const nome =
-          String(p["Empregado"] || "").trim();
-
-        return !motoristasRows.some(m =>
-          String(m["Motorista"] || "")
-          .trim() === nome
-        );
+    const painelRows = getTab("painel")
+      .filter(r => {
+        const s = String(r["Status"] || "").toUpperCase();
+        return s.includes("ANDAMENTO") || s.includes("VIAGEM") || s.includes("MANUT");
       });
+
+    const agendaRows = getTab("agenda")
+      .filter(r => String(r["Data"]) === hoje);
+
+    const socialRows = getTab("social")
+      .filter(r => String(r["Data"]) === hoje);
+
+    const motoristasRows = getTab("motoristas");
+
+    /* MOTORISTA FLUTUANTE */
+
+    const naoCadastrado = painelRows.find(p =>
+      !motoristasRows.some(m =>
+        m["Motorista"] === p["Empregado"]
+      )
+    );
 
     let linhaFlutuante = "";
 
-    if(motoristaFlutuante){
-
-      const nome =
-        motoristaFlutuante["Empregado"];
-
-      const status =
-        String(
-          motoristaFlutuante["Status"] || ""
-        ).toUpperCase();
-
-      let textoStatus = "🔴 OCUPADO";
-
-      if(status.includes("VIAGEM")){
-        textoStatus = "✈️ VIAGEM";
-      }
-
-      if(status.includes("MANUT")){
-        textoStatus = "🔧 MANUTENÇÃO";
-      }
-
+    if(naoCadastrado){
       linhaFlutuante = `
         <tr>
-          <td><strong>${nome}</strong></td>
-          <td>${textoStatus}</td>
+          <td><strong>${naoCadastrado["Empregado"]}</strong></td>
+          <td>🔴 OCUPADO</td>
           <td>USUÁRIO NÃO CADASTRADO</td>
-        </tr>
-      `;
+        </tr>`;
     }
 
-    /* ================= RESUMO (DUAL) ================= */
+    /* RESUMO */
 
     const dual = document.createElement("div");
     dual.className = "dual-cards";
 
-    [veiculosIndex, motoristasIndex].forEach(index => {
+    dual.innerHTML = `
+      <section class="card card-resumo">
+        <h2>VEÍCULOS</h2>
+        ${renderVeiculos(getTab("veiculos"), painelRows)}
+      </section>
 
-      const tab = TABS[index];
-      const rows = results[index] || [];
-
-      const section = document.createElement("section");
-
-      section.className = "card card-resumo";
-
-      section.innerHTML = `
-        <h2>${tab.title}</h2>
-        ${
-          tab.id === "veiculos"
-            ? renderTable(rows)
-            : renderMotoristas(rows, painelRows, linhaFlutuante)
-        }
-      `;
-
-      dual.appendChild(section);
-    });
+      <section class="card card-resumo">
+        <h2>MOTORISTAS</h2>
+        ${renderMotoristas(getTab("motoristas"), painelRows, linhaFlutuante)}
+      </section>
+    `;
 
     app.appendChild(dual);
 
-    /* ================= DEMAIS CARDS ================= */
+    /* DEMAIS */
 
-    TABS.forEach((tab, index)=>{
+    const outras = [
+      { id:"painel", rows:painelRows },
+      { id:"agenda", rows:agendaRows },
+      { id:"social", rows:socialRows }
+    ];
 
-      if(
-        tab.id === "veiculos" ||
-        tab.id === "motoristas"
-      ) return;
-
-      let rows;
-
-      if(tab.id === "painel"){
-        rows = painelRows;
-      }
-      else if(tab.id === "agenda"){
-        rows = agendaRows;
-      }
-      else if(tab.id === "social"){
-        rows = socialRows;
-      }
-      else{
-        rows = results[index] || [];
-      }
+    outras.forEach(t => {
 
       const section = document.createElement("section");
-
-      section.className = `card ${tab.id}`;
+      section.className = "card";
 
       section.innerHTML = `
-        <h2>${tab.title}</h2>
-        ${renderTable(rows)}
+        <h2>${t.id.toUpperCase()}</h2>
+        ${renderTable(t.rows)}
       `;
 
       app.appendChild(section);
-
     });
 
   }catch(err){
-
     console.error(err);
-
-    app.innerHTML =
-      "<div>Erro ao carregar dados.</div>";
+    app.innerHTML = "<p>Erro ao carregar</p>";
   }
 }
+
 
 /* ================= CLOCK ================= */
 
