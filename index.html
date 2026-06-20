@@ -160,42 +160,7 @@ margin-top:0;
 const WEBAPP =
 "https://script.google.com/macros/s/AKfycbz8rLIO3fD3yNOViBgqmhJKB3Pf9efGECLSqrvMDkPZh3X0rNGEXXXDdQ9drl9XeWiJ/exec";
 
-const TABS = [
-  {
-    id:"veiculos", title:"VEÍCULOS", sheet:"VEÍCULOS",
-    headers:[
-      "TRAIL TXN1I89", "CRETA TXJ6F18", "CRETA TXJ6F19", "CRETA TXJ6F20"
-    ]
-  },
 
-  {
-  id:"motoristas", title:"MOTORISTAS", sheet:"MOTORISTAS",
-  headers:[
-    "Motorista", "Status", "Condição",    
-  ]
-},
-
-  {
-    id:"painel", title:"PAINEL", sheet:"LANÇAMENTOS",
-    headers:[
-      "Data", "Hora", "Empregado", "Veículo", "Passageiro/ Setor/ Motivo", "Itinerário", "Status"
-    ]
-  },
-
-  {
-    id:"agenda", title:"AGENDA DO DIA", sheet:"AGENDA DO DIA",
-    headers:[
-      "Data", "Hora", "Passageiro", "Setor", "Motivo", "Itinerário", "Status"
-    ]
-  },
-
-  {
-    id:"social", title:"AGENDA SERVIÇO SOCIAL", sheet:"AGENDA SERVIÇO SOCIAL",
-    headers:[
-      "Data", "Período", "Passageiro", "Motivo", "Itinerário", "Status"
-    ]
-  }
-];
 
 /* ================= FETCH ================= */
 
@@ -209,7 +174,6 @@ async function getData(tab){
     return [];
   }
 }
-
 
 /* ================= STATUS ================= */
 
