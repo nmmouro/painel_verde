@@ -157,10 +157,7 @@ margin-top:0;
 
 /* ================= CONFIG ================= */
 
-const WEBAPP =
-"https://script.google.com/macros/s/AKfycbz8rLIO3fD3yNOViBgqmhJKB3Pf9efGECLSqrvMDkPZh3X0rNGEXXXDdQ9drl9XeWiJ/exec";
-
-
+const WEBAPP = "SEU_URL_WEBAPP";
 
 /* ================= FETCH ================= */
 
@@ -187,88 +184,59 @@ const STATUS = {
   viagem:{ class:"status-viagem" }
 };
 
-  
-  function getStatusKey(status=""){
-
-  status = status
-    .toLowerCase()
+function getStatusKey(status=""){
+  status = status.toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g,"");
 
-  if(status.includes("manutencao"))
-    return "manutenção";
-
-  if(status.includes("viagem"))
-    return "viagem";
-
-  if(status.includes("andamento"))
-    return "andamento";
-
-  if(status.includes("atendido"))
-    return "atendido";
-
-  if(status.includes("concluido"))
-    return "concluido";
-
-  if(status.includes("cancelado"))
-    return "cancelado";
+  if(status.includes("manut")) return "manutencao";
+  if(status.includes("viagem")) return "viagem";
+  if(status.includes("andamento")) return "andamento";
+  if(status.includes("atendido")) return "atendido";
+  if(status.includes("concluido")) return "concluido";
+  if(status.includes("cancelado")) return "cancelado";
 
   return null;
 }
 
-  function getStatusClass(status){
+function getStatusClass(status){
   return STATUS[getStatusKey(status)]?.class || "";
 }
 
- /* ================= DISPONIBILIDADE ================= */
+/* ================= DISPONIBILIDADE ================= */
 
-    function getDisponibilidade(nome, painelRows, tipo){
+function getDisponibilidade(nome, painelRows, tipo){
 
-  const procurado =
-    String(nome || "").trim().toUpperCase();
+  const procurado = String(nome || "").trim().toUpperCase();
 
   for(const row of painelRows){
 
-    const valores =
-      (row.c || []).map(getCell);
-
     const veiculo =
-      String(valores[3] || "").trim().toUpperCase();
+      String(row["Veículo"] || "").toUpperCase();
 
     const motorista =
-      String(valores[2] || "").trim().toUpperCase();
+      String(row["Empregado"] || "").toUpperCase();
 
     const status =
-      String(valores[6] || "").trim().toUpperCase();
+      String(row["Status"] || "").toUpperCase();
 
-    const encontrado =
+    const match =
       tipo === "veiculo"
         ? veiculo === procurado
         : motorista === procurado;
 
-    if(!encontrado){
-      continue;
+    if(!match) continue;
+
+    if(status.includes("MANUT")){
+      return tipo === "veiculo"
+        ? '<span class="manutencao">🔧 MANUTENÇÃO</span>'
+        : '<span class="livre">🟢 LIVRE</span>';
     }
 
-    // MANUTENÇÃO
-    if(
-      status.includes("MANUTENÇÃO") ||
-      status.includes("MANUTENCAO")
-    ){
-
-      if(tipo === "veiculo"){
-        return '<span class="manutencao">🔵 MANUTENÇÃO</span>';
-      }
-
-      return '<span class="livre">🟢 LIVRE</span>';
-    }
-
-    // VIAGEM
     if(status.includes("VIAGEM")){
-      return '<span class="viagem">🟣 VIAGEM</span>';
+      return '<span class="viagem">✈️ VIAGEM</span>';
     }
 
-    // OCUPADO
     return '<span class="ocupado">🔴 OCUPADO</span>';
   }
 
@@ -277,8 +245,7 @@ const STATUS = {
 
 /* ================= RENDER ================= */
 
- /* ===== painel ===== */
- function renderTable(rows){
+function renderTable(rows){
 
   if(!rows.length) return "<p>Sem dados</p>";
 
@@ -312,9 +279,8 @@ const STATUS = {
   </table>`;
 }
 
-  
-  /* ===== veículos ===== */
-  
+/* ===== veículos ===== */
+
 function renderVeiculos(rows, painelRows){
 
   if(!rows.length) return "<p>Sem dados</p>";
@@ -340,9 +306,9 @@ function renderVeiculos(rows, painelRows){
       `).join("")}
     </tbody>
   </table>`;
+}
 
- 
-  /* ===== motoristas ===== */
+/* ===== motoristas ===== */
 
 function renderMotoristas(rows, painelRows, linhaFlutuante){
 
@@ -479,6 +445,7 @@ async function load(){
     app.innerHTML = "<p>Erro ao carregar</p>";
   }
 }
+
 
 
 /* ================= CLOCK ================= */
