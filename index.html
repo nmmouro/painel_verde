@@ -220,14 +220,30 @@ document.createElement("div");
 resumoGrid.className = "resumo-grid";
 
 for(const tab of TABS.slice(0,2)){
+  
+const data = await getData(tab.id);
 
+const card = document.createElement("div");
 
+card.className = "resumo-card";
 
-    const data =
-      await getData(tab.id);
+card.innerHTML = `
+  <h2>${tab.title}</h2>
+  ${renderTable(data.rows || [])}
+`;
 
-    const card =
-      document.createElement("div");
+resumoGrid.appendChild(card);
+
+}
+
+app.appendChild(resumoGrid);
+
+/* DEMAIS CARDS */
+for(const tab of TABS.slice(2)){
+
+    const data = await getData(tab.id);
+
+    const card = document.createElement("div");
 
     card.className = "card";
 
