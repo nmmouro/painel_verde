@@ -42,6 +42,20 @@ main{
   padding:10px;
 }
 
+  table{
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+th,td{
+  border:none;
+  padding:8px;
+}
+
+tbody tr:nth-child(even){
+  background:#0f2147;
+}
+/*
 table{
   width:100%;
   border-collapse:collapse;
@@ -52,7 +66,7 @@ th,td{
   border:1px solid #1e2f5c;
   text-align:center;
 }
-
+*/
 thead{
   background:#2c4078;
 }
@@ -88,6 +102,14 @@ width:auto;
 #toggle-audio.off{
 background:#dc2626;
 color:white;
+}
+
+#clock{
+font-size:1.4rem;
+font-weight:bold;
+color:#ffffff;
+margin-right:15px;
+letter-spacing:1px;
 }
 
 .resumo-grid{
@@ -131,7 +153,7 @@ margin-top:0;
 /* ================= CONFIG ================= */
 
 const WEBAPP =
-"https://script.google.com/macros/s/AKfycbwiaVBLh1B4ZpMbyDNX5RIhFhhUxX9jni8M6vmtFoYRaU2-7eazccWwngHzjajXp44t8w/exec";
+"https://script.google.com/macros/s/AKfycbx73ESlCbdIou3DZ7x8OoTPnZ6ZzI_TPtC6yZ1sYTWDolWO1cKnhpUA_xD0SnO06k5SeA/exec";
 
 const TABS = [
   { id:"veiculos", title:"VEÍCULOS" },
