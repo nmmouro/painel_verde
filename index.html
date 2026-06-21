@@ -304,13 +304,13 @@ function getDisponibilidade(nome, painelRows, tipo){
   for(const row of painelRows){
 
     const veiculo =
-      String(row["Veículo"] || "").toUpperCase();
+      String(row["Veículo"] || "").trim().toUpperCase();
 
     const motorista =
-      String(row["Empregado"] || "").toUpperCase();
+      String(row["Empregado"] || "").trim().toUpperCase();
 
     const status =
-      String(row["Status"] || "").toUpperCase();
+      String(row["Status"] || "").trim().toUpperCase();
 
     const match =
       tipo === "veiculo"
