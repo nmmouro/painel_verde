@@ -337,7 +337,57 @@ function getDisponibilidade(nome, painelRows, tipo){
 
 /* ================= RENDER ================= */
 
-function renderTable(rows){
+  function renderTable(rows, visibleHeaders = []){
+
+  if(!rows.length) return "<p>Sem dados</p>";
+
+  const headers = visibleHeaders.length
+    ? visibleHeaders
+    : Object.keys(rows[0]);
+
+  return `
+  <table>
+    <thead>
+      <tr>
+        ${headers.map(h => `<th>${h}</th>`).join("")}
+      </tr>
+    </thead>
+
+    <tbody>
+
+      ${rows.map(row => {
+
+        const status =
+          row["Status"] || "";
+
+        return `
+          <tr>
+
+            ${headers.map(h => `
+
+              <td class="${
+                h === "Status"
+                  ? getStatusClass(status)
+                  : ""
+              }">
+
+                ${row[h] ?? ""}
+
+              </td>
+
+            `).join("")}
+
+          </tr>
+        `;
+
+      }).join("")}
+
+    </tbody>
+
+  </table>`;
+}
+  /*
+  function renderTable(rows){
 
   if(!rows.length) return "<p>Sem dados</p>";
 
@@ -370,7 +420,7 @@ function renderTable(rows){
     </tbody>
   </table>`;
 }
-
+*/
 /* ===== veículos ===== */
 
 function renderVeiculos(rows, painelRows){
@@ -521,6 +571,29 @@ async function load(){
 
     outras.forEach(t => {
 
+  const config =
+    TABS.find(x => x.id === t.id);
+
+  const section =
+    document.createElement("section");
+
+  section.className = "card";
+
+  section.innerHTML = `
+    <h2>${config.title}</h2>
+
+    ${renderTable(
+      t.rows,
+      config.headers
+    )}
+  `;
+
+  app.appendChild(section);
+
+});
+   /* 
+    outras.forEach(t => {
+
       const section = document.createElement("section");
       section.className = "card";
 
@@ -531,7 +604,7 @@ async function load(){
       
       app.appendChild(section);
     });
-
+*/
   }catch(err){
     console.error(err);
     app.innerHTML = "<p>Erro ao carregar</p>";
