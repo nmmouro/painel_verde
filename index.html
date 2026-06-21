@@ -334,7 +334,7 @@ function renderVeiculos(rows, painelRows){
           <td><strong>${row["Veículo"] || ""}</strong></td>
           <td>${getDisponibilidade(row["Veículo"], painelRows, "Veiculo")}</td>
           <td>${row["Odômetro"] || ""}</td>
-          <td>⛽ ${row["Combustível"] || ""}</td>
+          <td>⛽ ${row["Abastecimento"] || ""}</td>
         </tr>
       `).join("")}
     </tbody>
