@@ -336,11 +336,11 @@ function getDisponibilidade(nome, painelRows, tipo){
 
 /* ================= RENDER ================= */
 
-function renderTable(headers, rows){
+function renderTable(rows){
 
   if(!rows.length) return "<p>Sem dados</p>";
 
-  const headers = Object.keys(rows[0]);
+  const headers = Object.keys(rows[1]);
 
   return `
   <table>
