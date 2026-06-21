@@ -571,11 +571,20 @@ async function load(){
 
       const section = document.createElement("section");
       section.className = "card";
-
+/*
       section.innerHTML = `
         <h2>${t.id.toUpperCase()}</h2>
         ${renderTable(t.rows)}
       `;
+*/
+
+      section.innerHTML = `
+  <h2>${tab.title}</h2>
+  ${renderTable(
+      t.rows,
+      tab.headers
+  )}
+`;
 
       app.appendChild(section);
     });
