@@ -359,8 +359,8 @@ function renderMotoristas(rows, painelRows, linhaFlutuante){
     <tbody>
       ${rows.map(row => `
         <tr>
-          <td><strong>${row["Motorista"] || ""}</strong></td>
-          <td>${getDisponibilidade(row["Motorista"], painelRows, "motorista")}</td>
+          <td><strong>${row["Empregado"] || ""}</strong></td>
+          <td>${getDisponibilidade(row["Empregado"], painelRows, "motorista")}</td>
           <td>${row["Condição"] || ""}</td>
         </tr>
       `).join("")}
