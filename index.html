@@ -224,6 +224,35 @@ const TABS = [
 /* ================= FETCH ================= */
 
 async function getData(tab){
+
+  try{
+
+    const res =
+      await fetch(`${WEBAPP}?tab=${tab}`);
+
+    const json =
+      await res.json();
+
+    console.log(tab, json);
+
+    return json;
+
+  }catch(e){
+
+    console.error(
+      "Erro fetch:",
+      tab,
+      e
+    );
+
+    return [];
+
+  }
+}
+
+/*
+  
+async function getData(tab){
   try{
     const res = await fetch(`${WEBAPP}?tab=${tab}`);
     const json = await res.json();
@@ -233,7 +262,7 @@ async function getData(tab){
     return [];
   }
 }
-
+*/
 /* ================= STATUS ================= */
 
 const STATUS = {
