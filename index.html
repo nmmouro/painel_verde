@@ -334,7 +334,7 @@ function renderVeiculos(rows, painelRows){
           <td><strong>${row["Veículo"] || ""}</strong></td>
           <td>${getDisponibilidade(row["Veículo"], painelRows, "Veiculo")}</td>
           <td>${row["Km Atual"] || ""}</td>
-          <td>⛽ ${row["ABASTECIMENTO"] || ""}</td>
+          <td>⛽ ${row["Abastecimento"] || ""}</td>
         </tr>
       `).join("")}
     </tbody>
@@ -359,8 +359,8 @@ function renderMotoristas(rows, painelRows, linhaFlutuante){
     <tbody>
       ${rows.map(row => `
         <tr>
-          <td><strong>${row["Empregado"] || ""}</strong></td>
-          <td>${getDisponibilidade(row["Empregado"], painelRows, "motorista")}</td>
+          <td><strong>${row["Empregado / Matrícula"] || ""}</strong></td>
+          <td>${getDisponibilidade(row["Empregado / Matrícula"], painelRows, "motorista")}</td>
           <td>${row["Condição"] || ""}</td>
         </tr>
       `).join("")}
