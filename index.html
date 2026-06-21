@@ -184,8 +184,8 @@ const TABS = [
     "Motorista",
     "Status",
     "Condição",
-    
-  ]},
+   ]
+  },
   { id:"painel", title:"PAINEL" },
   { id:"agenda", title:"AGENDA" },
   { id:"social", title:"SERVIÇO SOCIAL" }
@@ -332,7 +332,7 @@ function renderVeiculos(rows, painelRows){
       ${rows.map(row => `
         <tr>
           <td><strong>${row["Placa"] || ""}</strong></td>
-          <td>${getDisponibilidade(row["Placa"], painelRows, "Veiculo")}</td>
+          <td>${getDisponibilidade(row["Veículo"], painelRows, "Veiculo")}</td>
           <td>${row["Odômetro"] || ""}</td>
           <td>⛽ ${row["Combustível"] || ""}</td>
         </tr>
