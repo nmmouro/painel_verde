@@ -171,21 +171,6 @@ flex:1;
 const WEBAPP = "https://script.google.com/macros/s/AKfycbz8rLIO3fD3yNOViBgqmhJKB3Pf9efGECLSqrvMDkPZh3X0rNGEXXXDdQ9drl9XeWiJ/exec";
 
 
-renderTable(
-  t.rows,
-  [
-    "Data",
-    "Hora",
-    "Empregado",
-    "Veículo",
-    "Passageiro/ Setor/ Motivo",
-    "Itinerário",
-    "Status"
-  ]
-);
-
-  
-  
 const TABS = [
   { id:"veiculos", title:"VEÍCULOS", sheet:"VEÍCULOS",
   headers:[
@@ -571,20 +556,11 @@ async function load(){
 
       const section = document.createElement("section");
       section.className = "card";
-/*
+
       section.innerHTML = `
         <h2>${t.id.toUpperCase()}</h2>
         ${renderTable(t.rows)}
       `;
-*/
-
-      section.innerHTML = `
-  <h2>${tab.title}</h2>
-  ${renderTable(
-      t.rows,
-      tab.headers
-  )}
-`;
 
       app.appendChild(section);
     });
