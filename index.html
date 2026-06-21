@@ -459,8 +459,7 @@ async function load(){
       results[TABS.findIndex(t => t.id === id)] || [];
 
     const painelRows = getTab("painel");
-   
-    const painelRows = painelRow.filter(r => {
+      .filter(r => {
         const s = String(r["Status"] || "").toUpperCase();
         return s.includes("ANDAMENTO") || s.includes("VIAGEM") || s.includes("MANUT");
       });
