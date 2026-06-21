@@ -441,7 +441,7 @@ function renderVeiculos(rows, painelRows){
       ${rows.map(row => `
         <tr>
           <td><strong>${row["Veículo"] || ""}</strong></td>
-          <td>${getDisponibilidade(row["Veículo"], painelRows, "Veiculo")}</td>
+          <td>${getDisponibilidade(row["Veículo"], painelRows, "veiculo")}</td>
           <td>${row["Km Atual"] || ""}</td>
           <td>⛽ ${row["Abastecimento"] || ""}</td>
         </tr>
