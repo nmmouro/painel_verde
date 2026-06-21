@@ -337,71 +337,38 @@ function getDisponibilidade(nome, painelRows, tipo){
 
 /* ================= RENDER ================= */
 
-function renderTable(rows, colunasVisiveis = []){
+function renderTable(rows){
 
   if(!rows.length) return "<p>Sem dados</p>";
 
   const headers = Object.keys(rows[0]);
 
-  // Se não informar colunas, mostra todas
-  const headersFiltrados =
-    colunasVisiveis.length
-      ? headers.filter(h => colunasVisiveis.includes(h))
-      : headers;
-
-  const indices =
-    headersFiltrados.map(h => headers.indexOf(h));
-
   return `
   <table>
-
     <thead>
       <tr>
-        ${headersFiltrados.map(h => `<th>${h}</th>`).join("")}
+        ${headers.map(h => `<th>${h}</th>`).join("")}
       </tr>
     </thead>
-
     <tbody>
-
       ${rows.map(row => {
 
         const values = Object.values(row);
-
-        const status =
-          String(values.at(-1) || "");
+        const status = values.at(-1);
 
         return `
           <tr>
-
-            ${indices.map(i => {
-
-              const valor =
-                values[i] ?? "";
-
-              const isStatus =
-                headers[i] === "Status";
-
-              return `
-                <td class="${
-                  isStatus
-                    ? getStatusClass(valor)
-                    : ""
-                }">
-                  ${valor}
-                </td>
-              `;
-
+            ${values.map((v,i)=>{
+              const isLast = i === values.length - 1;
+              return `<td class="${isLast ? getStatusClass(status) : ""}">
+                ${v || ""}
+              </td>`;
             }).join("")}
-
           </tr>
         `;
-
       }).join("")}
-
     </tbody>
-
-  </table>
-  `;
+  </table>`;
 }
 
 /* ===== veículos ===== */
@@ -556,19 +523,11 @@ async function load(){
 
       const section = document.createElement("section");
       section.className = "card";
-/*
+
       section.innerHTML = `
         <h2>${t.id.toUpperCase()}</h2>
         ${renderTable(t.rows)}
       `;
-*/
-section.innerHTML = `
-  <h2>${tab.title}</h2>
-  ${renderTable(
-      t.rows,
-      tab.headers
-  )}
-`;
       
       app.appendChild(section);
     });
