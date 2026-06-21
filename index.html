@@ -460,7 +460,7 @@ async function load(){
 
     const painelRows = getTab("painel");
    
-    const painelRows = painelRaw.filter(r => {
+    const painelRows = painelRow.filter(r => {
         const s = String(r["Status"] || "").toUpperCase();
         return s.includes("ANDAMENTO") || s.includes("VIAGEM") || s.includes("MANUT");
       });
