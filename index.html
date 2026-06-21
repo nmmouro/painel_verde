@@ -279,8 +279,7 @@ const STATUS = {
 function getStatusKey(status=""){
   status = status.toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
-    .replace(/[^\w\s]/g, "");     /*=====================================================*/
+    .replace(/[\u0300-\u036f]/g,"");
 
   if(status.includes("manut")) return "manutencao";
   if(status.includes("viagem")) return "viagem";
@@ -337,7 +336,7 @@ function getDisponibilidade(nome, painelRows, tipo){
 }
 
 /* ================= RENDER ================= */
-/*
+
 function renderTable(rows){
 
   if(!rows.length) return "<p>Sem dados</p>";
@@ -371,51 +370,7 @@ function renderTable(rows){
     </tbody>
   </table>`;
 }
-*/
-  function renderPainel(rows) {
 
-  if (!rows.length) return "<p>Sem dados</p>";
-
-  const colunas = [
-    { key: "Data", label: "Data" },
-    { key: "Hora", label: "Hora" },
-    { key: "Empregado", label: "Empregado / Matrícula" },
-    { key: "Veículo", label: "Veículo" },
-    { key: "Passageiro/ Setor/ Motivo", label: "Passageiro / Setor / Motivo" },
-    { key: "Itinerário", label: "Itinerário" },
-    { key: "Status", label: "Status" }
-  ];
-
-  return `
-  <table>
-    <thead>
-      <tr>
-        ${colunas.map(c => `<th>${c.label}</th>`).join("")}
-      </tr>
-    </thead>
-    <tbody>
-      ${rows.map(row => {
-
-        const status = row["Status"] || "";
-
-        return `
-          <tr>
-            ${colunas.map(c => {
-              const valor = row[c.key] || "";
-              const isStatus = c.key === "Status";
-
-              return `
-                <td class="${isStatus ? getStatusClass(status) : ""}">
-                  ${valor}
-                </td>
-              `;
-            }).join("")}
-          </tr>
-        `;
-      }).join("")}
-    </tbody>
-  </table>`;
-}
 /* ===== veículos ===== */
 
 function renderVeiculos(rows, painelRows){
@@ -505,22 +460,11 @@ async function load(){
       results[TABS.findIndex(t => t.id === id)] || [];
 
     const painelRows = getTab("painel")
-  .filter(r => {
-    const status = normalizarStatus(r["Status"]);
-
-    return (
-      status.includes("andamento") ||
-      status.includes("viagem") ||
-      status.includes("manut")
-    );
-  });
-   /* 
-    const painelRows = getTab("painel")
       .filter(r => {
         const s = String(r["Status"] || "").toUpperCase();
         return s.includes("ANDAMENTO") || s.includes("VIAGEM") || s.includes("MANUT");
       });
-*/
+
     const agendaRows = getTab("agenda")
       .filter(r => String(r["Data"]) === hoje);
 
@@ -582,12 +526,7 @@ async function load(){
 
       section.innerHTML = `
         <h2>${t.id.toUpperCase()}</h2>
-${t.id === "painel"
-  ? renderPainel(t.rows)
-  : renderTable(t.rows)}
-
-
-      
+        ${renderTable(t.rows)}
       `;
       
       app.appendChild(section);
