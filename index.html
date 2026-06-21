@@ -225,29 +225,29 @@ const TABS = [
 
 async function getData(tab){
 
-  try{
+try{
 
-    const res =
-      await fetch(`${WEBAPP}?tab=${tab}`);
+const res =
+  await fetch(`${WEBAPP}?tab=${tab}`);
 
-    const json =
-      await res.json();
+const json =
+  await res.json();
 
-    console.log(tab, json);
+console.log(tab, json);
 
-    return json;
+return json.rows || [];
 
-  }catch(e){
+}catch(e){
 
-    console.error(
-      "Erro fetch:",
-      tab,
-      e
-    );
+console.error(
+  "Erro fetch:",
+  tab,
+  e
+);
 
-    return [];
+return [];
 
-  }
+}
 }
 
 /*
