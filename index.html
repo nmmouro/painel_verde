@@ -73,15 +73,18 @@ padding:8px;
   text-overflow:ellipsis;
   word-wrap:break-word;
 }
-
+/*
 thead{
   background:#2c4078;
 }
-
+*/
 thead th{
-  text-align:left;
-  font-weight:700;
-  color:#fff;
+  background:#2c4078;
+  color:white;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  font-size:0.9rem;
+  font-weight:bold;
 }
   
 .status{
@@ -137,8 +140,14 @@ border-radius:10px;
 padding:10px;
 }
 
-.resumo-card h2{
-margin-top:0;
+.resumo-card h2,
+.card h2,
+.card-resumo h2{
+  text-align:center;
+  margin-top:0;
+  margin-bottom:12px;
+  font-size:1.2rem;
+  font-weight:bold;
 }
 
 .dual-cards{
