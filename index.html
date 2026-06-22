@@ -375,11 +375,18 @@ function getDisponibilidade(nome, painelRows, tipo){
 
   function renderTable(rows, visibleHeaders = []){
 
-  if(!rows.length) return "<p>Sem dados</p>";
+/*  if(!rows.length) return "<p>Sem dados</p>";
 
   const headers = visibleHeaders.length
     ? visibleHeaders
-    : Object.keys(rows[0]);
+    : Object.keys(rows[0]); */
+
+    const headers =
+    visibleHeaders.length
+      ? visibleHeaders
+      : (rows.length
+          ? Object.keys(rows[0])
+          : []);
 
   return `
   <table>
