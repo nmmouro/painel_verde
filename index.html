@@ -56,13 +56,19 @@ td{
   overflow:hidden;
   text-overflow:ellipsis;
   word-wrap:break-word;
-
-  background:#2c4078;#0f2147
   color:#fff;
 }
 
-tbody tr:nth-child(even){
+tbody td{
   background:#0f2147;
+}
+
+  tbody tr:nth-child(odd) td{
+  background:#0f2147;
+}
+
+tbody tr:nth-child(even) td{
+  background:#152a57;
 }
 
 padding:8px;
@@ -82,6 +88,8 @@ thead th{
   text-transform:uppercase;
   letter-spacing:0.5px;
   font-size:0.9rem;
+  font-weight:700;
+}
  
  
   
