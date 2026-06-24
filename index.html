@@ -482,6 +482,12 @@ function renderVeiculos(rows, painelRows){
 
   if(!rows.length) return "<p>Sem dados</p>";
 
+  const linhas = [...rows];
+
+while (linhas.length < 5) {
+  linhas.push({ c: [] });
+}
+
   return `
   <table>
     <thead>
@@ -493,7 +499,7 @@ function renderVeiculos(rows, painelRows){
       </tr>
     </thead>
     <tbody>
-      ${rows.map(row => `
+      ${linhas.map(row => `
         <tr>
           <td><strong>${row["Veículo"] || ""}</strong></td>
           <td>${getDisponibilidade(row["Veículo"], painelRows, "veiculo")}</td>
