@@ -182,6 +182,22 @@ margin-bottom:15px;
 flex:1;
 }
 
+  
+.table-painel td:nth-child(1) { width: 90px; }
+.table-painel td:nth-child(2) { width: 70px; }
+
+.table-painel td:nth-child(3) { width: 90px; }
+.table-painel td:nth-child(4) { width: 70px; }
+
+
+.table-painel td:nth-child(5) { width: 120px; }
+.table-painel td:nth-child(6) { width: 150px; }
+
+  
+.table-painel td:nth-child(7) { width: 90px; }
+
+
+
 
 
 </style>
@@ -634,8 +650,10 @@ async function load(){
   const section =
     document.createElement("section");
 
+      <section class="card table-${t.id}">
+/*
   section.className = "card";
-
+*/
   section.innerHTML = `
     <h2>${config.title}</h2>
 
