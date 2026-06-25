@@ -517,11 +517,7 @@ function getDisponibilidade(nome, painelRows, tipo){
         const status =
           row["Status"] || "";
 
-           while (linhas.length < 4) {
-  linhas.push({ c: [] });
-}
-
-        return `
+         return `
           <tr>
 
             ${headers.map(h => `
