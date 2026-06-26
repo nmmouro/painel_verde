@@ -854,10 +854,16 @@ function toggleFull(){
   }
 }
 
-/* ================= INIT ================= */
-
+/* ================= INIT ================= 
 load();
-setInterval(load,30000);
+setInterval(load,30000); */
+
+  async function loop(){
+  await load();
+  setTimeout(loop, 3000); // ajuste aqui (2–5s ideal)
+}
+
+loop();
 
 </script>
 </body>
