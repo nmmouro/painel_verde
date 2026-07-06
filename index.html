@@ -90,8 +90,6 @@ thead th{
   vertical-align:middle;
 }
 
-
-
   tbody td{
   text-align:left;
 }
@@ -176,7 +174,6 @@ margin-bottom:15px;
 .card-resumo{
 flex:1;
 }
-
   
 /* PAINEL */
 table.painel th:nth-child(1),
@@ -281,10 +278,6 @@ table.social td:nth-child(6){
   width: 11%;
 }
 
-
-
-
-
 </style>
 </head>
 
@@ -366,7 +359,6 @@ const TABS = [
  }
 ];
 
-
 /* ================= FETCH ================= */
 
 async function getData(tab){
@@ -395,8 +387,6 @@ return [];
 
 }
 }
-
-
   
 async function getData(tab){
   try{
@@ -483,12 +473,6 @@ function getDisponibilidade(nome, painelRows, tipo){
 /* ================= RENDER ================= */
 
   function renderTable(rows, visibleHeaders = [], tableId){
-
-/*  if(!rows.length) return "<p>Sem dados</p>";
-
-  const headers = visibleHeaders.length
-    ? visibleHeaders
-    : Object.keys(rows[0]); */
 
     const headers =
     visibleHeaders.length
@@ -768,8 +752,6 @@ async function load(){
     app.innerHTML = "<p>Erro ao carregar</p>";
   }
 }
-
-
 
 /* ================= CLOCK ================= */
 
